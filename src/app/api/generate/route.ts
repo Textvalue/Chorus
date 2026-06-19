@@ -5,11 +5,13 @@ import { GenerateSchema } from "@/lib/schemas";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompt";
 import { sanitize, type SlopViolation } from "@/lib/antislop";
 import { getOrg, getMember, addPost, id } from "@/lib/store";
+import { mockGenerate } from "@/lib/mockGen";
 import type { Post } from "@/lib/types";
 
 export const maxDuration = 120;
 
 const MAX_TRIES = 3;
+const MOCK = process.env.MOCK_GENERATION === "1";
 
 export async function POST(req: Request) {
   try {
@@ -30,19 +32,35 @@ export async function POST(req: Request) {
     let violations: SlopViolation[] = [];
     let object: typeof GenerateSchema._type | null = null;
     let attempts = 0;
+    let mocked = false;
 
-    for (let i = 0; i < MAX_TRIES; i++) {
-      attempts++;
-      const res = await generateObject({
-        model: model(DRAFT_MODEL),
-        schema: GenerateSchema,
-        system,
-        prompt: buildUserPrompt(topic, angle ?? "", violations),
-      });
-      object = res.object;
-      const check = sanitize(object.body);
-      violations = check.violations;
-      if (check.pass) break; // anti-slop gate passed
+    if (MOCK) {
+      object = mockGenerate(org, member, topic);
+      violations = sanitize(object.body).violations;
+      attempts = 1;
+      mocked = true;
+    } else {
+      try {
+        for (let i = 0; i < MAX_TRIES; i++) {
+          attempts++;
+          const res = await generateObject({
+            model: model(DRAFT_MODEL),
+            schema: GenerateSchema,
+            system,
+            prompt: buildUserPrompt(topic, angle ?? "", violations),
+          });
+          object = res.object;
+          const check = sanitize(object.body);
+          violations = check.violations;
+          if (check.pass) break; // anti-slop gate passed
+        }
+      } catch (genErr) {
+        // Never dead-end the Create flow: fall back to a mock draft if the live LLM call fails.
+        console.error("[generate] live LLM failed, using mock fallback:", genErr);
+        object = mockGenerate(org, member, topic);
+        violations = sanitize(object.body).violations;
+        mocked = true;
+      }
     }
 
     if (!object) return NextResponse.json({ error: "generation failed" }, { status: 500 });
@@ -67,6 +85,7 @@ export async function POST(req: Request) {
       post,
       why: object.why,
       antislop: { pass: passed, violations, attempts },
+      mocked,
     });
   } catch (e) {
     return NextResponse.json(

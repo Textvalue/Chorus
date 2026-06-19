@@ -53,7 +53,7 @@ export const ExpertPovSchema = z.object({
 // ---- Generation ----
 export const GenerateSchema = z.object({
   body: z.string().describe("The full LinkedIn post, ready to publish, in the member's voice"),
-  voice_match: z.number().min(0).max(100).describe("Self-assessed % it sounds like the member"),
+  voice_match: z.number().describe("Self-assessed score 0-100 for how much it sounds like the member"),
   why: z.object({
     belief: z.string(),
     hook: z.string(),

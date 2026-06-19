@@ -7,21 +7,20 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const STORE_PATH = path.join(DATA_DIR, "store.json");
 const EMPTY: Store = { org: null, members: [], posts: [] };
 
-let cache: Store | null = null;
-
+// Always read from disk. The store is tiny, and an in-memory cache is unsafe here:
+// in Next.js, API route handlers and RSC pages load this module as separate instances,
+// so a cached copy in one bundle goes stale after the other writes — which silently
+// bounced users back to onboarding. Disk is the single source of truth.
 async function load(): Promise<Store> {
-  if (cache) return cache;
   try {
     const raw = await fs.readFile(STORE_PATH, "utf8");
-    cache = { ...EMPTY, ...(JSON.parse(raw) as Store) };
+    return { ...EMPTY, ...(JSON.parse(raw) as Store) };
   } catch {
-    cache = structuredClone(EMPTY);
+    return structuredClone(EMPTY);
   }
-  return cache!;
 }
 
 async function persist(s: Store): Promise<void> {
-  cache = s;
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.writeFile(STORE_PATH, JSON.stringify(s, null, 2), "utf8");
 }

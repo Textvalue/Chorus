@@ -12,9 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!org) redirect("/onboarding/org");
 
   const members = await getMembers();
-  const ready = members.some(
-    (m) => m.prose_samples.length > 0 && m.voice_dna.traits.length > 0
-  );
+  const ready = members.some((m) => m.prose_samples.length > 0);
   if (!ready) redirect("/onboarding/member");
 
   const owner =

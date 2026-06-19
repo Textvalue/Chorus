@@ -11,6 +11,7 @@ type GenResult = {
   post: { id: string; body: string; voice_match: number; topic: string };
   why: Why;
   antislop: { pass: boolean; violations: { rule: string; detail: string }[]; attempts: number };
+  mocked?: boolean;
 };
 
 export function CreateView({ members, orgName, starters }: { members: Mem[]; orgName: string; starters: string[] }) {
@@ -182,6 +183,12 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
                 )}
                 <span className="cf-sep">·</span>
                 <span className="cf"><b>{result.post.voice_match}%</b>&nbsp;sounds like you</span>
+                {result.mocked && (
+                  <>
+                    <span className="cf-sep">·</span>
+                    <span className="chip" style={{ color: "var(--ink3)" }}>mock draft</span>
+                  </>
+                )}
                 {result.antislop.attempts > 1 && (
                   <>
                     <span className="cf-sep">·</span>
