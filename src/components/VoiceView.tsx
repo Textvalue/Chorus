@@ -36,9 +36,60 @@ const DemoTag = () => (
   <Badge variant="secondary" className="ml-2 align-middle">sample</Badge>
 );
 
+// Sample Brand DNA so the Company tab is populated even before it's filled in.
+const MOCK_COMPANY: Company = {
+  positioning: "We help B2B teams turn each person's real voice into on-brand LinkedIn content — one brand DNA, many human voices. Not another scheduler; a voice engine.",
+  personas: ["VP Marketing", "Head of Content", "Founder / CEO", "Demand-gen lead"],
+  pains: [
+    { pain: "Employee advocacy makes everyone sound identical", weekly_trigger: "Monday content push", severity: "high" },
+    { pain: "Reach looks fine but pipeline doesn't move", weekly_trigger: "QBR / board prep", severity: "high" },
+    { pain: "Reps won't post — the drafts don't sound like them", weekly_trigger: "Weekly 1:1s", severity: "medium" },
+  ],
+  antiPersonas: ["Solo creators", "Pure B2C brands"],
+  voiceRules: ["Lead with a point of view, not a feature", "One hard number per post", "Short sentences — cut the throat-clearing", "No buzzwords, no “excited to share”"],
+  atoms: [],
+  competitors: [],
+};
+
+function withSampleData(c: Company): Company {
+  return {
+    positioning: c.positioning || MOCK_COMPANY.positioning,
+    personas: c.personas?.length ? c.personas : MOCK_COMPANY.personas,
+    pains: c.pains?.length ? c.pains : MOCK_COMPANY.pains,
+    antiPersonas: c.antiPersonas?.length ? c.antiPersonas : MOCK_COMPANY.antiPersonas,
+    voiceRules: c.voiceRules?.length ? c.voiceRules : MOCK_COMPANY.voiceRules,
+    atoms: c.atoms ?? [],
+    competitors: c.competitors ?? [],
+  };
+}
+
 export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCount: number; company: Company; isOwner: boolean }) {
   const [tab, setTab] = useState<"me" | "winning" | "company">("me");
   const toast = useToast();
+
+  // Company / Brand DNA — populated with sample data and editable in-session.
+  const [co, setCo] = useState<Company>(() => withSampleData(company));
+  const [editingDNA, setEditingDNA] = useState(false);
+  const [draftPos, setDraftPos] = useState("");
+  const [draftPersonas, setDraftPersonas] = useState("");
+  const [draftRules, setDraftRules] = useState("");
+
+  function startEditDNA() {
+    setDraftPos(co.positioning);
+    setDraftPersonas(co.personas.join(", "));
+    setDraftRules(co.voiceRules.join("\n"));
+    setEditingDNA(true);
+  }
+  function saveDNA() {
+    setCo({
+      ...co,
+      positioning: draftPos.trim() || co.positioning,
+      personas: draftPersonas.split(",").map((s) => s.trim()).filter(Boolean),
+      voiceRules: draftRules.split("\n").map((s) => s.trim()).filter(Boolean),
+    });
+    setEditingDNA(false);
+    toast("Brand DNA updated");
+  }
 
   return (
     <div className="pad">
@@ -202,7 +253,11 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
           <Card style={{ marginBottom: 16 }}>
             <CardContent>
               <div className="eyebrow muted" style={{ marginBottom: 8 }}>Positioning</div>
-              <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, color: "var(--text-body)" }}>{company.positioning || "Not set yet."}</p>
+              {editingDNA ? (
+                <textarea className="field" rows={3} value={draftPos} onChange={(e) => setDraftPos(e.target.value)} style={{ resize: "vertical" }} />
+              ) : (
+                <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, color: "var(--text-body)" }}>{co.positioning}</p>
+              )}
             </CardContent>
           </Card>
 
@@ -210,31 +265,41 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
             <Card>
               <CardContent>
                 <div className="eyebrow muted" style={{ marginBottom: 12 }}>Ideal customer</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
-                  {company.personas.map((p) => <Badge key={p} variant="secondary">{p}</Badge>)}
-                </div>
-                {company.antiPersonas.length > 0 && (
-                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}><b style={{ color: "var(--text-body)" }}>Not for:</b> {company.antiPersonas.join(", ")}</p>
+                {editingDNA ? (
+                  <input className="field" value={draftPersonas} onChange={(e) => setDraftPersonas(e.target.value)} placeholder="Comma-separated personas" />
+                ) : (
+                  <>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
+                      {co.personas.map((p) => <Badge key={p} variant="secondary">{p}</Badge>)}
+                    </div>
+                    {co.antiPersonas.length > 0 && (
+                      <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}><b style={{ color: "var(--text-body)" }}>Not for:</b> {co.antiPersonas.join(", ")}</p>
+                    )}
+                  </>
                 )}
               </CardContent>
             </Card>
             <Card>
               <CardContent>
                 <div className="eyebrow muted" style={{ marginBottom: 12 }}>Brand voice rules</div>
-                {company.voiceRules.map((r) => (
-                  <div key={r} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "5px 0", color: "var(--text-body)", lineHeight: 1.4 }}>
-                    <Icon.check size={15} color="var(--green)" stroke={2.4} />{r}
-                  </div>
-                ))}
+                {editingDNA ? (
+                  <textarea className="field" rows={4} value={draftRules} onChange={(e) => setDraftRules(e.target.value)} placeholder="One rule per line" style={{ resize: "vertical" }} />
+                ) : (
+                  co.voiceRules.map((r) => (
+                    <div key={r} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "5px 0", color: "var(--text-body)", lineHeight: 1.4 }}>
+                      <Icon.check size={15} color="var(--green)" stroke={2.4} />{r}
+                    </div>
+                  ))
+                )}
               </CardContent>
             </Card>
           </div>
 
-          {company.pains.length > 0 && (
+          {co.pains.length > 0 && (
             <Card style={{ marginBottom: 16 }}>
               <CardContent>
                 <div className="eyebrow muted" style={{ marginBottom: 12 }}>Validated pains</div>
-                {company.pains.map((p, i) => (
+                {co.pains.map((p, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)" }}>
                     <span style={{ flex: 1, fontSize: 14, color: "var(--text-strong)", fontWeight: 600 }}>{p.pain}</span>
                     <Badge variant="secondary">{p.weekly_trigger}</Badge>
@@ -246,7 +311,14 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
           )}
 
           {isOwner && (
-            <button className="btn" onClick={() => toast("Editing Brand DNA — coming soon")}><Icon.edit size={15} /> Edit Brand DNA</button>
+            editingDNA ? (
+              <div className="im">
+                <button className="btn pri" onClick={saveDNA}><Icon.check size={15} color="#fff" /> Save Brand DNA</button>
+                <button className="btn" onClick={() => setEditingDNA(false)}>Cancel</button>
+              </div>
+            ) : (
+              <button className="btn" onClick={startEditDNA}><Icon.edit size={15} /> Edit Brand DNA</button>
+            )
           )}
         </div>
       )}

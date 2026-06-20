@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
+import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import { LoadingMessage, IDEAS_MESSAGES } from "./LoadingMessage";
 
 type Mem = { id: string; name: string };
@@ -27,6 +28,47 @@ const MOCK_IDEAS: Idea[] = [
   { title: "Your reps all sound the same — here’s the fix", angle: "Name the tooling-vs-people tension, land on “give them a POV, not a script.”", source_type: "pain", source: "Company pains", tag: "How-to" },
   { title: "Stop scheduling. Start sounding human.", angle: "Short and punchy: distinct voices on one strategy beat identical voices every time.", source_type: "belief", source: "Your beliefs", tag: "Punchy" },
 ];
+
+type DiscoverResult = { trend: string; lift: number; winning: string; ideas: Idea[] };
+type RepurposeResult = { ways: number; pieces: number; weeks: string; atoms: string[]; assets: { title: string; lift: string }[] };
+
+// Mock "Discover" analysis for any topic — stands in for the live top-post study.
+function mockDiscover(topic: string): DiscoverResult {
+  const t = topic.replace(/\.$/, "");
+  return {
+    trend: `Contrarian, specific takes on “${t}” are outperforming generic advice`,
+    lift: 3.2,
+    winning: "Personal-story hooks paired with one hard number. Posts under 120 words, no link in-body.",
+    ideas: [
+      { title: `The “${t}” advice everyone repeats is wrong`, angle: "Open against the consensus, then show the counter-example with a number.", source_type: "belief", source: "Trend", tag: "Hook" },
+      { title: `What nobody tells you about ${t}`, angle: "Insider POV; one specific story from your own work.", source_type: "belief", source: "Trend", tag: "Story" },
+      { title: `We tried ${t} for 90 days — here's the data`, angle: "Measured, data-led; lead with the result, not the setup.", source_type: "belief", source: "Trend", tag: "Data" },
+      { title: `${t}, but make it human`, angle: "Short, punchy reframe; end on a one-line principle.", source_type: "belief", source: "Trend", tag: "Punchy" },
+    ],
+  };
+}
+
+// Mock "Repurpose" breakdown for any source URL/transcript.
+function mockRepurpose(): RepurposeResult {
+  return {
+    ways: 9,
+    pieces: 6,
+    weeks: "4–6",
+    atoms: [
+      "A contrarian one-liner that opens a post",
+      "A 3-step framework you can teach",
+      "A surprising stat worth its own post",
+      "A short personal story / lesson learned",
+      "A myth-vs-reality comparison",
+      "A checklist readers can save",
+    ],
+    assets: [
+      { title: "Carousel: the 3-step framework", lift: "3× reach" },
+      { title: "Hook post: the contrarian opener", lift: "2× saves" },
+      { title: "Data post: the surprising stat", lift: "Strong fit" },
+    ],
+  };
+}
 
 export function IdeasView({ members }: { members: Mem[] }) {
   const router = useRouter();
@@ -50,6 +92,28 @@ export function IdeasView({ members }: { members: Mem[] }) {
     setIdeas((prev) => prev.map((it, j) => (j === i ? { ...it, title: draftTitle.trim() || it.title, angle: draftAngle.trim() || it.angle } : it)));
     setEditIdx(null);
     toast("Idea updated");
+  }
+
+  // Discover — analyze any topic (mock results, in-session).
+  const [dq, setDq] = useState("");
+  const [dBusy, setDBusy] = useState(false);
+  const [discover, setDiscover] = useState<DiscoverResult | null>(null);
+  function runDiscover() {
+    if (!dq.trim() || dBusy) return;
+    setDBusy(true);
+    setDiscover(null);
+    window.setTimeout(() => { setDiscover(mockDiscover(dq.trim())); setDBusy(false); }, 1100);
+  }
+
+  // Repurpose — break down any source (mock results, in-session).
+  const [rq, setRq] = useState("");
+  const [rBusy, setRBusy] = useState(false);
+  const [repurpose, setRepurpose] = useState<RepurposeResult | null>(null);
+  function runRepurpose() {
+    if (!rq.trim() || rBusy) return;
+    setRBusy(true);
+    setRepurpose(null);
+    window.setTimeout(() => { setRepurpose(mockRepurpose()); setRBusy(false); }, 1100);
   }
 
   const load = useCallback(async (id: string) => {
@@ -208,8 +272,17 @@ export function IdeasView({ members }: { members: Mem[] }) {
         <div className="fade">
           <div className="card" style={{ padding: 16, marginBottom: 14 }}>
             <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-              <input className="field" style={{ flex: 1, minWidth: 220 }} placeholder="Analyze what's working for any topic…" disabled />
-              <button className="btn pri" disabled>Analyze</button>
+              <input
+                className="field"
+                style={{ flex: 1, minWidth: 220 }}
+                placeholder="Analyze what's working for any topic…"
+                value={dq}
+                onChange={(e) => setDq(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && runDiscover()}
+              />
+              <button className="btn pri" onClick={runDiscover} disabled={dBusy || !dq.trim()}>
+                {dBusy ? <span className="spinner" /> : null} Analyze
+              </button>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
               {["Last 30 days", "Min 200 likes", "5k+ followers", "All formats"].map((f) => (
@@ -217,17 +290,57 @@ export function IdeasView({ members }: { members: Mem[] }) {
               ))}
             </div>
           </div>
-          <Empty style={{ padding: 48 }}>
-            <EmptyHeader>
-              <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Discover what&apos;s trending</EmptyTitle>
-              <EmptyDescription style={{ maxWidth: 460 }}>
-                Type any topic and Penkala studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context — with the right format and hook.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Badge variant="secondary">Coming soon</Badge>
-            </EmptyContent>
-          </Empty>
+
+          {dBusy && (
+            <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
+              <LoadingMessage messages={["Studying top posts…", ...IDEAS_MESSAGES]} />
+            </div>
+          )}
+
+          {!dBusy && discover && (
+            <>
+              <div className="card" style={{ padding: 20, marginBottom: 14, borderLeft: "3px solid var(--accent)" }}>
+                <div className="eyebrow">Trend</div>
+                <h4 style={{ margin: "4px 0 12px" }}>{discover.trend}</h4>
+                <div style={{ display: "flex", gap: 28, flexWrap: "wrap", alignItems: "flex-start" }}>
+                  <div style={{ fontSize: 26, fontWeight: 700, color: "var(--accent-ink)", fontVariantNumeric: "tabular-nums", lineHeight: 1.1 }}>
+                    <AnimatedNumber value={discover.lift} decimals={1} suffix="× vs median" />
+                  </div>
+                  <div style={{ fontSize: 13.5, color: "var(--text-body)", maxWidth: 380, lineHeight: 1.55 }}>
+                    <b style={{ color: "var(--text-strong)" }}>What&apos;s winning:</b> {discover.winning}
+                  </div>
+                </div>
+              </div>
+              <div className="card" style={{ padding: "6px 24px" }}>
+                <AnimatedGroup as="div" className="divide-y divide-[var(--line)]">
+                  {discover.ideas.map((idea, i) => (
+                    <Item key={i} className="gap-[15px] rounded-none px-0 py-[18px]">
+                      <ItemMedia className="iic">{ICONS[i % ICONS.length]}</ItemMedia>
+                      <ItemContent>
+                        <ItemTitle className="text-[15.5px] font-bold text-[var(--text-strong)]">{idea.title}</ItemTitle>
+                        <ItemDescription className="text-[13.5px] text-[var(--text-body)]">{idea.angle}</ItemDescription>
+                        <div className="im"><Badge variant="secondary">{idea.tag}</Badge></div>
+                      </ItemContent>
+                      <ItemActions>
+                        <button className="btn sm ghost" onClick={() => router.push(`/create?topic=${encodeURIComponent(idea.title)}`)}>Write →</button>
+                      </ItemActions>
+                    </Item>
+                  ))}
+                </AnimatedGroup>
+              </div>
+            </>
+          )}
+
+          {!dBusy && !discover && (
+            <Empty style={{ padding: 48 }}>
+              <EmptyHeader>
+                <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Discover what&apos;s trending</EmptyTitle>
+                <EmptyDescription style={{ maxWidth: 460 }}>
+                  Type any topic above and Penkala studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )}
         </div>
       )}
 
@@ -236,26 +349,88 @@ export function IdeasView({ members }: { members: Mem[] }) {
         <div className="fade">
           <div className="card" style={{ padding: 16, marginBottom: 14 }}>
             <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-              <input className="field" style={{ flex: 1, minWidth: 220 }} placeholder="Paste a blog post, podcast, YouTube, or webinar URL…" disabled />
-              <button className="btn pri" disabled>Repurpose</button>
+              <input
+                className="field"
+                style={{ flex: 1, minWidth: 220 }}
+                placeholder="Paste a blog post, podcast, YouTube, or webinar URL…"
+                value={rq}
+                onChange={(e) => setRq(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && runRepurpose()}
+              />
+              <button className="btn pri" onClick={runRepurpose} disabled={rBusy || !rq.trim()}>
+                {rBusy ? <span className="spinner" /> : null} Repurpose
+              </button>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
               {["Blog post", "Podcast", "YouTube", "Webinar", "Past post"].map((f, i) => (
-                <span key={f} className={`chip${i === 0 ? " dot" : ""}`} style={i === 0 ? { color: "var(--brass-600)" } : undefined}>{f}</span>
+                <span key={f} className={`chip${i === 0 ? " dot" : ""}`} style={i === 0 ? { color: "var(--accent-ink)" } : undefined}>{f}</span>
               ))}
             </div>
           </div>
-          <Empty style={{ padding: 48 }}>
-            <EmptyHeader>
-              <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Turn one thing into many</EmptyTitle>
-              <EmptyDescription style={{ maxWidth: 460 }}>
-                Drop in something you already made — a blog post, podcast, webinar, or an old top post. Penkala breaks it into reusable pieces and the highest-leverage ways to turn it into posts, in your voice.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Badge variant="secondary">Coming soon</Badge>
-            </EmptyContent>
-          </Empty>
+
+          {rBusy && (
+            <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
+              <LoadingMessage messages={["Breaking this down…", ...IDEAS_MESSAGES]} />
+            </div>
+          )}
+
+          {!rBusy && repurpose && (
+            <>
+              <div className="card" style={{ padding: 20, marginBottom: 14 }}>
+                <div style={{ display: "flex", gap: 30, flexWrap: "wrap" }}>
+                  <div>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: "var(--accent-ink)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}><AnimatedNumber value={repurpose.ways} /></div>
+                    <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 6 }}>ways to reuse it</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: "var(--text-strong)", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}><AnimatedNumber value={repurpose.pieces} /></div>
+                    <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 6 }}>ready-to-write pieces</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: "var(--text-strong)", lineHeight: 1 }}>{repurpose.weeks}</div>
+                    <div style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 6 }}>weeks of content</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: "6px 24px", marginBottom: 14 }}>
+                <div className="label" style={{ paddingTop: 14 }}>What&apos;s reusable</div>
+                <AnimatedGroup as="div" className="divide-y divide-[var(--line)]">
+                  {repurpose.atoms.map((a, i) => (
+                    <Item key={i} className="gap-[12px] rounded-none px-0 py-[14px]">
+                      <ItemContent>
+                        <ItemTitle className="text-[14px] font-semibold text-[var(--text-strong)]">{a}</ItemTitle>
+                      </ItemContent>
+                      <ItemActions>
+                        <button className="btn sm ghost" onClick={() => router.push(`/create?topic=${encodeURIComponent(a)}`)}>Write →</button>
+                      </ItemActions>
+                    </Item>
+                  ))}
+                </AnimatedGroup>
+              </div>
+
+              <div className="card" style={{ padding: "6px 24px" }}>
+                <div className="label" style={{ paddingTop: 14 }}>Suggested assets</div>
+                {repurpose.assets.map((asset, i) => (
+                  <div key={i} className="im" style={{ justifyContent: "space-between", padding: "14px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)" }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>{asset.title}</span>
+                    <Badge variant="success">{asset.lift}</Badge>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {!rBusy && !repurpose && (
+            <Empty style={{ padding: 48 }}>
+              <EmptyHeader>
+                <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Turn one thing into many</EmptyTitle>
+                <EmptyDescription style={{ maxWidth: 460 }}>
+                  Drop in something you already made — a blog post, podcast, webinar, or an old top post. Penkala breaks it into reusable pieces and the highest-leverage ways to turn it into posts, in your voice.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )}
         </div>
       )}
     </div>
