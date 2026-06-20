@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
 
 /* ============================================================================
    Tutti — editorial design system
@@ -52,7 +54,7 @@
   --text-accent:var(--accent-ink); --text-link:var(--accent-ink); --text-success:var(--green-600);
 
   --border-subtle:var(--line); --border-strong:var(--line-2); --border-focus:var(--accent);
-  --ring:0 0 0 3px var(--accent-soft);
+  --focus-shadow:0 0 0 3px var(--accent-soft);
 
   --action-primary:var(--accent); --action-primary-hover:var(--accent-ink);
   --action-accent:var(--accent); --action-accent-hover:var(--accent-ink);
@@ -244,7 +246,7 @@ code, pre { font-family: var(--font-mono); }
 .stack { display: flex; flex-direction: column; gap: 20px; }
 
 .field { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 12px 14px; font-size: 14px; color: var(--text-strong); background: var(--surface-card); outline: none; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
-.field:focus { border-color: var(--border-focus); box-shadow: var(--ring); }
+.field:focus { border-color: var(--border-focus); box-shadow: var(--focus-shadow); }
 .field::placeholder { color: var(--text-muted); }
 .label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; display: block; }
 
@@ -253,7 +255,7 @@ code, pre { font-family: var(--font-mono); }
 .auth-row .al { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 .ch { font-family: var(--serif); font-size: 42px; font-weight: 400; letter-spacing: -0.02em; margin: 0 0 22px; line-height: 1.05; color: var(--text-strong); }
 .composer { background: var(--surface-card); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: 6px; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
-.composer:focus-within { border-color: var(--border-focus); box-shadow: var(--ring); }
+.composer:focus-within { border-color: var(--border-focus); box-shadow: var(--focus-shadow); }
 .composer textarea { width: 100%; border: none; outline: none; resize: none; padding: 16px 16px 4px; font-size: 17px; line-height: 1.55; color: var(--text-strong); background: transparent; min-height: 84px; letter-spacing: -0.005em; }
 .composer textarea::placeholder { color: var(--text-muted); }
 .composer-foot { display: flex; align-items: center; gap: 12px; padding: 8px 10px 10px; flex-wrap: wrap; }
@@ -280,7 +282,7 @@ code, pre { font-family: var(--font-mono); }
 .postcard .pbody { font-size: 15.5px; line-height: 1.68; white-space: pre-wrap; color: var(--text-body); letter-spacing: -0.003em; }
 .postcard .pbody b { font-weight: 700; color: var(--text-strong); }
 .postcard textarea { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 14px; font-size: 15.5px; line-height: 1.68; resize: vertical; min-height: 220px; outline: none; color: var(--text-strong); background: var(--surface-card); }
-.postcard textarea:focus { border-color: var(--border-focus); box-shadow: var(--ring); }
+.postcard textarea:focus { border-color: var(--border-focus); box-shadow: var(--focus-shadow); }
 
 .confidence { display: flex; align-items: center; gap: 10px; margin: 16px 2px 0; font-size: 13px; color: var(--text-body); flex-wrap: wrap; }
 .cf { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
@@ -416,4 +418,63 @@ code, pre { font-family: var(--font-mono); }
 
 @media (max-width: 560px) {
   .ob-step .lbl { display: none; }
+}
+
+/* ============================================================================
+   shadcn/ui ↔ Choir bridge — map shadcn's semantic color tokens onto the
+   electric-violet palette so every shadcn component renders on-brand.
+   (Defined directly against the Choir scale to avoid colliding with the app's
+   own --accent / --ring tokens.)
+   ============================================================================ */
+:root {
+  --radius: 0.75rem;                 /* shadcn radius base (rounded-md ≈ 12px) */
+  /* sidebar tokens (neutral, light) */
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ev-600);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--ev-100);
+  --sidebar-accent-foreground: var(--ev-800);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--ev-600);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--ev-600);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--gray-50);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--gray-50);
+  --color-muted-foreground: var(--ink3);
+  --color-accent: var(--ev-100);
+  --color-accent-foreground: var(--ev-800);
+  --color-destructive: var(--coral-d);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--line);
+  --color-input: var(--line-2);
+  --color-ring: var(--ev-600);
+  --color-chart-1: var(--ev-600);
+  --color-chart-2: var(--ev-400);
+  --color-chart-3: var(--green-500);
+  --color-chart-4: var(--amber-500);
+  --color-chart-5: var(--ev-800);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-sans);
 }

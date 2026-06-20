@@ -1,0 +1,1287 @@
+<title>Choir — Component Build Kit</title>
+<style>
+  :root{
+    --bg:#F7F7F8; --surface:#fff; --ink:#18181B; --ink2:#5B5B63; --ink3:#9B9BA3;
+    --line:#ECECEF; --line2:#E2E2E6;
+    /* accent = electric-violet (11-stop scale) */
+    --ev-50:#f4f1ff; --ev-100:#ebe6ff; --ev-200:#d9d0ff; --ev-300:#bdaaff; --ev-400:#9e7aff; --ev-500:#8145ff; --ev-600:#761fff; --ev-700:#7218f4; --ev-800:#5a0bcc; --ev-900:#4b0ba7; --ev-950:#2c0372;
+    --accent:var(--ev-600); --accent-soft:var(--ev-100); --accent-ink:var(--ev-800);
+    --green:#0E9F6E; --green-soft:#E6F6EF; --amber:#B26B00; --amber-soft:#FFF6E8;
+    --ink-surface:#1C1C20; --code-bg:#1C1C20; --code-ink:#E8E8EC;
+    --r:16px; --r-sm:11px; --r-xs:8px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --shadow-1:0 1px 2px rgba(24,24,27,.04),0 1px 3px rgba(24,24,27,.06);
+    --shadow-2:0 2px 4px rgba(24,24,27,.05),0 8px 24px rgba(24,24,27,.08);
+    --shadow-3:0 12px 40px rgba(24,24,27,.14);
+    --ease-out:cubic-bezier(.23,1,.32,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--accent-soft)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+  a{color:var(--accent-ink);text-decoration:none}
+  a:hover{text-decoration:underline}
+  svg.ic{width:18px;height:18px;display:block}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+  /* ---------- HEADER ---------- */
+  header.top{background:linear-gradient(180deg,#fff 0%,#FBFBFC 100%);border-bottom:1px solid var(--line)}
+  .hd{padding:54px 0 46px}
+  .hd-mark{display:inline-flex;align-items:center;gap:12px;margin-bottom:26px}
+  .rmark{width:40px;height:40px;border-radius:11px;background:var(--accent);color:#fff;display:flex;
+    align-items:center;justify-content:center;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 6px rgba(242,84,45,.32)}
+  .rmark svg{width:22px;height:22px}
+  .hd-mark .nm{font-size:14px;font-weight:680;letter-spacing:.01em}
+  .hd-mark .nm span{color:var(--ink3);font-weight:560}
+  .hd h1{font-size:42px;line-height:1.06;font-weight:700;letter-spacing:-.032em;margin:0 0 16px;max-width:18ch;text-wrap:balance}
+  .hd h1 b{color:var(--accent)}
+  .hd .lede{font-size:17px;color:var(--ink2);max-width:64ch;margin:0 0 24px;line-height:1.6}
+  .hd .lede b{color:var(--ink);font-weight:680}
+  .hd-meta{display:flex;flex-wrap:wrap;gap:10px}
+  .metachip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink2);
+    background:var(--surface);border:1px solid var(--line2);border-radius:99px;padding:6px 13px}
+  .metachip .dot{width:7px;height:7px;border-radius:99px;background:var(--accent)}
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  section{padding:52px 0}
+  section + section{border-top:1px solid var(--line)}
+  .seclabel{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:720;
+    text-transform:uppercase;letter-spacing:.09em;color:var(--accent-ink);margin-bottom:14px}
+  .seclabel .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+    border-radius:7px;background:var(--accent-soft);color:var(--accent-ink);font-size:12px;font-weight:760;letter-spacing:0}
+  h2.sec{font-size:27px;font-weight:700;letter-spacing:-.026em;margin:0 0 10px}
+  .sec-intro{font-size:15px;color:var(--ink2);max-width:72ch;margin:0 0 30px;line-height:1.62}
+  .sec-intro b{color:var(--ink);font-weight:660}
+
+  /* ---------- FOUNDATION GRID ---------- */
+  .foundgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-1);
+    padding:22px 22px 20px}
+  .fcard.span2{grid-column:1 / -1}
+  .fcard h3{font-size:12px;font-weight:720;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin:0 0 14px;
+    display:flex;align-items:center;gap:8px}
+  .fcard h3 svg{width:15px;height:15px;color:var(--accent)}
+  .frow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:8px 0;border-top:1px solid var(--line)}
+  .frow:first-of-type{border-top:none;padding-top:2px}
+  .frow .k{font-size:13px;color:var(--ink2);font-weight:560;flex:none}
+  .frow .v{font-size:13px;color:var(--ink);font-weight:640;text-align:right}
+  .frow .v code{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--line);
+    border-radius:6px;padding:2px 6px;color:var(--ink)}
+
+  /* color swatches */
+  .swatches{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+  .sw{flex:1 1 120px;min-width:120px;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;background:var(--surface)}
+  .sw .chip{height:46px}
+  .sw .lab{padding:8px 10px}
+  .sw .lab .nm{font-size:12px;font-weight:680;letter-spacing:-.01em}
+  .sw .lab .hx{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:1px}
+  .sw.accent{border-color:var(--accent-soft)}
+
+  /* motion + mcp lists */
+  .ulist{list-style:none;margin:0;padding:0}
+  .ulist li{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5}
+  .ulist li:first-child{border-top:none}
+  .ulist li .lt{font-weight:680;color:var(--ink);flex:none;min-width:148px}
+  .ulist li .ld{color:var(--ink2)}
+  .ulist li .ld code{font-family:var(--mono);font-size:11.5px;color:var(--accent-ink);background:var(--accent-soft);
+    border-radius:5px;padding:1px 5px}
+
+  /* ---------- COPY-CODE BLOCK ---------- */
+  .codeblock{position:relative;background:var(--code-bg);border-radius:var(--r);box-shadow:var(--shadow-2);overflow:hidden;margin:0 0 16px}
+  .cb-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .cb-head .ttl{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:680;color:#fff;letter-spacing:.01em}
+  .cb-head .ttl .bdot{width:8px;height:8px;border-radius:99px;background:var(--accent)}
+  .cb-head .grp{font-family:var(--mono);font-size:11px;color:#9B9BA3}
+  .copybtn{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:12px;font-weight:640;
+    color:#E8E8EC;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);cursor:pointer;
+    border-radius:8px;padding:6px 11px;transition:background .15s,border-color .15s}
+  .copybtn:hover{background:rgba(242,84,45,.22);border-color:rgba(242,84,45,.5)}
+  .copybtn.done{background:rgba(14,159,110,.22);border-color:rgba(14,159,110,.55);color:#8FE9C4}
+  .copybtn svg{width:14px;height:14px}
+  .cb-scroll{overflow-x:auto}
+  .codeblock pre{margin:0;padding:16px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--code-ink);
+    white-space:pre;tab-size:2}
+  .codeblock pre .cm{color:#7E8590}
+  .codeblock pre .pk{color:#F2A28C}
+  .codeblock pre .cl{color:#9FD0FF}
+
+  /* manifest group nav */
+  .mangroups{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .mangroup{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:620;color:var(--ink2);
+    background:var(--surface);border:1px solid var(--line2);border-radius:99px;padding:7px 14px}
+  .mangroup b{color:var(--ink);font-weight:740;font-variant-numeric:tabular-nums}
+  .mangroup .gd{width:8px;height:8px;border-radius:99px;flex:none}
+
+  /* ---------- SCREENS ---------- */
+  .screen-intro{display:flex;align-items:flex-start;gap:16px;margin:0 0 26px;flex-wrap:wrap}
+  .screen-intro .lead{flex:1;min-width:280px}
+  .screengrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .scard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-1);
+    overflow:hidden;display:flex;flex-direction:column;transition:transform .12s var(--ease-out),box-shadow .15s}
+  .scard:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+  .scard.wide{grid-column:1 / -1}
+  .sc-head{padding:18px 20px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#FCFCFD)}
+  .sc-head .grp{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+  .sc-head .scn{font-size:11px;font-weight:720;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+  .sc-head .lines{font-family:var(--mono);font-size:10.5px;color:var(--ink3);flex:none}
+  .sc-head h4{font-size:16.5px;font-weight:760;letter-spacing:-.02em;margin:0 0 7px}
+  .sc-head p{margin:0;font-size:12.5px;color:var(--ink2);line-height:1.55}
+
+  .sc-body{padding:8px 20px 18px;flex:1}
+  .erow{padding:14px 0;border-top:1px solid var(--line)}
+  .erow:first-child{border-top:none}
+  .erow .el{font-size:13.5px;font-weight:680;color:var(--ink);line-height:1.4;margin-bottom:9px;display:flex;gap:8px;align-items:flex-start}
+  .erow .el .arr{color:var(--accent);flex:none;margin-top:1px}
+  .map{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+  .comp{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--ink);
+    background:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:4px 10px}
+  .comp .cdot{width:6px;height:6px;border-radius:99px;background:var(--ink3)}
+  .to{color:var(--ink3);font-size:13px;flex:none}
+  .srcchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:680;border-radius:99px;padding:3px 9px;
+    letter-spacing:.01em;white-space:nowrap}
+  .src-shadcn{background:#EEF1F4;color:#3C4350}
+  .src-mp{background:var(--accent-soft);color:var(--accent-ink)}
+  .src-ace{background:#F1EEFA;color:#5B4A8C}
+  .src-wm{background:var(--green-soft);color:var(--green)}
+  .src-cf{background:#FFF6E8;color:var(--amber)}
+  .src-bespoke{background:#23232A;color:#E8E8EC}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+  .tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:680;border-radius:6px;padding:2px 8px;letter-spacing:.01em}
+  .tag svg{width:11px;height:11px}
+  .tag-free{background:var(--green-soft);color:var(--green)}
+  .tag-paid{background:#ebe6ff;color:var(--accent-ink)}
+  .tag-motion{background:var(--accent-soft);color:var(--accent-ink)}
+  .tag-accent{background:#ebe6ff;color:var(--accent-ink)}
+  .tag-base{background:#EEF1F4;color:#3C4350}
+  .tag-opt{background:#F0F0F2;color:var(--ink2)}
+  .tag-canon{background:#23232A;color:#fff}
+  .install{position:relative;display:flex;align-items:stretch;background:#FAFAFB;border:1px solid var(--line);
+    border-radius:var(--r-xs);overflow:hidden;margin-bottom:9px}
+  .install code{flex:1;min-width:0;font-family:var(--mono);font-size:11.5px;color:#2B2B31;padding:8px 11px;
+    overflow-x:auto;white-space:nowrap;line-height:1.5}
+  .install .ic-copy{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;
+    border-left:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink3);transition:.15s}
+  .install .ic-copy:hover{background:var(--accent-soft);color:var(--accent-ink)}
+  .install .ic-copy.done{color:var(--green)}
+  .install .ic-copy svg{width:14px;height:14px}
+  .treat{font-size:12.5px;color:var(--ink2);line-height:1.55}
+  .treat b{color:var(--ink);font-weight:660}
+
+  /* ---------- LEGEND ---------- */
+  .legendgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .lgcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-1);padding:20px 22px}
+  .lgcard h3{font-size:12px;font-weight:720;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin:0 0 14px}
+  .lgrow{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+  .lgrow:first-of-type{border-top:none;padding-top:0}
+  .lgrow .badge{flex:none}
+  .lgrow .desc{color:var(--ink2);line-height:1.5}
+  .lgrow .desc b{color:var(--ink);font-weight:660}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:40px 0 60px;border-top:1px solid var(--line);color:var(--ink3);font-size:12.5px;line-height:1.7}
+  footer b{color:var(--ink2);font-weight:660}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:860px){
+    .foundgrid,.screengrid,.legendgrid{grid-template-columns:1fr}
+    .fcard.span2{grid-column:auto}
+    .hd h1{font-size:33px}
+    .hd .lede{font-size:16px}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 18px}
+    .hd{padding:40px 0 34px}
+    .hd h1{font-size:27px}
+    section{padding:40px 0}
+    .erow .el .arr{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<!-- ======================= HEADER ======================= -->
+<header class="top">
+  <div class="wrap hd">
+    <div class="hd-mark">
+      <div class="rmark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12v0"/><path d="M9 8v8"/><path d="M13 5v14"/><path d="M17 9v6"/><path d="M21 11v2"/></svg></div>
+      <div class="nm">Choir <span>· Component Build Kit</span></div>
+    </div>
+    <h1>The exact components that build <b>every screen</b> of Choir.</h1>
+    <p class="lede">A team content-OS for B2B SaaS GTM, LinkedIn-first. <b>shadcn/ui is the base for ~90% of the app</b>; a motion component is reached for only where it materially lifts the screen. Linear / Vercel / Notion / Raycast restraint plus tasteful motion — one electric-violet accent on a clean neutral palette, whitespace and hierarchy over decoration. Hand this to engineers: the build is the list of <code style="font-family:var(--mono);font-size:13px">npx shadcn add</code> commands below.</p>
+    <div class="hd-meta">
+      <span class="metachip"><span class="dot"></span>Next.js + React + Tailwind v4 + shadcn/ui</span>
+      <span class="metachip"><span class="dot"></span>31 shadcn base · 6+2 Motion-Primitives · 4 Aceternity · 6 optional</span>
+      <span class="metachip"><span class="dot"></span>One electric-violet accent #761fff</span>
+      <span class="metachip"><span class="dot"></span>Code-distribution: you own every component</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ======================= 1 · FOUNDATION ======================= -->
+<section id="foundation">
+  <div class="wrap">
+    <div class="seclabel"><span class="num">1</span>Foundation</div>
+    <h2 class="sec">The substrate every screen sits on</h2>
+    <p class="sec-intro">Set these once at init and pin the mock's exact tokens. Generate the electric-violet scale from <b>UI Colors</b>, but use 3–4 stops max — neutral carries ~95% of the UI. Self-host <b>General Sans</b> (kills the third-party request and the overused-Inter look). Motion runs on <b>Motion-Primitives</b> (free / MIT, spring-physics, owned source).</p>
+
+    <div class="foundgrid">
+
+      <div class="fcard">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18 22 12 16 6"/><path d="M8 6 2 12 8 18"/></svg>Stack &amp; init order</h3>
+        <div class="frow"><span class="k">Framework</span><span class="v">Next.js + React</span></div>
+        <div class="frow"><span class="k">Styling</span><span class="v">Tailwind v4</span></div>
+        <div class="frow"><span class="k">Component base</span><span class="v">shadcn/ui — <code>npx shadcn@latest init</code></span></div>
+        <div class="frow"><span class="k">Motion runtime</span><span class="v"><code>npm i motion</code> (framer v12)</span></div>
+        <div class="frow"><span class="k">Smooth scroll</span><span class="v"><code>npm i lenis</code> at root</span></div>
+        <div class="frow"><span class="k">Radius</span><span class="v">Single scale — <code>--radius 16px</code></span></div>
+      </div>
+
+      <div class="fcard">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>Type &amp; motion</h3>
+        <div class="frow"><span class="k">Font (UI + body)</span><span class="v">General Sans Variable</span></div>
+        <div class="frow"><span class="k">Source</span><span class="v">Fontshare · free ITF-FFL</span></div>
+        <div class="frow"><span class="k">Delivery</span><span class="v">Self-host .woff2 + preload H1</span></div>
+        <div class="frow"><span class="k">Figures</span><span class="v"><code>tabular-nums</code> on all counters</span></div>
+        <div class="frow"><span class="k">Motion lib</span><span class="v">Motion-Primitives · free/MIT</span></div>
+        <div class="frow"><span class="k">Accent layer</span><span class="v">Aceternity free · 3–4 max, bones-not-skin</span></div>
+      </div>
+
+      <div class="fcard span2">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22a3 3 0 0 0 0-6c-1 0-2 .5-2.5-1-1-3.5 4-3 4-7"/></svg>Color scale — one electric-violet accent on warm neutral</h3>
+        <div class="swatches">
+          <div class="sw"><div class="chip" style="background:#f4f1ff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-50</div><div class="hx">#f4f1ff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#ebe6ff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-100 · soft</div><div class="hx">#ebe6ff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#d9d0ff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-200</div><div class="hx">#d9d0ff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#bdaaff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-300</div><div class="hx">#bdaaff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#9e7aff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-400</div><div class="hx">#9e7aff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#8145ff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-500</div><div class="hx">#8145ff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#761fff;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-600 · primary</div><div class="hx">#761fff</div></div></div>
+          <div class="sw"><div class="chip" style="background:#7218f4;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-700</div><div class="hx">#7218f4</div></div></div>
+          <div class="sw"><div class="chip" style="background:#5a0bcc;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-800 · ink/hover</div><div class="hx">#5a0bcc</div></div></div>
+          <div class="sw"><div class="chip" style="background:#4b0ba7;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-900</div><div class="hx">#4b0ba7</div></div></div>
+          <div class="sw"><div class="chip" style="background:#2c0372;box-shadow:inset 0 0 0 1px rgba(24,24,27,.10)"></div><div class="lab"><div class="nm">electric-violet-950</div><div class="hx">#2c0372</div></div></div>
+          <div class="sw"><div class="chip" style="background:#18181B"></div><div class="lab"><div class="nm">Ink</div><div class="hx">#18181B</div></div></div>
+          <div class="sw"><div class="chip" style="background:#5B5B63"></div><div class="lab"><div class="nm">Ink-2</div><div class="hx">#5B5B63</div></div></div>
+          <div class="sw"><div class="chip" style="background:#9B9BA3"></div><div class="lab"><div class="nm">Ink-3</div><div class="hx">#9B9BA3</div></div></div>
+          <div class="sw"><div class="chip" style="background:#ECECEF;border-bottom:1px solid #E2E2E6"></div><div class="lab"><div class="nm">Line</div><div class="hx">#ECECEF</div></div></div>
+          <div class="sw"><div class="chip" style="background:#F7F7F8;border-bottom:1px solid #ECECEF"></div><div class="lab"><div class="nm">Background</div><div class="hx">#F7F7F8</div></div></div>
+          <div class="sw"><div class="chip" style="background:#0E9F6E"></div><div class="lab"><div class="nm">Green (semantic)</div><div class="hx">#0E9F6E</div></div></div>
+          <div class="sw"><div class="chip" style="background:#B26B00"></div><div class="lab"><div class="nm">Amber (semantic)</div><div class="hx">#B26B00</div></div></div>
+          <div class="sw"><div class="chip" style="background:#1C1C20"></div><div class="lab"><div class="nm">Ink-surface</div><div class="hx">#1C1C20</div></div></div>
+        </div>
+        <p style="font-size:12px;color:var(--ink3);margin:14px 0 0;line-height:1.5"><b style="color:var(--ink2)">Spend discipline:</b> electric-violet lives only on the primary CTA, active nav/segment pill, focus ring, ONE KPI/proof highlight, chart target bars, voice dots, and the one "human input required" dashed card. Green / amber stay <b style="color:var(--ink2)">semantically separate</b> (verdict, status, confidence) so they never fight the accent. Run every text-on-surface pair through the free WCAG checker.</p>
+      </div>
+
+      <div class="fcard span2">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>MCP servers — so engineers/agents pull components by name</h3>
+        <ul class="ulist">
+          <li><span class="lt">shadcn</span><span class="ld">Natural-language component installs in-session — <code>npx shadcn@latest mcp init --client claude</code>. <b style="color:var(--green);font-weight:680">Free.</b></span></li>
+          <li><span class="lt">21st.dev Magic</span><span class="ld">Optional premium motion pulls. Try Motion-Primitives free equivalents first — <code>claude mcp add 21st-dev …</code>. Browse free; full pulls paid.</span></li>
+          <li><span class="lt">Mobbin</span><span class="ld">Ground UI against real shipped flows + mine shipped microcopy. Browser OAuth, no key. Pro-gated (~£8/mo).</span></li>
+          <li><span class="lt">Refero</span><span class="ld">Clean-premium DESIGN.md calibration (Linear / Vercel / Cursor) + shipped-screen query. Free beta for DESIGN.md copy-paste.</span></li>
+        </ul>
+        <p style="font-size:12px;color:var(--ink3);margin:14px 0 0;line-height:1.5">Pin exact versions in <code style="font-family:var(--mono)">.mcp.json</code> — <code style="font-family:var(--mono)">npx -y &lt;pkg&gt;@latest</code> re-resolves every session (supply-chain). Mobbin / Refero are reference-grounding only — study structure and microcopy, never clone an identity.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 2 · INSTALL MANIFEST ======================= -->
+<section id="manifest">
+  <div class="wrap">
+    <div class="seclabel"><span class="num">2</span>Install Manifest</div>
+    <h2 class="sec">Bootstrap the whole component set in one pass</h2>
+    <p class="sec-intro">De-duplicated across every screen. Every recurring element resolves to a canonical primitive — no duplicate installs. <b>This manifest is the complete bootstrap;</b> everything else is owned source the team restyles to the foundation tokens. Click <b>Copy</b> on any block.</p>
+
+    <div class="mangroups">
+      <span class="mangroup"><span class="gd" style="background:#3C4350"></span>shadcn base <b>31</b></span>
+      <span class="mangroup"><span class="gd" style="background:var(--accent)"></span>Motion-Primitives <b>6+2</b></span>
+      <span class="mangroup"><span class="gd" style="background:#5B4A8C"></span>Aceternity (free) <b>4</b></span>
+      <span class="mangroup"><span class="gd" style="background:var(--green)"></span>Watermelon <b>5</b> optional</span>
+      <span class="mangroup"><span class="gd" style="background:var(--amber)"></span>Componentry <b>1</b> optional</span>
+    </div>
+
+    <div class="codeblock">
+      <div class="cb-head">
+        <div class="ttl"><span class="bdot"></span>shadcn/ui base — one batched command</div>
+        <button class="copybtn" onclick="copyCode(this)" aria-label="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+      </div>
+      <div class="cb-scroll"><pre><span class="pk">npx shadcn@latest add</span> button button-group toggle-group tabs \
+  textarea input input-group field label select \
+  card item separator badge avatar progress \
+  dialog sheet popover dropdown-menu tooltip command \
+  table chart calendar \
+  skeleton spinner empty sonner alert collapsible</pre></div>
+    </div>
+
+    <div class="codeblock">
+      <div class="cb-head">
+        <div class="ttl"><span class="bdot"></span>Motion-Primitives — the motion set (free / MIT)</div>
+        <button class="copybtn" onclick="copyCode(this)" aria-label="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+      </div>
+      <div class="cb-scroll"><pre><span class="pk">npx motion-primitives@latest add</span> animated-background animated-number sliding-number \
+  text-effect animated-group in-view
+<span class="cm"># optional (gated to one state / one surface — see legend):</span>
+<span class="pk">npx motion-primitives@latest add</span> border-trail spotlight</pre></div>
+    </div>
+
+    <div class="codeblock">
+      <div class="cb-head">
+        <div class="ttl"><span class="bdot"></span>Aceternity (free tier) — accent layer, install on use</div>
+        <button class="copybtn" onclick="copyCode(this)" aria-label="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+      </div>
+      <div class="cb-scroll"><pre><span class="cm"># Aceternity installs by per-component registry URL (NOT an @aceternity namespace).</span>
+<span class="cm"># Confirm each slug on ui.aceternity.com before running.</span>
+<span class="cm"># Card hover — OPTIONAL, single-surface experiment only (see note below):</span>
+<span class="pk">npx shadcn@latest add</span> <span class="cl">"https://ui.aceternity.com/registry/card-spotlight.json"</span>
+<span class="cm"># Analytics scaffold — STRUCTURE ONLY, strip 100% of the skin:</span>
+<span class="pk">npx shadcn@latest add</span> <span class="cl">"https://ui.aceternity.com/registry/bento-grid.json"</span>
+<span class="cm"># Brief names a NumberTicker — alt to Motion-Primitives Animated Number (pick ONE):</span>
+<span class="pk">npx shadcn@latest add</span> <span class="cl">"https://ui.aceternity.com/registry/number-ticker.json"</span>
+<span class="cm"># NOTE: Card Spotlight is dark-mode-native + pulls a WebGL canvas-reveal dep</span>
+<span class="cm"># (three.js, blue/purple shader). Full reimplementation on light surfaces —</span>
+<span class="cm"># the translateY hover-lift is the default; treat this as a skippable stretch goal.</span></pre></div>
+    </div>
+
+    <div class="codeblock">
+      <div class="cb-head">
+        <div class="ttl"><span class="bdot"></span>Optional registry picks — install only if chosen</div>
+        <button class="copybtn" onclick="copyCode(this)" aria-label="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
+      </div>
+      <div class="cb-scroll"><pre><span class="cm"># Watermelon UI (free/MIT) — strip-down layout references, NOT ship-as-is.</span>
+<span class="cm"># VERIFY each slug on ui.watermelon.sh before install; if a slug 404s, drop it</span>
+<span class="cm"># and lean on the canonical shadcn primitive already named for that element.</span>
+<span class="pk">npx shadcn add</span> <span class="cl">"https://registry.watermelon.sh/fluid-tabs.json"</span>      <span class="cm"># Voice sub-nav alt (canon: Tabs)</span>
+<span class="pk">npx shadcn add</span> <span class="cl">"https://registry.watermelon.sh/edit-profile.json"</span>    <span class="cm"># Brand-DNA editor (canon: Field+Textarea)</span>
+<span class="pk">npx shadcn add</span> <span class="cl">"https://registry.watermelon.sh/file-upload.json"</span>     <span class="cm"># Repurpose drop-zone</span>
+<span class="pk">npx shadcn add</span> <span class="cl">"https://registry.watermelon.sh/gauge.json"</span>           <span class="cm"># XP ring alt (canon: Chart RadialBar)</span>
+<span class="cm"># Componentry.fun (free/MIT) — at most ONE flourish:</span>
+<span class="pk">npx shadcn@latest add</span> @componentry/split-flap-display              <span class="cm"># ONE hero proof stat</span></pre></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ======================= 3 · SCREEN-BY-SCREEN ======================= -->
+<section id="screens">
+  <div class="wrap">
+    <div class="seclabel"><span class="num">3</span>Screen by Screen</div>
+    <h2 class="sec">Per screen — element → component → install</h2>
+    <p class="sec-intro">Each card is one screen. Each row maps a real mock element (its class name + line refs) to the component that builds it, the source library, the exact install command, and the treatment. Tags mark <b>base vs accent</b>, <b>free vs paid</b>, and the <b>motion</b> moments. Canonical recurring decisions (segmented control, the dominant row, the pill system) are noted, not repeated.</p>
+
+    <!-- ===== A · APP SHELL ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:8px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>App Shell &amp; Global</h3>
+    <div class="screengrid">
+
+      <!-- Desktop rail -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">App Shell</span><span class="lines">.rail · L562–574</span></div>
+          <h4>Desktop icon rail</h4>
+          <p>Slim 86px rail — electric-violet logo, 6 icon+label nav buttons with a sliding electric-violet pill + 3px left spine, and the workspace avatar at the bottom. shadcn has no "icon rail" primitive — hand-lay Buttons; steal the sliding indicator.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Rail nav item <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.rbtn</code> (icon + 10px label)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button</span> <span class="to">ghost, flex-col</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ghost variant, flex-col, 20px Lucide icon (PenLine / Lightbulb / Layers / MessageCircle / BarChart3 / AudioLines) + 10px label. <b>data-active</b> = electric-violet text + #ebe6ff bg.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Active-nav sliding pill + 3px electric-violet spine</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Animated Background</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>The highest polish-per-line steal.</b> One shared <code style="font-family:var(--mono);font-size:11px">layoutId</code> so the electric-violet-soft pill SLIDES between rail items. Same component reused for every segmented control + the mobile tabbar — one motion language app-wide. Reduced-motion: snap.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Rail-icon hover labels / disabled-feature hints</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Tooltip</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add tooltip</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Low-delay, neutral surface. Also covers the "unlocks when a teammate joins" hints on disabled menu items.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Bottom account avatar <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.ravatar</code> ("SM")</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Avatar</span> <span class="to">menu trigger</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add avatar</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">AvatarFallback "SM" on #2B2B31; electric-violet-soft hover ring. Wraps the workspace DropdownMenu.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile tabbar -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">App Shell</span><span class="lines">.tabbar · L1202–1209</span></div>
+          <h4>Mobile bottom tab bar</h4>
+          <p>Shown at narrow widths — a fixed bottom bar of 6 tabs with a 2px electric-violet top marker on the active item. Same nav model as the rail; built from the same atoms + the same sliding indicator so both navs feel like one system.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Mobile tab <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.tbtn</code> (icon + 9.5px label)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button</span> <span class="to">ghost, flex-col</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Same atom as <code style="font-family:var(--mono);font-size:11px">.rbtn</code>, smaller; fixed bottom flex bar. No native shadcn bottom-tab — compose it.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Active-tab top marker (2px electric-violet)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Animated Background</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Reuse the rail's <code style="font-family:var(--mono);font-size:11px">layoutId</code> pattern; the marker slides across tabs. 2px, top-anchored, electric-violet. Reduced-motion: snap.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workspace menu -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">App Shell</span><span class="lines">.smenu · L1213–1226</span></div>
+          <h4>Workspace / account menu</h4>
+          <p>Anchored off the avatar: workspace header + action list (Invite team, Roles [team, dimmed], Settings [admin, dimmed], Replay first-run, Profile, Sign out). An action-list menu → DropdownMenu, not a bare Popover.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Whole anchored menu + backdrop + ESC</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Dropdown Menu</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add dropdown-menu</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Radix gives focus-trap, ESC, arrow-key nav, item roles for free — <b>replaces the hand-rolled <code style="font-family:var(--mono);font-size:11px">.smask</code> + keydown listener</b>. DropdownMenuLabel for the header, Separator for <code style="font-family:var(--mono);font-size:11px">.sdiv</code>.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Workspace header (T logo + "1 member · solo workspace")</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Avatar + DropdownMenuLabel</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add avatar</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Square Avatar (rounded-9px) on #1C1C20 for the workspace mark. "1 member" reads as honest product state, not fabricated.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Disabled teaser rows (Roles · team / Settings · admin)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>DropdownMenuItem (disabled) + Badge</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">disabled item + neutral Badge ("team" / "admin") + Tooltip "unlocks when a teammate joins". Electric-violet stays off these.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toasts + palette -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">App Shell</span><span class="lines">.toast · L326–330</span></div>
+          <h4>Global toasts + ⌘K palette</h4>
+          <p>One dark pill for every confirmation ("Copied", "Scheduled Tue 7:45am", "Saved to your core memory"). Replace with Sonner. The ⌘K palette is the obvious premium power-user layer — flag as fast-follow.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>All confirmation toasts <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.toast</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Sonner</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical</span><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add sonner</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Use Sonner, <b>NOT legacy Toast</b>. One <code style="font-family:var(--mono);font-size:11px">&lt;Toaster /&gt;</code> at root; dark #1E1E22 + green check. The mock's toast() calls map 1:1.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>⌘K command palette (nav routes + quick actions)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Command (cmdk)</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span><span class="tag tag-opt">fast-follow</span></div>
+            <div class="install"><code>npx shadcn@latest add command</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Mirrors the nav routes. High Linear/Raycast premium signal. <b>Not in the mock — fast-follow, not v1-blocking.</b></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== B · ONBOARDING ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Onboarding — the activation funnel</h3>
+    <div class="screengrid">
+
+      <!-- Step 1 -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Onboarding · Step 1</span><span class="lines">L1237–1246</span></div>
+          <h4>Welcome / account</h4>
+          <p>Takeover with a sticky progress bar. Linear sign-up: headline, two label+input fields, electric-violet "Continue with email" + ghost Google, "No credit card · 14-day full access" reassurance.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Progress bar <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.ob-prog</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Progress</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add progress</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">electric-violet indicator, 5px, width per step index. Reduced-motion: jump, no ease.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Form rows (label + input + helper) <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.field</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Field + Input + Label</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add field input label</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">3.x Field composes label + control + hint + validation in one accessible block — exactly the <code style="font-family:var(--mono);font-size:11px">.field</code> pattern. Electric-violet focus ring.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Account CTAs (Continue with email / Google)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button</span> <span class="to">default electric-violet + outline</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Full-width. ONE electric-violet CTA (email); Google is the neutral one.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Welcome headline reveal</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Text Effect</span> <span class="to">per:word, fade-in-blur</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ONE quiet word-by-word reveal on the H2 entrance only — gives first-run a crafted feel. <code style="font-family:var(--mono);font-size:11px">per:word</code>, low speed, fire once. Never loop.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Onboarding · Step 2</span><span class="lines">.recfield · L1249–1259</span></div>
+          <h4>"React, don't fill" record cards</h4>
+          <p>"Here's what we found about Tideflow." 3 researched rows (key + value + confidence pill) + 2 dashed "You add" cards. The signature react-don't-fill moment — the confidence pills carry the trust.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Researched record row <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.recfield</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Card</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item card</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ItemContent = key + value, ItemActions = the pill. Editable-in-place: inline Input on click so "fix what's wrong" is one tap.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Confidence pills (High = green / Med = amber)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--green)"></span>Badge</span> <span class="to">success / warning</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical pill</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Add green (#0E9F6E / #E6F6EF) + amber (#B26B00 / #FFF6E8) CVA variants. Real model-confidence values — honest UI.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"You add" dashed prompt cards <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.recfield.add</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card (dashed-electric-violet) + Field</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card field textarea</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><code style="font-family:var(--mono);font-size:11px">1px dashed var(--accent)</code>, expands to a Textarea on focus. <b>The one place a electric-violet border earns its place</b> — it signals "human input required here".</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Reveal headline + 5-card stagger</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Text Effect + Animated Group</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add text-effect animated-group</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>The wow moment:</b> headline word-reveal, then the 5 recfields cascade in (~50–70ms stagger, translateY 4–8px + fade, spring). Fire ONCE on step-enter. Sells "we did the homework".</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Onboarding · Step 3</span><span class="lines">.qstage · L1262–1274</span></div>
+          <h4>One-question voice interview</h4>
+          <p>"Now, what do you believe?" 7-dot progress (active stretches to a electric-violet bar), one big rotating question, Record / Type mode buttons, a captured-confirm line. Captures BELIEFS — the strategic core.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Question progress <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.qdots</code> (active stretches to electric-violet bar)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:#23232A"></span>Bespoke dot-stepper</span> <span class="srcchip src-bespoke">bespoke</span></div>
+            <div class="tags"><span class="tag tag-base">atoms only</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add progress &nbsp;# fallback</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Keep bespoke: 7 spans, active = width 22px electric-violet pill. <b>The electric-violet stretch IS the delight</b> — too specific for a stock primitive. Progress is the fallback if you'd rather show a single bar.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Big rotating question <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.qbig</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Text Effect</span> <span class="to">per:word</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Re-reveal the question each time it advances (AnimatePresence key on question index) so each feels "asked". <b>The one screen where re-firing the reveal is correct</b> — new content each step.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Mode buttons (Record / Type instead)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button Group + Button</span> <span class="to">outline</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button-group button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Both ghost; "Record" slightly weightier (talking-first product) but neither shouts.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Interview mic + type-instead box <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.obtextarea</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:#23232A"></span>Reuse Create recorder + Spinner + Textarea</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base + bespoke</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add spinner textarea</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>Reuse the bespoke Create brain-dump recorder</b> (idle glow → rec → transcribe Spinner → green ✓ captured). Same recorder primitive across onboarding + Create = consistency. Textarea hidden until "Type instead".</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Onboarding · Step 4</span><span class="lines">L1277–1303</span></div>
+          <h4>First post + AHA confirm</h4>
+          <p>"Written in your voice, checked for AI tells." A real postcard + confidence row (94% sounds like you) + provenance, then the AHA card: "Does this sound like you?" The activation moment — the whole funnel ends here.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>First-post preview (postcard)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Card + Avatar</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card avatar</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Same postcard composition as Create — the user recognizes it. 16px radius, shadow-1, pre-wrap body.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Post-body reveal ("written in your voice")</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Text Effect</span> <span class="to">per:word</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Reveal per-word as if Choir is composing it live — the literal "aha". <b>The single most important reveal in the app</b> — tune it to feel considered (slow-ish, quiet). Fire once.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Confidence row (✓ No AI tells · 94% sounds like you)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Badge + Animated Number</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge && npx motion-primitives@latest add animated-number</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Count 94 up from 0 on reveal (gentle spring, no bounce) — a real score, so the count-up is honest. Green ✓ Badge for "No AI tells".</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>AHA confirm buttons (Yes, this sounds like me / Not quite)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button Group + Button</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button-group button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Electric-violet "Yes" + ghost "Not quite". <b>THE conversion click</b> — the one electric-violet CTA. "Not quite" opens the voice/belief quick-fix.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== C · CREATE ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Create — the product's front door</h3>
+    <div class="screengrid">
+
+      <!-- Composer -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Create</span><span class="lines">L582–617</span></div>
+          <h4>Author switch + composer + starters</h4>
+          <p>"Writing as" 2-option segmented control, the focal borderless composer card (shadow-2, elevated), the action row with the mic + CTA, and starter idea chips.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"Writing as" author switch <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.seg</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Toggle Group + Animated Background</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical seg</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add toggle-group && npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>Toggle Group is THE primitive for the pervasive <code style="font-family:var(--mono);font-size:11px">.seg</code> pattern</b> (also Ideas mode, Queue filter, Analytics range, Voice zones). Animated Background slides the white pill between authors. Pair an Avatar chip per author.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Composer textarea (borderless 18px, focal shadow-2)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Textarea in Card</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add textarea card</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Strip border/outline, 18px/1.55, transparent bg. <b>The Card gets shadow-2 — the ONE focal surface</b> that sits higher than every other card.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"Write in my voice" CTA <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.ctapulse</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Button</span> <span class="to">default electric-violet, sm</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Keep the bespoke <code style="font-family:var(--mono);font-size:11px">.ctapulse</code> ring (electric-violet-soft expanding shadow, fires twice after a brain-dump lands) — a tasteful "now do this" nudge, not slop. Reduced-motion: drop the pulse.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Starter chips <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.starter</code> + "+ Browse 14 ideas"</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button</span> <span class="to">outline, rounded-full, sm</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Pill buttons, neutral border → electric-violet border + ink on hover. "+ Browse" is electric-violet-bordered → routes to Ideas. Badge is text-only; these are interactive, so Button.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brain-dump mic -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Create</span><span class="lines">.micbtn · L592–602, JS 1359–1404</span></div>
+          <h4>The brain-dump mic</h4>
+          <p>The shiny mic: idle breathing glow → rounded-square rec morph + 6-bar waveform + timer → transcribe shimmer → rambly transcript fills the composer. Mostly bespoke choreography on shadcn atoms — the value-add is owning ONE recorder.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Idle mic + glow / rec morph / pulsing dot <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.micbtn</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:#23232A"></span>Bespoke recorder</span> <span class="to">on a Button atom</span> <span class="srcchip src-bespoke">bespoke</span></div>
+            <div class="tags"><span class="tag tag-base">base atom</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Electric-violet circle, Lucide Mic. Keep the breathing glow (scale 1→1.22, 2.6s) + the <code style="font-family:var(--mono);font-size:11px">border-radius 99px→13px</code> rec morph. <b>Build the whole recorder as ONE owned component</b> (idle / rec / transcribe). Reduced-motion freezes the glow.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Live waveform <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.recwave</code> (6 bars) + timer</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:#23232A"></span>Bespoke bars + (opt) Sliding Number</span> <span class="srcchip src-bespoke">bespoke</span><span class="srcchip src-mp">M-P opt</span></div>
+            <div class="tags"><span class="tag tag-opt">optional motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add sliding-number &nbsp;# optional timer</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">6 electric-violet bars, staggered delays; in product drive heights off real mic amplitude (Web Audio analyser). No library waveform fits the electric-violet-on-clean register. Timer: plain <code style="font-family:var(--mono);font-size:11px">tabular-nums</code> is fine; Sliding Number is a low-priority odometer nicety.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Transcribe shimmer <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.shim/.wv</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Skeleton</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical load</span><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add skeleton</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">The <code style="font-family:var(--mono);font-size:11px">.wv</code> shimmer rows = Skeleton with the gradient sweep. <b>Reused verbatim</b> for "Writing in Sofia's voice…" + Discover / Repurpose loads. Teams skip this — it's critical app-state polish.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Stop button + capture-confirm <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.captick</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button + Text Effect + Sonner</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button sonner && npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Electric-violet Stop (right-aligned). Quiet green ✓ fade-in (auto-hides 4s) + a Sonner toast. Don't over-animate a status line — a CSS fade suffices.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate + postcard -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Create</span><span class="lines">L614–628</span></div>
+          <h4>Generating state + postcard preview</h4>
+          <p>"Write in my voice" → ~1.4s shimmer → the generated post renders as a real LinkedIn postcard (avatar + author + meta + pre-wrap body). The product's payoff surface.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Generating shimmer ("Writing in Sofia's voice…")</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Skeleton</span> <span class="to">+ opt Border Trail</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P opt</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical load</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add skeleton &nbsp;# opt: …add border-trail</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Same Skeleton as transcribe. Optional electric-violet Border Trail on the composer <b>gated to the in-flight state only, then STOP</b> — a perpetual trail is slop. Ship the Skeleton first.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Post author header <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.pc-head</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Avatar</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item avatar</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Item header pattern (media + title + meta). Avatar "SM" on #2B2B31. Honest "now" timestamp.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Post body <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.pc-body</code> (pre-wrap) + first reveal</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card + Text Effect</span> <span class="to">per:word</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card && npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Reveal body per-word on resolve (replaces the mock's blunt fade). Fire ONCE, never loop. Plain <code style="font-family:var(--mono);font-size:11px">white-space:pre-wrap</code> for the content itself.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Default card hover (all clickable cards/rows)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>translateY hover-lift</span> <span class="to">the canonical default</span> <span class="srcchip src-shadcn">CSS / shadcn</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code># no install — <code style="font-family:var(--mono);font-size:11px">hover:-translate-y-0.5 hover:shadow-md</code></code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>The unambiguous default everywhere</b> — the mock's existing translateY lift. Card Spotlight (Aceternity, below) is a separate, single-surface stretch goal the team may skip entirely.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Optional cursor-glow — single-surface experiment only</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:#5B4A8C"></span>Card Spotlight</span> <span class="to">stretch goal, may skip</span> <span class="srcchip src-ace">Aceternity</span></div>
+            <div class="tags"><span class="tag tag-accent">accent</span><span class="tag tag-opt">optional · skippable</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add "https://ui.aceternity.com/registry/card-spotlight.json"</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>Dark-mode-native effect</b> — it ships on <code style="font-family:var(--mono);font-size:11px">bg-black</code> and pulls a WebGL canvas-reveal dep (three.js + a blue/purple shader). Recoloring to electric-violet-soft-on-white is a <b>full reimplementation, not a recolor</b> — confirm the slug on ui.aceternity.com, try it on ONE surface, cut if loud. The hover-lift above is the safe pick.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confidence + actions -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Create</span><span class="lines">.confidence · L629–654</span></div>
+          <h4>Confidence strip + score + action bar</h4>
+          <p>"✓ No AI tells · 94% sounds like you" + a "why?" provenance panel, then feedback → core-memory, then the action bar (Approve &amp; schedule / Copy / Regenerate / Edit). The trust + flywheel core.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"94% sounds like you" — the score</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Animated Number</span> <span class="to">count-up</span> <span class="srcchip src-mp">Motion-Primitives</span></div>
+            <div class="tags"><span class="tag tag-canon">signature</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx motion-primitives@latest add animated-number</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>THE signature count-up:</b> 94 ticks 0→94% via <code style="font-family:var(--mono);font-size:11px">useInView</code>, fires once on reveal, gentle settle, NO bounce. Reserve this delight for the score + the one hero proof number only. Real values only.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"why?" expandable provenance panel <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.whyp</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Collapsible</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add collapsible</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Inline expand (matches the in-flow panel) with a chevron that rotates. Faint #FCFCFD panel. 4 rows (Belief / Hook / Your words / Rhythm) = a key/value grid.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Feedback + "saved to your voice memory" <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.fblearn</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button Group + Text Effect + Sonner</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button-group button sonner && npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Two outline sm feedback buttons (low-pressure ask). <b>The flywheel moment</b> — quiet green ✓ line + toast; let the "core memory" copy carry it, don't over-animate.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Action bar <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.actions</code> + schedule picker</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Button Group + Calendar + Popover</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button-group button calendar popover</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">"Approve &amp; schedule" = the ONE electric-violet CTA; Copy / Regenerate / Edit = ghost. Mock fakes the slot with a toast; the real surface is a Popover-anchored Calendar (best-window informed) — flag to engineers.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== D · IDEAS ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Ideas — For you / Discover / Repurpose</h3>
+    <div class="screengrid">
+
+      <!-- Ideas shell + For you -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Ideas · Shell + For you</span><span class="lines">L658+</span></div>
+          <h4>3-mode switch + belief-derived cards</h4>
+          <p>Persistent 3-way mode switch (For you / Discover / Repurpose), then belief-derived idea cards = title + provenance + source-category pill + Write. The pill color encodes the source.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>3-mode switch <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.seg #ideasSeg</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Toggle Group + Animated Background</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical seg</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add toggle-group && npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Inline icons (sparkle / refresh) before labels. Electric-violet-soft sliding pill — the same treatment as every other <code style="font-family:var(--mono);font-size:11px">.seg</code> in the app.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Belief-derived idea card <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.idea</code> + list reveal</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item in Card + Animated Group</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item card && npx motion-primitives@latest add animated-group</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ItemContent = title + <code style="font-family:var(--mono);font-size:11px">.prov</code> provenance, ItemActions = Write. Keep the translateY hover-lift. Cards stagger in (~50–70ms) on <b>first paint / mode-switch only</b>.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Source-category pill (beliefs=green / gap=electric-violet / news=neutral)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--green)"></span>Badge</span> <span class="to">success / default / secondary</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical pill</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Semantic colors via the shared status CVA. Source chips row = Badge (secondary, leading icon); "+ Add source" = dashed electric-violet-text Button. "Write →" = ghost sm.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discover -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Ideas · Discover</span><span class="lines">"Inspire me" — richest</span></div>
+          <h4>Search → filter → analyze → trends</h4>
+          <p>Search bar + 4 Taplio-style filters → empty / loading / result. Result = AI trend-breakdown card (electric-violet left-border + 4 stats) + "what's winning" + top-posts list + 5 idea cards with Format/Hook/Visual chips.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Search bar (icon + input + "Analyze") <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.searchbar</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Input Group + Spinner</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add input-group button spinner</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">3.x Input Group composes leading search-icon + input + trailing button as ONE bordered control. While analyzing, swap the Analyze label for an inline Spinner.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Filter row (4 selects) + empty / loading states</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Select ×4 + Empty + Skeleton</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical load + empty</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add select empty skeleton</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Styled accessible Selects replace native ones (electric-violet focus ring + small leading label each). Empty (search glyph) for pre-analyze; Skeleton "Analyzing top posts…" while loading.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>AI trend-breakdown card <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.trendcard</code> ("3.2×" stat)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card (left-border) + Animated Number</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card separator && npx motion-primitives@latest add animated-number</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">3px electric-violet left-border. "3.2× vs median" is a real value → count-up on view-enter; non-numeric stats (Carousel / Tue–Thu / Contrarian) stay static. <b>The ONE focal insight card.</b> Default hover = the translateY lift. A Card Spotlight glow here is a skippable single-surface experiment only (dark-mode-native, full reimplementation on light — see Create note).</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Top-posts list + 5 idea cards with chips <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.apost / .chip2</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Avatar + Badge (outline)</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item avatar badge button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Top-post = Item (avatar + content + green ♥ score). Each <code style="font-family:var(--mono);font-size:11px">.chip2</code> = small outline Badge with a electric-violet-bold key ("Format:" / "Hook:" / "Visual:"). Stagger via Animated Group on reveal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Repurpose -->
+      <div class="scard wide">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Ideas · Repurpose</span><span class="lines">URL → atoms → assets</span></div>
+          <h4>Repurpose — turn one asset into many</h4>
+          <p>URL input + source-type chips + "paste transcript" toggle → empty / loading → value-summary stat bar (9 ways / 6 pieces / 4–6 wks) + "what is reusable" atom list + 5 suggested-asset cards with green expected-lift pills.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>URL input + source-type chips + paste toggle <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.searchbar / .srcchip.src</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Input Group + Toggle Group + Textarea</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add input-group toggle-group button textarea empty skeleton</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Input Group (link leading icon + "Repurpose"). Single-select Toggle Group for Blog / Podcast / YouTube / Webinar / Past post (active = electric-violet-soft fill). Link Button reveals a Textarea. Empty + Skeleton ("Breaking this down…") reuse the canonical states.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Value-summary stat bar <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.repsum</code> (9 ways / 6 pieces / 4–6 wks)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card (3 cells via Separator) + Animated Number</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card separator && npx motion-primitives@latest add animated-number</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">One Card split into 3 cells by vertical Separators. The lead "9" is electric-violet + loudest → count-up on reveal; "6" also count-up; "4–6 wks" stays static. <code style="font-family:var(--mono);font-size:11px">tabular-nums</code> so digits don't jitter.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"What is reusable" atom list <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.atomrow</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item rows in Card + Badge</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item badge separator</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Each row = leading Badge (atom type — Key quote / Core stat / Framework / Story…, electric-violet-soft) + the extracted text muted. Stagger in with Animated Group on result-reveal.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Suggested-asset cards + expected-lift pills <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.liftpill</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--green)"></span>Item/Card + Badge (success) + outline chips</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item badge button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Lift pill (3× reach / 4 posts from 1 / +2× on video) = green success Badge inline beside the title. <b>Keep lift pills HONEST</b> — static badges; only real projections animate. Optional Watermelon <code style="font-family:var(--mono);font-size:11px">file-upload</code> drop-zone as an alt ingest path.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== E · QUEUE ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Queue — schedule &amp; team review</h3>
+    <div class="screengrid">
+
+      <div class="scard wide">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Queue</span><span class="lines">.qrow / .teamband</span></div>
+          <h4>Filter + post rows + 8-state status + team review</h4>
+          <p>Segmented filter (All / Needs approval / Scheduled) → post rows (avatar + title + meta + status pill + action). The full 8-state status superset compresses onto 4 pill colors + a per-state icon. A "Team Review" band separates the approval segment.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Segmented filter <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.seg</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Toggle Group + Animated Background</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical seg</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add toggle-group && npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Same segmented primitive as Ideas. Apply the sliding pill for consistency. On change fire a Sonner toast ("Filter: Scheduled").</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Post row <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.qrow</code> + row reveal</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item in Card + Avatar + Animated Group</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item card avatar && npx motion-primitives@latest add animated-group</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ItemMedia = Avatar, content = title (truncate) + meta, actions = status Badge + Button. Keep hover-lift. Rows cascade in on first paint / filter-change. For a sortable team view at scale, upgrade to Data Table — Item rows match the mock's density for v1.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span><b>8-state status pills</b> (Scheduled / Draft / Needs you / Approved / Posted / Rejected / Failed / Generating)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--green)"></span>Badge (status CVA → 4 colors + icon)</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical pill</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge spinner</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ONE Badge with a status CVA: green (Scheduled/Approved/Posted), secondary (Draft), electric-violet (Needs you/approval), amber (Generating) + destructive (Rejected/Failed). <b>Leading icon per state for a11y</b> — color is never the only signal. Generating can host an inline Spinner.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Team Review band + Approve / Reject + empty Queue <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.teamband</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Separator + Button Group + Sonner + Empty</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical empty</span><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add separator button-group button sonner empty</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Band = label flanked by two rules (uppercase tracked, neutral — no electric-violet). Approve = electric-violet primary + Reject = outline, joined cleanly; fire "Post approved ✓". Empty Queue = Empty (inbox glyph + CTA to Ideas/Create); optional single-accent unDraw SVG recolored via currentColor.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== F · ENGAGE ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Engage — warm-feed mining</h3>
+    <div class="screengrid">
+
+      <div class="scard wide">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Engage</span><span class="lines">.feedcard · L942–1010</span></div>
+          <h4>Compliance bar + prospect cards + in-voice draft</h4>
+          <p>A read-only mining feed: the compliance lock banner, then prospect cards (avatar + name/role + quoted post + fit verdict + "Draft a comment in my voice") each owning an inline draft on a electric-violet-soft panel. The one motion moment is the per-word reveal as the draft resolves.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Compliance banner <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.complybar</code> ("Nothing sent automatically")</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Alert</span> <span class="to">quiet info variant</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add alert</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Lock icon electric-violet, <b>neutral surface (NOT a warning color)</b> — it's a trust signal, not an error. AlertDescription only, one line.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Prospect card + head row <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.feedcard / .fc-head</code> + paint-in</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Card + Item + Avatar + Animated Group</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card item avatar && npx motion-primitives@latest add animated-group</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Card surface + subtle hover-lift. Item: media = Avatar (RP/MT initials), title = name, description = "VP Sales · Northwind (target account)", trailing = "3h ago". Cards stagger in on first paint only; cap long feeds.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Fit/verdict chip + "Draft a comment in my voice" CTA</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--green)"></span>Badge (success/warning) + Button (electric-violet) + Spinner</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical pill</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge button spinner</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Verdict color carries fit semantics (Strong fit = green / Pursue = amber). <b>Electric-violet stays OFF the verdict</b> — reserved for the CTA so the two never compete. While drafting, swap the CTA label for a Spinner.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Generated in-voice comment <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.cdbody</code> + Copy / Tweak</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Text Effect + Button Group + Sonner + Badge</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add button-group button sonner badge tooltip && npx motion-primitives@latest add text-effect</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>The one motion moment on Engage</b> — reveal the comment per-word (fade-in-blur) on resolve, fire once. Panel stays #ebe6ff. <code style="font-family:var(--mono);font-size:11px">.cdmeta</code> proof line = quiet secondary Badge (green ✓ + muted). Copy = electric-violet, Tweak = outline; "Copy &amp; open" fires a toast.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== G · ANALYTICS ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Analytics — real data, honest dataviz</h3>
+    <div class="screengrid">
+
+      <!-- Gamification + KPIs -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Analytics</span><span class="lines">.gamestrip / .kpis · L1010–1130</span></div>
+          <h4>Range switch + gamification + KPI tickers</h4>
+          <p>30d/Quarter/All-time switch, the gamification strip (level ring + XP + badges + streak), and the 4-up KPI row. The brief explicitly asks for NumberTicker on the KPIs — count-ups on REAL values only.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Range switch <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.seg</code> + gamestrip container</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Toggle Group + Animated Background + Card</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical seg</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add toggle-group card && npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Canonical sliding-pill segmented; range change fires Sonner. Gamestrip = Card surface, bespoke 3-col flex (ring | badges | streak). Optional Bento Grid for the page scaffold — STRUCTURE ONLY, strip 100% of its skin to Choir tokens; skip if your shadcn grid covers it.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Level ring <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.gring</code> ("L4" + XP arc)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Chart (RadialBar) + In View</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add chart progress && npx motion-primitives@latest add in-view</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">XP gauge (320/500 ≈ 64%): Recharts RadialBarChart, <code style="font-family:var(--mono);font-size:11px">--chart-1</code> electric-violet, track electric-violet-soft, "L4" static center. Arc fills once via In View. One gauge max per screen (Watermelon <code style="font-family:var(--mono);font-size:11px">gauge</code> is the alt).</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Badges + streak <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.gbadges / .gstreak</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Badge + Tooltip + Sliding Number</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical counter</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add badge tooltip && npx motion-primitives@latest add sliding-number</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">5 emoji badges + Tooltip labels; locked = desaturated + "Unlocks when…". Badges static by default (over-animating = slop). Streak = Sliding Number digit-roll <b>on real week increment only</b>; <code style="font-family:var(--mono);font-size:11px">tabular-nums</code>.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>KPI tiles <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.kpis</code> (4 + up/down deltas)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card + Animated Number + Badge</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-canon">KPI ticker</span><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card badge && npx motion-primitives@latest add animated-number in-view</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>THE explicitly-requested KPI ticker.</b> Each value counts up via In View (fires once); <b>stagger the 4 tiles ~60ms apart</b>, never simultaneous. <code style="font-family:var(--mono);font-size:11px">tabular-nums</code>; handle "6.2%" / "1,240" / "+312". Delta = quiet green-up / muted-down Badge. Real values only. (Aceternity NumberTicker is the named alt — pick ONE.)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proof + chart + winning + leaderboard -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Analytics</span><span class="lines">.anbox / .lbrow</span></div>
+          <h4>On-voice proof + chart + leaderboard</h4>
+          <p>The two on-voice hero stats (96% / 214), the consistency bar chart, the "what's working" block, and the team leaderboard with illustrated SVG face avatars. Real product data → Chart + Table are honest UI.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>On-voice proof <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.proofbig</code> (96% / 214)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card + Animated Number</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card && npx motion-primitives@latest add animated-number</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>The metric only Choir has</b> — reserve count-up weight here. 96% in electric-violet-ink, 214 in ink; fire once via In View. Optional ONE Componentry Split-Flap flourish on a single hero stat (Sliding Number is the quieter default).</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Consistency chart <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.bars</code> (W1–W4 + target bars)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Chart (BarChart) + In View</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add chart && npx motion-primitives@latest add in-view</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>REAL data = honest chart.</b> <code style="font-family:var(--mono);font-size:11px">--chart-1</code> electric-violet for target-hit bars, electric-violet-soft under-target. In View fires the height fill once (0.5s ease-out + <code style="font-family:var(--mono);font-size:11px">--i*60ms</code>). <b>Preserve the reduced-motion branch</b> — render at final size when off.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"What's working" block <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.toppost / .chip2</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Badge + Card</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card item badge button</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Top-post = Item row + format Badge. The <code style="font-family:var(--mono);font-size:11px">.chip2</code> strip = flex-wrap of secondary Badges with bold labels. "Turn winners into ideas" = ghost Button. No motion — dense reference content, let the data speak.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Team leaderboard <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.lbrow</code> + invite</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Table + Avatar + Badge + Dialog</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add table avatar badge dialog</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>REAL data = honest Table.</b> Cols: rank (medal) / avatar / name + streak / points. The <code style="font-family:var(--mono);font-size:11px">.facav</code> illustrated SVG faces drop into AvatarImage (initials fallback). The <code style="font-family:var(--mono);font-size:11px">.me</code> row = electric-violet-soft highlight + "you". "Invite your team" → Dialog ("they inherit brand DNA, keep their own voice"); electric-violet only on "Send invite".</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== H · VOICE ===== -->
+    <h3 style="font-size:14px;font-weight:740;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin:34px 0 18px;display:flex;align-items:center;gap:10px"><span style="width:26px;height:2px;background:var(--accent);border-radius:2px"></span>Voice — the two-axis identity + learning loop</h3>
+    <div class="screengrid">
+
+      <!-- My Voice -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Voice · My Voice</span><span class="lines">.memcard / .vbox · L1130–1197</span></div>
+          <h4>Zone sub-nav + voice summary + Core Memory</h4>
+          <p>3-zone sub-nav (My Voice / Winning content / Company), the two-axis summary (How you sound / What you believe), and the Core Memory card — the product's "gets sharper the more you use it" emotional core.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Zone sub-nav <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.vzone-tabs</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Tabs + Animated Background</span> <span class="to">switches PAGES</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add tabs && npx motion-primitives@latest add animated-background</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">These switch whole PAGES → <code style="font-family:var(--mono);font-size:11px">Tabs</code> (not Toggle Group). Layer the <b>same</b> sliding electric-violet-soft pill for app-wide consistency (Watermelon <code style="font-family:var(--mono);font-size:11px">fluid-tabs</code> is the alt).</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"How you sound" + "What you believe" cards <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.vtag / .vbel</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Card + Badge</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card badge</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Tone chips = secondary/outline Badges (<b>NOT electric-violet</b> — too many electric-violet chips fights the one-accent rule; let the <code style="font-family:var(--mono);font-size:11px">.vd</code> dot + headings carry electric-violet). "What you believe" = the differentiator axis: a electric-violet-soft left border to pair the two.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Core Memory <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.memcard</code> (count + memitem rows)</div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Card + Item + Badge + Dialog</span> <span class="to">+ opt Border Trail</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P opt</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card item badge dialog sheet</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>The product's emotional core.</b> <code style="font-family:var(--mono);font-size:11px">.mdot</code> electric-violet dot + "47 things learned" Badge (Sliding Number if it ticks live). Each <code style="font-family:var(--mono);font-size:11px">.memitem</code> = Item row (icon + statement + <code style="font-family:var(--mono);font-size:11px">.msrc</code> provenance). "View all 47" → Dialog. Optional electric-violet Border Trail ONLY while "updated today".</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Voice-status rows <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.vbox</code> (Belief interview / Samples / Visibility / Deepen)</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Badge (status)</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-canon">canonical row</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item badge button button-group</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">ItemMedia = electric-violet-soft icon tile, trailing = status Badge (success "Complete", secondary "Private"). "Deepen your voice" = dashed-border add-row (electric-violet + plus) firing the 18-Q interview toast. CTAs: "Write a post" electric-violet, "Replay first-run" outline.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Winning Content + Company -->
+      <div class="scard">
+        <div class="sc-head">
+          <div class="grp"><span class="scn">Voice · Winning + Company</span><span class="lines">.wcformula / .gaptrack</span></div>
+          <h4>Winning-content analysis + Team Brand DNA</h4>
+          <p>The "your winning formula" callout, format gap bars + pillar balance (real per-dimension data), the "stop doing" list, then the Company tab's Brand-DNA rows + admin editor.</p>
+        </div>
+        <div class="sc-body">
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"Your winning formula" callout <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.wcformula</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:#5B4A8C"></span>Card (electric-violet-soft tint) + opt Card Spotlight</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-ace">Ace opt</span></div>
+            <div class="tags"><span class="tag tag-accent">accent</span><span class="tag tag-opt">optional</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add card &nbsp;# opt: …add "https://ui.aceternity.com/registry/card-spotlight.json"</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">The hero insight — a distinct electric-violet-soft tinted Card with bold inline emphasis on the formula terms. <b>The electric-violet-soft tint alone is enough.</b> A Card Spotlight glow here is a skippable single-surface stretch goal only (dark-mode-native, full reimplementation on light — see Create note).</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Format gap bars + pillar balance <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.gaptrack / .pillarbar</code></div>
+            <div class="map"><span class="comp"><span class="cdot" style="background:var(--accent)"></span>Chart / Progress + In View</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-mp">M-P</span></div>
+            <div class="tags"><span class="tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add chart progress && npx motion-primitives@latest add in-view</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat"><b>REAL per-dimension data.</b> Positive deltas electric-violet (+34%), "Think-piece −19%" in ink3. On-target pillar (<code style="font-family:var(--mono);font-size:11px">.ok</code>) = electric-violet, off-target neutral. In View width fill once, <code style="font-family:var(--mono);font-size:11px">--i*60ms</code>; preserve reduced-motion. A reference line at target % reads cleaner than two bars.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>"Stop doing" rows + reference cards <code style="font-family:var(--mono);font-size:11px;color:var(--ink2)">.anti / .wcdim</code></div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Card</span> <span class="srcchip src-shadcn">shadcn/ui</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item card</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Each <code style="font-family:var(--mono);font-size:11px">.anti</code> = Item row with a ✕ media icon in <b>quiet ink3 (NOT red/electric-violet</b> — these are neutral "stop" observations, not errors). Hooks / Length / Engagement = plain reference Cards; In View can fade each in subtly.</div>
+          </div>
+          <div class="erow">
+            <div class="el"><span class="arr">→</span>Company — Brand-DNA rows + "Edit brand DNA" editor</div>
+            <div class="map"><span class="comp"><span class="cdot"></span>Item + Badge + Button → Dialog/Sheet</span> <span class="srcchip src-shadcn">shadcn</span><span class="srcchip src-wm">WM opt</span></div>
+            <div class="tags"><span class="tag tag-base">base</span><span class="tag tag-free">free</span></div>
+            <div class="install"><code>npx shadcn@latest add item badge button &nbsp;# editor: edit-profile.json</code><span class="ic-copy" onclick="copyInline(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span></div>
+            <div class="treat">Same <code style="font-family:var(--mono);font-size:11px">.vbox</code> Item-row pattern as My Voice; all three rows show success "Approved". "Edit brand DNA" (admin-gated, Tooltip on disabled) opens an editor — Watermelon <code style="font-family:var(--mono);font-size:11px">edit-profile</code> torn down to Choir's field set + recolored neutral+electric-violet.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ======================= 4 · LEGEND ======================= -->
+<section id="legend">
+  <div class="wrap">
+    <div class="seclabel"><span class="num">4</span>Legend</div>
+    <h2 class="sec">How to read the kit</h2>
+    <p class="sec-intro">Tags, source chips, and the motion marker that appear on every screen row — and the doctrine that governs them.</p>
+
+    <div class="legendgrid">
+
+      <div class="lgcard">
+        <h3>Source libraries</h3>
+        <div class="lgrow"><span class="badge srcchip src-shadcn">shadcn/ui</span><span class="desc">The <b>base for ~90% of the app</b>. Copy-paste source — you own and restyle the code; nothing is npm-locked.</span></div>
+        <div class="lgrow"><span class="badge srcchip src-mp">Motion-Primitives</span><span class="desc">The core motion set — <b>free / MIT</b>, spring-physics, owned source. 6 components serve ~30 motion moments via reuse.</span></div>
+        <div class="lgrow"><span class="badge srcchip src-ace">Aceternity</span><span class="desc">The surgical accent layer — <b>free tier</b>, 3–4 max in the app interior. Harvest bones, burn skin (recolor + halve speed).</span></div>
+        <div class="lgrow"><span class="badge srcchip src-wm">Watermelon</span><span class="desc">Free/MIT layout-skeleton <b>references</b> — strip to skeleton, rewire to Choir metrics. Never ship stock SaaS styling.</span></div>
+        <div class="lgrow"><span class="badge srcchip src-cf">Componentry</span><span class="desc">Free/MIT — at most ONE flourish (Split-Flap on a single hero stat). Most of the catalog is banned (dark-neon).</span></div>
+        <div class="lgrow"><span class="badge srcchip src-bespoke">bespoke</span><span class="desc">Built once as owned source on a shadcn atom — the brain-dump recorder + the 7-dot voice-interview stepper.</span></div>
+      </div>
+
+      <div class="lgcard">
+        <h3>Row tags</h3>
+        <div class="lgrow"><span class="badge tag tag-base">base</span><span class="desc">A shadcn primitive — the default, no motion library needed.</span></div>
+        <div class="lgrow"><span class="badge tag tag-accent">accent</span><span class="desc">An Aceternity/registry component used surgically as a single accent. Always optional.</span></div>
+        <div class="lgrow"><span class="badge tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>motion</span><span class="desc">An earned motion moment. Fires <b>once</b> on resolve/view-enter, honors reduced-motion, animates REAL values only.</span></div>
+        <div class="lgrow"><span class="badge tag tag-canon">canonical</span><span class="desc">A cross-screen decision resolved once and reused everywhere (the segmented control, the dominant row, the pill system).</span></div>
+        <div class="lgrow"><span class="badge tag tag-opt">optional</span><span class="desc">Ship only if it lifts the screen. Default to subtract — the hover-lift + Skeleton are the safe defaults.</span></div>
+        <div class="lgrow"><span class="badge tag tag-free">free</span> <span class="badge tag tag-paid" style="margin-left:6px">paid</span><span class="desc">Everything recommended is on a <b>free / MIT tier</b>. Paid is flagged explicitly (premium MCP tiers only — no paid components in the build).</span></div>
+      </div>
+
+      <div class="lgcard" style="grid-column:1/-1">
+        <h3>The doctrine in one breath</h3>
+        <div class="lgrow"><span class="badge tag tag-accent" style="background:var(--accent);color:#fff">1 electric-violet</span><span class="desc"><b>One electric-violet accent</b> (#761fff) — primary CTA, active nav/segment pill, focus ring, one KPI/proof highlight, chart target bars, voice dots, the one "human input" dashed card. Green/amber stay <b>semantically separate</b> (verdict, status, confidence) so they never fight the accent.</span></div>
+        <div class="lgrow"><span class="badge tag tag-base" style="background:#23232A;color:#fff">base 90%</span><span class="desc"><b>shadcn is the base for ~90%.</b> Reach for a motion/registry component only where it materially lifts the screen — one motion moment per viewport, never decoration.</span></div>
+        <div class="lgrow"><span class="badge tag tag-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-3 7h6l-3 7"/></svg>once</span><span class="desc"><b>Fire-once, never loop.</b> Honor <code style="font-family:var(--mono);font-size:11px">prefers-reduced-motion</code> via an SSR-safe project hook. Banned: Aceternity neon/aurora/beams, cursor-particles, dark-mode glows — the "AI slop" register.</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>Choir Component Build Kit</b> · the handoff = the consolidated Install Manifest (§2) + this screen-by-screen checklist. Source spec: <code style="font-family:var(--mono);font-size:12px">brainstorms/content-os-app/component-kit/00-COMPONENT-BUILD-KIT.md</code> · verified against <code style="font-family:var(--mono);font-size:12px">choir-app-mock.html</code> (1529 lines).<br>
+    31 shadcn base components · 6 + 2 Motion-Primitives · 4 Aceternity (free) · 5 Watermelon + 1 Componentry (optional). Every library distributes via the shadcn registry protocol — the team owns every copied component outright.
+  </div>
+</footer>
+
+</main>
+
+<script>
+  function flashDone(btn, originalHTML){
+    btn.classList.add('done');
+    setTimeout(function(){ btn.classList.remove('done'); if(originalHTML!==undefined){ btn.innerHTML = originalHTML; } }, 1400);
+  }
+  function copyCode(btn){
+    var block = btn.closest('.codeblock');
+    var pre = block.querySelector('pre');
+    var text = pre.innerText;
+    var original = btn.innerHTML;
+    navigator.clipboard.writeText(text).then(function(){
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Copied';
+      flashDone(btn, original);
+    }).catch(function(){
+      btn.innerHTML = 'Copy failed';
+      flashDone(btn, original);
+    });
+  }
+  function copyInline(el){
+    var wrap = el.closest('.install');
+    var code = wrap.querySelector('code');
+    var text = code.innerText.split('#')[0].trim();
+    navigator.clipboard.writeText(text).then(function(){
+      el.classList.add('done');
+      setTimeout(function(){ el.classList.remove('done'); }, 1200);
+    });
+  }
+</script>

@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-// General Sans (Fontshare) is the primary UI/body face — clean Swiss-grotesque, the new design's
-// "feels designed" lift over Inter. Loaded via the Fontshare CDN (self-host the .woff2 for prod).
-// Instrument Serif stays available for the rare display moment.
+// General Sans (Fontshare) is the primary UI/body face — the new design's "feels designed" lift.
+// Loaded via the Fontshare CDN (self-host the .woff2 for prod). Instrument Serif for rare display.
 const serif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
