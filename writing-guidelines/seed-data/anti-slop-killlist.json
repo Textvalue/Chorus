@@ -1,0 +1,385 @@
+{
+  "_meta": {
+    "artifact": "anti-slop-killlist",
+    "purpose": "Deterministic anti-slop sanitizer seed data — the moat gate. Engineers seed these arrays into the global_library layer (app-wide, read-only). The sanitizer runs a code-detectable pass over generated content and HARD-FAILS on any kill_word, banned_phrase, em-dash density breach, curly-quote, or (under editorial register) register_gated_phrase / structural_pattern.",
+    "data_layer": "global_library",
+    "rationale_for_layer": "These are app-wide constraints identical for every org and member. They are NOT per-org or per-member — they belong in the read-only seed DB the sanitizer loads at startup. Org/member layers MAY append additional banned vocabulary (e.g. competitor names, off-brand words) but the universal floor here is shared.",
+    "source_canonical_file": ".claude/voice-dna/_shared/anti-slop-universal.md",
+    "source_extractor_code": "scripts/lib/sanitize-copy.mjs (parseAntiSlop)",
+    "extraction_method": "Verbatim output of parseAntiSlop() run against the canonical file on 2026-06-20. Counts are ground-truth: the running sanitizer parses these exact strings at runtime. kill_words=70, banned_phrases=28, register_gated_phrases=11.",
+    "extraction_note": "The sanitizer PARSES the canonical markdown at runtime so it never drifts. This JSON snapshots that parse for a DB seed. If engineers seed from JSON instead of parsing markdown, they MUST keep this file in sync with anti-slop-universal.md — the canonical file is the single source of truth. See sanitizer-spec.md § Runtime-Parse Design.",
+    "matching_rules": {
+      "kill_words": "whole-word, case-insensitive (\\b<word>\\b, regex-escaped). Multi-token entries (e.g. 'that being said', \"here's the thing:\") match as exact whole token sequences.",
+      "banned_phrases": "case-insensitive substring (lower.includes(phrase)). No word boundary — a substring match anywhere in the text fails.",
+      "register_gated_phrases": "whole-word, case-insensitive (\\b<phrase>\\b). Boundary matching is deliberate so 'act now' never fires inside 'react now' / 'impact now'. ONLY active under register==='editorial'.",
+      "em_dash_max_per_paragraph": "count of '—' (U+2014 EM DASH) per paragraph (paragraphs split on /\\n\\s*\\n/). > max => violation.",
+      "curly_quotes": "any presence of ‘ ’ “ ” in the text => one violation per distinct character found.",
+      "structural_patterns": "S1-S5 regex/heuristic detectors. HARD-FAIL only under register==='editorial'; advisory WARNING otherwise. S6-S7 are taste-level, NOT mechanized."
+    }
+  },
+
+  "em_dash_max_per_paragraph": 1,
+
+  "curly_quotes_banned": {
+    "‘": "'",
+    "’": "'",
+    "“": "\"",
+    "”": "\""
+  },
+
+  "kill_words": {
+    "_count": 70,
+    "_match": "whole-word, case-insensitive",
+    "_categories_in_source": "verbs (16), adjectives (16), nouns/abstract (7), transitions (subset, 9), filler (22) — flattened into one array by the parser; category preserved below in kill_words_by_category for engineers who want UI grouping.",
+    "all": [
+      "delve",
+      "leverage",
+      "utilize",
+      "facilitate",
+      "foster",
+      "bolster",
+      "underscore",
+      "unveil",
+      "navigate",
+      "streamline",
+      "enhance",
+      "endeavour",
+      "ascertain",
+      "elucidate",
+      "garner",
+      "showcase",
+      "robust",
+      "comprehensive",
+      "pivotal",
+      "crucial",
+      "vital",
+      "transformative",
+      "cutting-edge",
+      "groundbreaking",
+      "innovative",
+      "seamless",
+      "intricate",
+      "nuanced",
+      "multifaceted",
+      "holistic",
+      "vibrant",
+      "enduring",
+      "landscape",
+      "tapestry",
+      "testament",
+      "interplay",
+      "paradigm",
+      "synergy",
+      "realm",
+      "furthermore",
+      "moreover",
+      "notwithstanding",
+      "that being said",
+      "at its core",
+      "additionally",
+      "here's the thing:",
+      "here's why:",
+      "here's what's interesting:",
+      "absolutely",
+      "actually",
+      "basically",
+      "certainly",
+      "clearly",
+      "definitely",
+      "essentially",
+      "extremely",
+      "fundamentally",
+      "incredibly",
+      "interestingly",
+      "naturally",
+      "obviously",
+      "quite",
+      "really",
+      "significantly",
+      "simply",
+      "surely",
+      "truly",
+      "ultimately",
+      "undoubtedly",
+      "very"
+    ]
+  },
+
+  "kill_words_by_category": {
+    "_note": "Original source taxonomy preserved for UI grouping / suggestion tooltips. The 'use_instead' suggestions come verbatim from anti-slop-universal.md replacement tables (lines 24-81). Nouns and filler have no per-word replacement in source.",
+    "verbs": [
+      { "word": "delve", "use_instead": "explore, examine, look at" },
+      { "word": "leverage", "use_instead": "use, apply, draw on" },
+      { "word": "utilize", "use_instead": "use" },
+      { "word": "facilitate", "use_instead": "help, enable, support" },
+      { "word": "foster", "use_instead": "encourage, support, develop" },
+      { "word": "bolster", "use_instead": "strengthen, support" },
+      { "word": "underscore", "use_instead": "stress, highlight" },
+      { "word": "unveil", "use_instead": "reveal, show, introduce" },
+      { "word": "navigate", "use_instead": "manage, handle, work through" },
+      { "word": "streamline", "use_instead": "simplify, make more efficient" },
+      { "word": "enhance", "use_instead": "improve, strengthen" },
+      { "word": "endeavour", "use_instead": "try, attempt" },
+      { "word": "ascertain", "use_instead": "find out, determine" },
+      { "word": "elucidate", "use_instead": "explain, clarify" },
+      { "word": "garner", "use_instead": "get, earn, attract" },
+      { "word": "showcase", "use_instead": "show, demonstrate, present" }
+    ],
+    "adjectives": [
+      { "word": "robust", "use_instead": "strong, reliable, solid" },
+      { "word": "comprehensive", "use_instead": "complete, thorough, full" },
+      { "word": "pivotal", "use_instead": "key, critical, important" },
+      { "word": "crucial", "use_instead": "important, key, essential" },
+      { "word": "vital", "use_instead": "important, essential" },
+      { "word": "transformative", "use_instead": "significant, major" },
+      { "word": "cutting-edge", "use_instead": "new, advanced, modern" },
+      { "word": "groundbreaking", "use_instead": "new, original" },
+      { "word": "innovative", "use_instead": "new, original, creative" },
+      { "word": "seamless", "use_instead": "smooth, easy, effortless" },
+      { "word": "intricate", "use_instead": "complex, detailed" },
+      { "word": "nuanced", "use_instead": "subtle, complex" },
+      { "word": "multifaceted", "use_instead": "complex, varied" },
+      { "word": "holistic", "use_instead": "complete, whole" },
+      { "word": "vibrant", "use_instead": "lively, active, bright" },
+      { "word": "enduring", "use_instead": "lasting, long-standing" }
+    ],
+    "nouns_abstract": [
+      { "word": "landscape", "use_instead": null },
+      { "word": "tapestry", "use_instead": null },
+      { "word": "testament", "use_instead": null },
+      { "word": "interplay", "use_instead": null },
+      { "word": "paradigm", "use_instead": null },
+      { "word": "synergy", "use_instead": null },
+      { "word": "realm", "use_instead": null }
+    ],
+    "transitions_captured_as_words": [
+      { "word": "furthermore", "use_instead": "also, and" },
+      { "word": "moreover", "use_instead": "also, and, besides" },
+      { "word": "notwithstanding", "use_instead": "despite, still" },
+      { "word": "that being said", "use_instead": "however, but, still" },
+      { "word": "at its core", "use_instead": "essentially, basically" },
+      { "word": "additionally", "use_instead": "also, and, plus" },
+      { "word": "here's the thing:", "use_instead": "(delete — just make the point)" },
+      { "word": "here's why:", "use_instead": "(delete — show the reason directly)" },
+      { "word": "here's what's interesting:", "use_instead": "(delete — state the interesting thing)" }
+    ],
+    "filler_words": [
+      "absolutely", "actually", "basically", "certainly", "clearly",
+      "definitely", "essentially", "extremely", "fundamentally", "incredibly",
+      "interestingly", "naturally", "obviously", "quite", "really",
+      "significantly", "simply", "surely", "truly", "ultimately",
+      "undoubtedly", "very"
+    ]
+  },
+
+  "transitions_in_source_NOT_captured_by_parser": {
+    "_note": "These appear in the Transitions table of anti-slop-universal.md (lines 67-82) but the parser DROPS them: 'it is worth noting that' (>3 words after no-strip), 'in the realm of' / 'in the landscape of' (>3 words), 'in today's [anything]' (contains '['). They are NOT enforced as kill_words. If engineers want them enforced, add as banned_phrases (substring match) — see net_new flag in manifest.",
+    "items": [
+      "it is worth noting that",
+      "in the realm of",
+      "in the landscape of",
+      "in today's [anything]"
+    ]
+  },
+
+  "replace_instructions_in_source_NOT_enforced": {
+    "_note": "anti-slop-universal.md line 239 prescribes replacements that the parser does NOT enforce (the filler section regex only captures single ^[a-z]+$ tokens). Document-only guidance, not gate-enforced. Engineers MAY add the left-hand strings as banned_phrases if they want enforcement.",
+    "items": [
+      { "replace": "in order to", "with": "to" },
+      { "replace": "due to the fact that", "with": "because" },
+      { "replace": "at this point in time", "with": "now" }
+    ]
+  },
+
+  "banned_phrases": {
+    "_count": 28,
+    "_match": "case-insensitive substring (no word boundary)",
+    "_categories_in_source": "opening (7), transitional (5), closing (7), chatbot artifacts (5), pseudo-profound flourishes (4). Parser strips trailing '...' and [placeholders], keeps stable prefix; entries with placeholders like 'the future of x is y' keep literal 'x'/'y' tokens.",
+    "all": [
+      "in today's fast-paced world",
+      "in today's digital age",
+      "in an era of",
+      "in the ever-evolving landscape of",
+      "it's important to note that",
+      "let's delve into",
+      "imagine a world where",
+      "that being said",
+      "with that in mind",
+      "it's worth mentioning that",
+      "to put it simply",
+      "in essence",
+      "in conclusion",
+      "to sum up",
+      "the future looks bright",
+      "exciting times ahead",
+      "this is just the beginning",
+      "the implications are staggering",
+      "this changes everything",
+      "i hope this helps",
+      "of course!",
+      "let me know if",
+      "here is a",
+      "great question!",
+      "we're witnessing the emergence of",
+      "the future of x is y",
+      "once you do x, y feels wrong",
+      "after x, you'll never go back to y"
+    ]
+  },
+
+  "banned_phrases_by_category": {
+    "opening": [
+      "in today's fast-paced world",
+      "in today's digital age",
+      "in an era of",
+      "in the ever-evolving landscape of",
+      "it's important to note that",
+      "let's delve into",
+      "imagine a world where"
+    ],
+    "transitional": [
+      "that being said",
+      "with that in mind",
+      "it's worth mentioning that",
+      "to put it simply",
+      "in essence"
+    ],
+    "closing": [
+      "in conclusion",
+      "to sum up",
+      "the future looks bright",
+      "exciting times ahead",
+      "this is just the beginning",
+      "the implications are staggering",
+      "this changes everything"
+    ],
+    "chatbot_artifacts": [
+      "i hope this helps",
+      "of course!",
+      "let me know if",
+      "here is a",
+      "great question!"
+    ],
+    "pseudo_profound_flourishes": [
+      "we're witnessing the emergence of",
+      "the future of x is y",
+      "once you do x, y feels wrong",
+      "after x, you'll never go back to y"
+    ]
+  },
+
+  "register_gated_phrases": {
+    "_count": 11,
+    "_match": "whole-word, case-insensitive (\\b...\\b)",
+    "_active_only_when": "register === 'editorial'",
+    "_rationale": "Legitimate direct-response urgency/scarcity CTAs for ads + sales pages. Off-register ONLY for editorial-restraint brands (VOICE.md register: third-person-editorial / density: editorial-restraint). Silent for ads/sales/default. Code-enforced half of the DR Register Map (05-marketing-demand/copywriting/_index.md).",
+    "all": [
+      "act now",
+      "don't delay",
+      "before it's too late",
+      "last chance",
+      "limited time",
+      "limited-time",
+      "while supplies last",
+      "while stocks last",
+      "don't miss out",
+      "offer ends",
+      "offer expires"
+    ]
+  },
+
+  "structural_patterns": {
+    "_note": "S1-S5 are mechanized in detectStructuralSlop(). HARD-FAIL under register==='editorial', advisory WARNING otherwise. S6-S7 are taste-level and NOT mechanized (enforced by hostile-editor critic + slop grader). S8 is a candidate, not yet detectable. Detection logic is verbatim from sanitize-copy.mjs lines 270-382.",
+    "patterns": [
+      {
+        "id": "S1",
+        "type": "aphorism-the-x-is-the-y",
+        "description": "\"THE X is THE Y\" aphorism — billboard, not a person talking.",
+        "shipped_offender_example": "The list is the message.",
+        "detection": "For each sentence with word-count <= 12, regex /\\bthe\\s+[\\w'’-]+\\s+is\\s+the\\s+[\\w'’-]+/i. Sentence-scoped, short only, to limit false positives.",
+        "scope": "sentence (<=12 words)",
+        "enforcement": "editorial=HARD-FAIL; default=WARN"
+      },
+      {
+        "id": "S2",
+        "type": "contrast-reframe",
+        "description": "Contrast-reframe family — the soft cousins of the banned Pattern 7 (\"X isn't Y. It's Z.\"). Ban the whole family. Manufactured-insight tell.",
+        "shipped_offender_example": "Posts in your voice, not a ghostwriter's. / Knowledge that compounds, not resets. / not just impressions / a specific mechanic rather than a line on a feature grid",
+        "detection": "For each sentence, ANY of these 4 regexes (first match wins, one S2 per sentence): (a) /,\\s+not\\s+(?:just\\s+|a\\s+|an\\s+|the\\s+)?[\\w'’-]/i  '\", not Y\" trailing contrast'; (b) /\\bnot\\s+just\\b/i  '\"not just X\"'; (c) /\\b(?:is\\s+)?never\\s+(?:the|a|an|just)\\b/i  '\"is never the/a Y\"'; (d) /\\brather\\s+than\\b/i  '\"X rather than Y\"'.",
+        "scope": "sentence",
+        "enforcement": "editorial=HARD-FAIL; default=WARN"
+      },
+      {
+        "id": "S3",
+        "type": "noun-that-verbs-headline",
+        "description": "\"[Noun] that/who [verb]s\" vendor headline (product-as-subject + relative clause).",
+        "shipped_offender_example": "Outbound that survives the AI flood. / Content that sounds like you wrote it / The knowledge layer that compounds.",
+        "detection": "Headline-scoped only. For each headline candidate, regex /^[\\w'’-]+(?:\\s+[\\w'’-]+){0,3}\\s+(?:that|who)\\s+[\\w'’-]+/i.",
+        "scope": "headline candidate",
+        "enforcement": "editorial=HARD-FAIL; default=WARN"
+      },
+      {
+        "id": "S4",
+        "type": "imperative-pair-cta",
+        "description": "Imperative punchy-pair CTA — two consecutive imperative sentences (one terse) = ad cadence, not a person.",
+        "shipped_offender_example": "Bring your setup. Leave with a plan for it.",
+        "detection": "For each adjacent sentence pair (i, i+1): first word of BOTH is in the IMPERATIVE_VERBS set AND min(wordcount(a), wordcount(b)) <= 6. Skips one index after a match (no double-count).",
+        "scope": "adjacent sentence pair",
+        "enforcement": "editorial=HARD-FAIL; default=WARN"
+      },
+      {
+        "id": "S5",
+        "type": "rule-of-n-fragment",
+        "description": "Rule-of-N aphoristic fragment headline — 2+ spelled cardinal number-words in a short headline. Digits are deliberately EXCLUDED (a numeral is usually a real metric, e.g. '8 to 12 pieces').",
+        "shipped_offender_example": "Four parts, one memory. / Three services. One operator. One context.",
+        "detection": "Headline-scoped, word-count <= 7. Count matches of /\\b(?:one|two|three|four|five|six|seven|eight|nine|ten)\\b/gi. If matches >= 2 => finding.",
+        "scope": "headline candidate (<=7 words)",
+        "enforcement": "editorial=HARD-FAIL; default=WARN"
+      },
+      {
+        "id": "S6",
+        "type": "colon-aphorism",
+        "description": "Colon-aphorism: [short setup]: [punchy payoff]. TASTE-LEVEL — NOT mechanized (regex cannot separate a slop colon-aphorism from a legitimate label colon).",
+        "shipped_offender_example": "Ask any engineer: read access only. / The bar: send the same sequence to 500 companies.",
+        "detection": "NOT mechanized. Enforced by hostile-editor critic (critique-pass-protocol.md § M) + slop grader.",
+        "scope": "n/a",
+        "enforcement": "NOT mechanized (taste-level)"
+      },
+      {
+        "id": "S7",
+        "type": "balanced-billboard-declarative",
+        "description": "Balanced \"clever\" declarative — short, witty, rhythmically balanced. Reads like a billboard, not a person mid-conversation. TASTE-LEVEL — NOT mechanized.",
+        "shipped_offender_example": "Relationship over volume.",
+        "detection": "NOT mechanized. Enforced by hostile-editor critic + slop grader, anchored to negative examples.",
+        "scope": "n/a",
+        "enforcement": "NOT mechanized (taste-level)"
+      }
+    ],
+    "S8_candidate": {
+      "id": "S8",
+      "type": "meta-label-essay-scaffolding",
+      "description": "Meta-labels that name the rhetorical move as a heading (\"The problem\" / \"The stakes\" / \"The fix\"). Essay-scaffolding-as-UI. Held with S6/S7 for the hostile-editor critic until a reliable detector exists.",
+      "status": "candidate, not yet mechanized",
+      "note": "Builder/structural slop bypasses ALL string gates (2026-06-16) — these arrive as component structure (eyebrow labels, crossheads), not copy strings, so the sanitizer is blind to them. Must be caught at app-building Website Build Mode structural review, not the copy gate."
+    }
+  },
+
+  "imperative_verbs_set": {
+    "_note": "Used by S4 detection. First word of an imperative sentence. Verbatim from sanitize-copy.mjs lines 63-118 (IMPERATIVE_VERBS Set).",
+    "_count": 54,
+    "verbs": [
+      "bring", "leave", "stop", "start", "book", "get", "make", "see", "skip",
+      "try", "ask", "take", "build", "ship", "run", "send", "give", "keep",
+      "find", "learn", "write", "talk", "show", "drop", "grab", "join", "claim",
+      "discover", "unlock", "transform", "meet", "watch", "read", "explore",
+      "imagine", "picture", "forget", "own", "tell", "let", "go", "use", "pick",
+      "choose", "turn", "save", "win", "scale", "grow", "fix", "cut", "add",
+      "map", "wire"
+    ]
+  },
+
+  "number_words_set": {
+    "_note": "Used by S5 detection (spelled cardinals). Verbatim from sanitize-copy.mjs lines 119-130 (NUM_WORDS).",
+    "words": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+  }
+}

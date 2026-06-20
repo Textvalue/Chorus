@@ -1,0 +1,559 @@
+{
+  "_meta": {
+    "layer": "global_library",
+    "description": "Choir DM template bank + warm-up sequence. App-wide read-only seed DB. Members reference these by id; per-member voice/prose adapts the {variables} at generation time. Templates extracted verbatim. {curly_brace} tokens are merge variables to expose as fillable fields in the composer.",
+    "merge_variables_reference": [
+      "{first_name}", "{last_name}", "{name}", "{job_title}", "{company_name}", "{company}",
+      "{dynamic_placeholder}", "{topic}", "{specific topic}", "{link}", "{resource}",
+      "{competitor}", "{competitor name}", "{competitor 1}", "{competitor 2}",
+      "{name of lead magnet}", "{youtube_link}", "{round}", "{sector}", "{industry}",
+      "{service}", "{outcome}", "{timeframe}", "{client}", "{event host name}", "{percentage}", "{target}", "{painpoint}"
+    ],
+    "merge_variable_note": "Source uses inconsistent token styles ({first name} with space and {first_name} with underscore). Tokens preserved verbatim per template. Recommend normalizing to {first_name} convention at ingest with a token-alias map: {first name}->{first_name}, {company name}->{company_name}, {firstname}->{first_name}, {companyname}->{company_name}.",
+    "primary_source": "my-context-os/04-linkedin-content/engagement/linkedin-dm-social-selling-playbook.md",
+    "supporting_source": "my-context-os/raw-context/inbox/coldiq-evaluation/github-gtm-skills/master-skills/linkedin-content/.claude/skills/engagement/SKILL.md",
+    "char_cap_note": "LinkedIn connection-request notes have a hard 300-char limit (set char_cap:300 for connection_request scenarios). DMs to existing connections have no practical char cap; char_cap:null. The engagement SKILL.md prescribes a soft 3-4 sentence / one-paragraph cap for cold DM openers (char_cap_soft ~280 emulated where flagged).",
+    "extracted": "2026-06-20"
+  },
+  "dm_templates": [
+    {
+      "id": "conn_mutual_group",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "We are both in {group_name} -- thought it would be great to connect since we are both in {industry/niche}.",
+      "char_cap": 300,
+      "when_to_use": "Mutual group connection. Both parties belong to the same LinkedIn group.",
+      "source": "linkedin-dm-social-selling-playbook.md:165-166"
+    },
+    {
+      "id": "conn_value_upfront",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "Hey {first_name} -- I put together a {resource_type} that covers {topic relevant to their role}. Happy to share if useful. Either way, would love to connect!",
+      "char_cap": 300,
+      "when_to_use": "Lead with value in the connection note. Offer a resource relevant to their role.",
+      "source": "linkedin-dm-social-selling-playbook.md:168-169"
+    },
+    {
+      "id": "conn_content_retargeting",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "Thanks for engaging with my post on {topic}, {first_name}! Would love to connect and share more insights on {related topic}.",
+      "char_cap": 300,
+      "when_to_use": "They engaged with your content (liked/commented on your post).",
+      "source": "linkedin-dm-social-selling-playbook.md:171-172"
+    },
+    {
+      "id": "conn_same_tech",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "Hey {first_name}, noticed your team uses {tool/platform}. We use it too and found some interesting workarounds -- would love to exchange notes!",
+      "char_cap": 300,
+      "when_to_use": "Shared tech stack. You and the prospect use the same tool/platform.",
+      "source": "linkedin-dm-social-selling-playbook.md:174-175"
+    },
+    {
+      "id": "conn_comment_to_receive",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "Hey {first_name}! You commented on my post about {topic}. Here is the {resource} I mentioned: {link}. Would love to stay connected!",
+      "char_cap": 300,
+      "when_to_use": "Comment-to-receive offer fulfillment. They commented expecting a resource.",
+      "source": "linkedin-dm-social-selling-playbook.md:177-178"
+    },
+    {
+      "id": "conn_posted_filter_salesnav",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "{first_name}, really enjoyed your recent post on {specific topic}. Your point about {specific detail} was spot on. Would love to connect!",
+      "char_cap": 300,
+      "when_to_use": "Sales Navigator 'Posted on LinkedIn' filter. Reference a specific post.",
+      "source": "linkedin-dm-social-selling-playbook.md:180-181"
+    },
+    {
+      "id": "conn_view_similar_salesnav",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "{first_name}, your profile stood out while I was researching {industry/topic}. Would love to connect!",
+      "char_cap": 300,
+      "when_to_use": "Sales Navigator 'View Similar' leads.",
+      "source": "linkedin-dm-social-selling-playbook.md:183-184"
+    },
+    {
+      "id": "conn_inbound_lead",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "{first_name}, I saw you checked out our {page/resource}. Happy to share more about how we help {their target outcome}. Let's connect!",
+      "char_cap": 300,
+      "when_to_use": "Inbound lead. They visited your page/resource.",
+      "source": "linkedin-dm-social-selling-playbook.md:186-187"
+    },
+    {
+      "id": "conn_local_leader",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "Hey {first_name}! Fellow {city} professional here. Always great to connect with local leaders in {industry}. Let's stay in touch!",
+      "char_cap": 300,
+      "when_to_use": "Local/geo affinity. Same city or region.",
+      "source": "linkedin-dm-social-selling-playbook.md:189-190"
+    },
+    {
+      "id": "conn_event_attendee_replay",
+      "scenario": "connection_request",
+      "category": "Connection Request",
+      "template": "I always find it hard to find event replays, so now I just record every event I attend. Here is the replay link: {youtube_link}. PS: I also create a Notion doc for every event -- let me know if you want the key takeaways.",
+      "char_cap": 300,
+      "when_to_use": "Event attendee. Offer the replay + Notion takeaways. NOTE: exceeds 300-char cap; trim for connection note or send as first DM post-acceptance.",
+      "source": "linkedin-dm-social-selling-playbook.md:192-193"
+    },
+    {
+      "id": "leadmagnet_already_connected",
+      "scenario": "lead_magnet_delivery",
+      "category": "Lead Magnet Delivery (Commenters)",
+      "template": "Here is the {name of lead magnet} {first name}: {link}\n\nOption A (start conversation): Curious, {specific, related question}\n\nOption B (book call): Saw you are in {specific space}, I am doing free {strategy / setup / demo} calls I think would be helpful for you. Let me know and I will send my cal over.",
+      "char_cap": null,
+      "when_to_use": "Deliver a promised lead magnet to a commenter you are ALREADY connected with. Choose Option A (start conversation) or Option B (book call).",
+      "source": "linkedin-dm-social-selling-playbook.md:319-324"
+    },
+    {
+      "id": "leadmagnet_not_connected_reply",
+      "scenario": "lead_magnet_delivery",
+      "category": "Lead Magnet Delivery (Commenters)",
+      "template": "Hey {first name} -- here it is: {link to lead magnet}, let me know what you think!",
+      "char_cap": null,
+      "when_to_use": "Deliver a lead magnet by REPLYING to their comment (not yet connected).",
+      "source": "linkedin-dm-social-selling-playbook.md:326-327"
+    },
+    {
+      "id": "leadmagnet_not_connected_conn_req",
+      "scenario": "lead_magnet_delivery",
+      "category": "Lead Magnet Delivery (Commenters)",
+      "template": "Here is the {name of lead magnet} {first name}: {link}. Curious, {specific, related question}",
+      "char_cap": 300,
+      "when_to_use": "Deliver a lead magnet via connection request + delivery in one (not yet connected).",
+      "source": "linkedin-dm-social-selling-playbook.md:329-330"
+    },
+    {
+      "id": "competitor_steal_msg1_voice",
+      "scenario": "competitor_lead_stealing",
+      "category": "Competitor Lead Stealing",
+      "message_type": "voice_note",
+      "sequence_position": 1,
+      "template": "Hey {first name}. Hope you don't mind the voice note -- I just saw your name under {competitor name}'s post, {he/she} is pretty insightful ey? I thought that if you'd be interested in {his/her} {specific content}, you might also be interested in this {complementary but BETTER resource}. I'll drop a link in the chat and yeh have a great rest of your day!",
+      "char_cap": null,
+      "when_to_use": "MSG 1 of competitor-commenter steal sequence. Scrape commenters from a competitor's post. Send as a VOICE NOTE.",
+      "source": "linkedin-dm-social-selling-playbook.md:336-337"
+    },
+    {
+      "id": "competitor_steal_msg2_link",
+      "scenario": "competitor_lead_stealing",
+      "category": "Competitor Lead Stealing",
+      "sequence_position": 2,
+      "template": "{Link to complementary but BETTER resource}",
+      "char_cap": null,
+      "when_to_use": "MSG 2 of competitor-commenter steal sequence. Drop the link immediately after the voice note.",
+      "source": "linkedin-dm-social-selling-playbook.md:339-340"
+    },
+    {
+      "id": "competitor_steal_msg3_opened",
+      "scenario": "competitor_lead_stealing",
+      "category": "Competitor Lead Stealing",
+      "sequence_position": 3,
+      "branch": "if_opened",
+      "template": "What did you think? Interested to hear your thoughts on the {specifically intriguing} section.",
+      "char_cap": null,
+      "when_to_use": "MSG 3 follow-up IF they opened the link.",
+      "source": "linkedin-dm-social-selling-playbook.md:342-343"
+    },
+    {
+      "id": "competitor_steal_msg3_not_opened",
+      "scenario": "competitor_lead_stealing",
+      "category": "Competitor Lead Stealing",
+      "sequence_position": 3,
+      "branch": "if_not_opened",
+      "template": "Hey {first name}, saw you didn't have a chance to check it out -- was {resource name} not relevant for you?",
+      "char_cap": null,
+      "when_to_use": "MSG 3 follow-up IF they did NOT open the link.",
+      "source": "linkedin-dm-social-selling-playbook.md:344-345"
+    },
+    {
+      "id": "industry_digitalads_msg1",
+      "scenario": "industry_specific_sequence",
+      "category": "Industry-Specific Sequences",
+      "industry": "Digital Ads Agency Targeting E-com",
+      "sequence_position": 1,
+      "template": "Hey dude -- your ad on Insta caught my eye. Not sure if you've heard of {competitor 1} or {competitor 2}?",
+      "char_cap": null,
+      "when_to_use": "MSG 1, digital ads agency -> e-com prospect. Opener referencing their running ad.",
+      "source": "linkedin-dm-social-selling-playbook.md:353"
+    },
+    {
+      "id": "industry_digitalads_msg2_voice",
+      "scenario": "industry_specific_sequence",
+      "category": "Industry-Specific Sequences",
+      "industry": "Digital Ads Agency Targeting E-com",
+      "message_type": "voice_note",
+      "sequence_position": 2,
+      "template": "So reason I ask is I saw that ad you're running and saw you're pretty similar to those guys. We basically rebuilt their entire ad strategy and ended up increasing their Insta ROAS from about 1.7x to 5x. If you're on that lower end I've got this follow-along playbook you could use to go even above 5x.",
+      "char_cap": null,
+      "when_to_use": "MSG 2 (voice note), digital ads agency. Results-driven foreshadow of value.",
+      "source": "linkedin-dm-social-selling-playbook.md:355"
+    },
+    {
+      "id": "industry_digitalads_msg3",
+      "scenario": "industry_specific_sequence",
+      "category": "Industry-Specific Sequences",
+      "industry": "Digital Ads Agency Targeting E-com",
+      "sequence_position": 3,
+      "template": "Here's that follow-along to 5x Insta ROAS I mentioned -- let me know if useful.",
+      "char_cap": null,
+      "when_to_use": "MSG 3, digital ads agency. Deliver the promised playbook.",
+      "source": "linkedin-dm-social-selling-playbook.md:357"
+    },
+    {
+      "id": "industry_marketingagency_msg1",
+      "scenario": "industry_specific_sequence",
+      "category": "Industry-Specific Sequences",
+      "industry": "Marketing Agency Social Sell",
+      "sequence_position": 1,
+      "template": "Hey {first name} -- just saw you liked {competitor}'s post. Just checked your profile -- have you read {industry specific book}? Honestly the best book written on {topic}. Really changed my perspective on {specific thing}.",
+      "char_cap": null,
+      "when_to_use": "MSG 1, marketing agency social sell. Book recommendation as authority hook.",
+      "source": "linkedin-dm-social-selling-playbook.md:361"
+    },
+    {
+      "id": "industry_marketingagency_msg2",
+      "scenario": "industry_specific_sequence",
+      "category": "Industry-Specific Sequences",
+      "industry": "Marketing Agency Social Sell",
+      "sequence_position": 2,
+      "template": "Hey {first name}, it's a pleasure to connect with you here. I'm curious... how many leads are you getting from your content at the moment?",
+      "char_cap": null,
+      "when_to_use": "MSG 2, marketing agency social sell. Open-ended process-discovery question.",
+      "source": "linkedin-dm-social-selling-playbook.md:363"
+    },
+    {
+      "id": "warm_event_attendee",
+      "scenario": "warm_trigger",
+      "category": "Warm Triggers (Signal-Driven)",
+      "trigger": "previous_event_attendee",
+      "template": "I always find it hard to find event replays, so now I just record every event I attend. Here's the replay link: {youtube_link}. PS: I also create a Notion doc for every event I attend, if you just want the key takeaways -- let me know.",
+      "char_cap": null,
+      "when_to_use": "Previous event attendees. Connection request offering replay + Notion takeaways.",
+      "source": "linkedin-dm-social-selling-playbook.md:370"
+    },
+    {
+      "id": "warm_company_follower",
+      "scenario": "warm_trigger",
+      "category": "Warm Triggers (Signal-Driven)",
+      "trigger": "company_follower",
+      "template": "Thanks a lot {firstname}. You're one of the {number} lovely people who follow {company name}. How did you find out about us in the first place?",
+      "char_cap": null,
+      "when_to_use": "Company followers. Thank them and open with a discovery question.",
+      "source": "linkedin-dm-social-selling-playbook.md:373"
+    },
+    {
+      "id": "warm_partnership_offer",
+      "scenario": "warm_trigger",
+      "category": "Warm Triggers (Signal-Driven)",
+      "trigger": "partnership",
+      "template": "Hey {first name}, I've got a client that's interested in {the service they offer}, similar to what you guys offer. Is it worth talking about a potential partnership? (If so, we have a lot of leads in the pipeline for you.)",
+      "char_cap": null,
+      "when_to_use": "Partnership offer. Lead with a client interested in their service.",
+      "source": "linkedin-dm-social-selling-playbook.md:376"
+    },
+    {
+      "id": "warm_raised_funds",
+      "scenario": "warm_trigger",
+      "category": "Warm Triggers (Signal-Driven)",
+      "trigger": "funding_round",
+      "template": "Hey {first name}. Just saw that you guys raised X last {round} (congrats btw!). Was wondering how you guys plan to invest that in {sector}? We've helped a bunch of companies in the {industry} space achieve {outcome} after their {round}.",
+      "char_cap": null,
+      "when_to_use": "Funding-round trigger. Reference the raise, ask about investment plans, anchor a relevant outcome.",
+      "source": "linkedin-dm-social-selling-playbook.md:379"
+    },
+    {
+      "id": "profilevisit_caught_eye",
+      "scenario": "profile_visit_to_call",
+      "category": "Profile Visit to Booked Call",
+      "template": "Hey {first name}, saw you were stalking my profile ha. What caught your eye?",
+      "char_cap": null,
+      "when_to_use": "Profile viewer follow-up. Playful 'what caught your eye?' opener.",
+      "source": "linkedin-dm-social-selling-playbook.md:386"
+    },
+    {
+      "id": "profilevisit_humor",
+      "scenario": "profile_visit_to_call",
+      "category": "Profile Visit to Booked Call",
+      "template": "Hey {first name}, cheers for connecting. I don't know if you connected because of my amazing sense of humour or to learn more about {your offer}, either way, happy you made it here. If it's the latter, was there a specific resource on my page you wanted access to?",
+      "char_cap": null,
+      "when_to_use": "Post-connection, sense-of-humor approach. Surfaces intent without pitching.",
+      "source": "linkedin-dm-social-selling-playbook.md:388-389"
+    },
+    {
+      "id": "profilevisit_conversation_starter",
+      "scenario": "profile_visit_to_call",
+      "category": "Profile Visit to Booked Call",
+      "template": "Hey {first name}, saw you stalked my profile, what's up! You doing {their role} for {their company} right?",
+      "char_cap": null,
+      "when_to_use": "Profile viewer, casual conversation starter confirming their role.",
+      "source": "linkedin-dm-social-selling-playbook.md:391-392"
+    },
+    {
+      "id": "straightsell_voice_results",
+      "scenario": "straight_sell",
+      "category": "Straight Sell (Voice Note)",
+      "message_type": "voice_note",
+      "template": "So yeah, hope you don't mind the voice note -- I thought it would be easier than writing a long message. I came across what you are doing and I wanted to suggest that we {suggestion}. We've done the same thing for {similar companies} so the goal here is essentially to {detail your objective as much as possible}. Would you be down for a quick call so that I can show you the results we typically get?",
+      "char_cap": null,
+      "when_to_use": "Direct offer with results angle, delivered as a voice note. Use when relationship is warm enough for a direct ask.",
+      "source": "linkedin-dm-social-selling-playbook.md:398-399"
+    },
+    {
+      "id": "followup_social_proof",
+      "scenario": "follow_up",
+      "category": "Follow-Ups",
+      "template": "{first name}, just wrapped up a project with [similar company] where we helped them [specific result]. Made a 2min Loom breaking down the process. Happy to shoot you the link if relevant?",
+      "char_cap": null,
+      "when_to_use": "Social proof follow-up. Offer a Loom walkthrough of a comparable result. Timing: Day 5-7.",
+      "source": "linkedin-dm-social-selling-playbook.md:405-406"
+    },
+    {
+      "id": "followup_value_add",
+      "scenario": "follow_up",
+      "category": "Follow-Ups",
+      "template": "Hey {first name}! Your team recently [relevant observation], no? Thought you might find this [relevant resource/insight] helpful: [link]. Would love to hear your thoughts on this approach.",
+      "char_cap": null,
+      "when_to_use": "Value-add follow-up. Reference a recent observation and share a resource.",
+      "source": "linkedin-dm-social-selling-playbook.md:408-409"
+    },
+    {
+      "id": "followup_responsibility_trigger",
+      "scenario": "follow_up",
+      "category": "Follow-Ups",
+      "template": "Is there anyone else at {company} I should reach out to about this?",
+      "char_cap": null,
+      "when_to_use": "Responsibility trigger / multi-threading. Surfaces the right contact. Timing: Day 10-14.",
+      "source": "linkedin-dm-social-selling-playbook.md:411-412"
+    },
+    {
+      "id": "followup_final_clean_exit",
+      "scenario": "follow_up",
+      "category": "Follow-Ups",
+      "template": "Not sure if LinkedIn's shadowbanned me in your inbox or if you're just really good at ghosting me... if it's the latter, you've got talent! Jokes aside, if my thoughts about [relevant observation] were WAY off just let me know. If not, maybe this will help: [relevant free resource link].",
+      "char_cap": null,
+      "when_to_use": "Final follow-up, clean exit with humor. Timing: Day 21+.",
+      "source": "linkedin-dm-social-selling-playbook.md:414-415"
+    },
+    {
+      "id": "coldopener_direct_sell",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "template": "{first name} -- I saw you [relevant observation] and usually this means [relevant pain point]. I recently {specific offer} for {competitor} without [stuff they don't like, e.g. hiring, ads, SEO]. Thought you'd crush it with this as well! No stress if this isn't a priority for you right now but if it is, we'll {risk reversal}. Let me know, I'm happy to share exactly how we did this for {another competitor} -- you might know them?",
+      "char_cap": null,
+      "when_to_use": "Cold opener 1 -- direct sell. Observation -> pain -> offer -> risk reversal -> social proof.",
+      "source": "linkedin-dm-social-selling-playbook.md:421-422"
+    },
+    {
+      "id": "coldopener_prying_pain",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "template": "{first name}, saw that you offer {service} for {industry served}. I spoke to another {job role} in {industry} and they told me that they often run into issues like {specific pain points}. Do you guys see any of these issues at {company name}?",
+      "char_cap": null,
+      "when_to_use": "Cold opener 2 -- prying pain points via peer reference.",
+      "source": "linkedin-dm-social-selling-playbook.md:424-425"
+    },
+    {
+      "id": "coldopener_free_value",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "template": "Hey dude -- you probably know that {percentage} of {target} say {painpoint} is their biggest challenge. Got this great -- could I share a template that's getting {outcome}?",
+      "char_cap": null,
+      "when_to_use": "Cold opener 3 -- free value. Stat hook + template offer.",
+      "source": "linkedin-dm-social-selling-playbook.md:427-428"
+    },
+    {
+      "id": "coldopener_partnership",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "template": "Hey {first name}, I've got a client that's interested in {the service they offer}, similar to what you guys offer. It's not the first time I've been asked so thought a partnership could make sense rather than {doing it yourself}. Worth exploring?",
+      "char_cap": null,
+      "when_to_use": "Cold opener 4 -- partnership angle.",
+      "source": "linkedin-dm-social-selling-playbook.md:430-431"
+    },
+    {
+      "id": "coldopener_case_study",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "template": "{companyname} looks similar to {client}, who {achieved outcome} in {timeframe} working with us. Mind if I share a little more info on how you guys could get a similar result?",
+      "char_cap": null,
+      "when_to_use": "Cold opener 5 -- case study / lookalike anchor.",
+      "source": "linkedin-dm-social-selling-playbook.md:433-434"
+    },
+    {
+      "id": "coldopener_bonus_sneaky_feedback",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "message_type": "voice_note",
+      "template": "Hey {first name}, saw you're kind of an expert in {your field} -- do you mind if I ask you a couple of questions? We're tryna gather some feedback on our {product} from people that know the space.",
+      "char_cap": null,
+      "when_to_use": "Bonus voice note -- sneaky feedback request. Disarming, peer-level ask.",
+      "source": "linkedin-dm-social-selling-playbook.md:436-437"
+    },
+    {
+      "id": "coldopener_bonus_event_attended",
+      "scenario": "cold_opener",
+      "category": "Cold Openers",
+      "message_type": "voice_note",
+      "template": "Hey {first name} -- think you also attended {event host name}'s event {when it was}? Looks like we work with similar people -- you also {reference commonality}?",
+      "char_cap": null,
+      "when_to_use": "Bonus voice note -- event-attended commonality.",
+      "source": "linkedin-dm-social-selling-playbook.md:439-440"
+    },
+    {
+      "id": "curiosity_silly_question",
+      "scenario": "post_acceptance_question",
+      "category": "6-Step DM Sales Process",
+      "template": "Hey {name} -- mind if I ask your expert opinion on a potentially silly {relevant topic} related question?",
+      "char_cap": null,
+      "when_to_use": "Step 3 of the 6-Step DM Sales Process. Curiosity-sparking open-ended question after connection acceptance. Documented 30% reply rate.",
+      "performance_note": "30% reply rate",
+      "source": "linkedin-dm-social-selling-playbook.md:227-228"
+    },
+    {
+      "id": "multithread_restrained_compliment",
+      "scenario": "multi_threading",
+      "category": "Ty Frankel Multi-Threading",
+      "template": "Solid case study with E-Com ROI. 3.2x ROAS is pretty good for e-com FB ads.",
+      "char_cap": null,
+      "when_to_use": "Restrained compliment (4-5/10 enthusiasm) example -- signals peer-level authority, not fan admiration. Formula: Greeting + Restrained Compliment + Authoritative Observation + Personal Connection.",
+      "anti_example": "Avoid 10/10 enthusiasm: 'I absolutely LOVE the work you did with E-Com ROI!' (looks desperate, low status).",
+      "source": "linkedin-dm-social-selling-playbook.md:266-268"
+    },
+    {
+      "id": "multithread_foreshadow_value",
+      "scenario": "multi_threading",
+      "category": "Ty Frankel Multi-Threading",
+      "template": "Have you read Predictable Prospecting by Aaron Ross? Maybe the best book written on outbound. Pure gold. Actually have 9 pages of notes I took on it -- want me to send them to you?",
+      "char_cap": null,
+      "when_to_use": "Foreshadow value example. Sneakily hint at the value you can provide (resource offer).",
+      "source": "linkedin-dm-social-selling-playbook.md:278-279"
+    },
+    {
+      "id": "voicemsg_text_followup",
+      "scenario": "voice_message_sequence",
+      "category": "Voice Message Sequences",
+      "sequence_position": 2,
+      "template": "Not sure if you do voice messages. Was curious if you'd be interested in a free swipe from a recent workshop I did. All about building a 14-day welcome window to turn new subscribers into clients. LMK either way, I can send that over later today.",
+      "char_cap": null,
+      "when_to_use": "Message 2 (text, days later) following a voice note that went unanswered. Acknowledges the voice note and offers a free swipe.",
+      "source": "linkedin-dm-social-selling-playbook.md:308-309"
+    },
+    {
+      "id": "engsk_post_engager_followup",
+      "scenario": "post_engager_followup",
+      "category": "Engagement DM Sequences (SKILL.md)",
+      "template": "Hey [name], saw you liked my post about [topic]. Is [pain_point] something you're dealing with at [company]?",
+      "char_cap": null,
+      "char_cap_soft": 280,
+      "when_to_use": "Follow up with someone who engaged (liked) your post. Keep DMs short (3-4 sentences max, never over one paragraph). Never pitch in the first message.",
+      "source": "github-gtm-skills/.../engagement/SKILL.md:79"
+    },
+    {
+      "id": "engsk_connection_acceptance",
+      "scenario": "post_acceptance_question",
+      "category": "Engagement DM Sequences (SKILL.md)",
+      "template": "Thanks for connecting, [name]. Quick q -- what's your biggest challenge with [topic] right now?",
+      "char_cap": null,
+      "char_cap_soft": 280,
+      "when_to_use": "First message right after a connection is accepted. Open-ended challenge question, no pitch.",
+      "source": "github-gtm-skills/.../engagement/SKILL.md:81"
+    },
+    {
+      "id": "engsk_profile_viewer",
+      "scenario": "profile_visit_to_call",
+      "category": "Engagement DM Sequences (SKILL.md)",
+      "template": "Hey [name], noticed you checked out my profile. What caught your attention?",
+      "char_cap": null,
+      "char_cap_soft": 280,
+      "when_to_use": "Profile viewer follow-up (SKILL.md variant). Short, low-pressure opener.",
+      "source": "github-gtm-skills/.../engagement/SKILL.md:83"
+    }
+  ],
+  "warmup_sequence": [
+    {
+      "step": 1,
+      "day_offset": "-7 to -1",
+      "phase": "multi_touch_warmup",
+      "action": "Endorse the prospect's top 2 skills, like/comment on 1-2 of their posts, follow their company page",
+      "channel": "engagement",
+      "rule": "Never just DM. Create multiple touchpoints first to build familiarity and lift response rates.",
+      "source": "linkedin-dm-social-selling-playbook.md:294-299, 446-453"
+    },
+    {
+      "step": 2,
+      "day_offset": "0",
+      "phase": "connection_request",
+      "action": "Send connection request -- blank or minimal note (no-note requests have ~10% higher acceptance)",
+      "channel": "connection_request",
+      "rule": "Include a note ONLY with a strong reason (met at trade show, sent a gift, highly specific shared context). Otherwise send blank.",
+      "source": "linkedin-dm-social-selling-playbook.md:115-124, 446-453"
+    },
+    {
+      "step": 3,
+      "day_offset": "1 to 3",
+      "phase": "first_dm",
+      "action": "Send value-first message (no pitch). Ask a curiosity-sparking open-ended question (e.g. the 'silly question' opener, 30% reply rate).",
+      "channel": "dm",
+      "rule": "Critical rule: Never pitch first. Be useful to this particular person and do not mention your company.",
+      "source": "linkedin-dm-social-selling-playbook.md:126-140, 215-237, 446-453"
+    },
+    {
+      "step": 4,
+      "day_offset": "5 to 7",
+      "phase": "follow_up_1",
+      "action": "Social proof follow-up OR relevant resource (e.g. 2-min Loom, value-add resource)",
+      "channel": "dm",
+      "rule": "Lead with value, not an ask. Reference a comparable result or a recent observation about their team.",
+      "source": "linkedin-dm-social-selling-playbook.md:446-453"
+    },
+    {
+      "step": 5,
+      "day_offset": "10 to 14",
+      "phase": "follow_up_2",
+      "action": "Responsibility trigger or a different angle (e.g. 'Is there anyone else at {company} I should reach out to about this?')",
+      "channel": "dm",
+      "rule": "Multi-thread if the primary contact is unresponsive; surface the right decision-maker.",
+      "source": "linkedin-dm-social-selling-playbook.md:446-453"
+    },
+    {
+      "step": 6,
+      "day_offset": "21+",
+      "phase": "final_follow_up",
+      "action": "Clean exit with humor (shadowban/ghosting joke) + one last relevant free resource",
+      "channel": "dm",
+      "rule": "Genuine, not sales-y, but do not drag it out. Leave the door open with a final piece of value.",
+      "source": "linkedin-dm-social-selling-playbook.md:414-415, 446-453"
+    }
+  ],
+  "warmup_account_safety_protocol": {
+    "_note": "New/inactive account warm-up to avoid LinkedIn account restriction. Distinct from the per-prospect warmup_sequence above. Source: engagement SKILL.md.",
+    "days_1_to_10_max_interactions_per_day": 60,
+    "manual_activity_only": true,
+    "activity_mix": "views, likes, comments (no automation during warm-up)",
+    "post_warmup": "Gradual increase to full safe daily limits after warm-up",
+    "safe_daily_limits": {
+      "dms_to_existing_connections": "15-20",
+      "open_inmails": "30-40",
+      "connection_requests": "10-15",
+      "other_interactions_likes_comments_views": 40
+    },
+    "hard_limits": {
+      "connection_requests_per_month_non_premium": 400,
+      "open_inmails_per_month_premium": 800,
+      "total_interactions_per_day_unofficial_enforced": "100-120"
+    },
+    "restriction_recovery": "If account restricted after aggressive outreach: stop all outbound 48-72h, then restart with warm-up protocol (60/day for 10 days), shift to organic commenting over DMs until limits reset.",
+    "source": "github-gtm-skills/.../engagement/SKILL.md:57-73, 100-101"
+  }
+}

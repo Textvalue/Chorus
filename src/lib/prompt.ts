@@ -1,56 +1,90 @@
-// Verbatim-anchored generation prompt (plan.md §5). Inline REAL samples + TRUE facts + ban-list.
-// Never generate against an abstract voice description alone — that's the path to consultancy slop.
+// Generation system prompt, assembled in three layers:
+//   L1  Universal writing guidelines  ← writing-guidelines/SYSTEM-PROMPT.md (the craft: hooks,
+//       frameworks, anti-slop, platform rules). Same for everyone, cache-friendly first.
+//   L2  Company context (from the website / Exa research) — brand DNA, ICP, true facts.
+//   L3  Writer context (from their LinkedIn / Harvest) — voice DNA, POV, verbatim prose samples.
+// The cardinal rule (stated in L1): the real prose samples in L3 govern voice — on conflict, match them.
+import { readFileSync } from "fs";
+import path from "path";
 import type { Org, Member } from "./types";
-import { BAN_LIST } from "./antislop";
 import type { SlopViolation } from "./antislop";
 
-/** Stable per-member prefix — cacheable. Brand DNA + voice + samples + facts. */
-export function buildSystemPrompt(org: Org, member: Member): string {
-  const trueFacts = [
-    `Company: ${org.name} — ${org.positioning}`,
-    `Audience: ${org.brand_dna.narrative_atoms.audience}`,
-    `Problem we solve: ${org.brand_dna.narrative_atoms.problem}`,
-    `Outcome we deliver: ${org.brand_dna.narrative_atoms.outcome}`,
-    `Proof: ${org.brand_dna.narrative_atoms.proof}`,
-    `Author: ${member.name}${member.headline ? `, ${member.headline}` : ""}`,
-  ];
+// --- L1: load the writing-guidelines prompt once. Placeholders are repointed at L2/L3 below. ---
+const GUIDELINES_FALLBACK = [
+  "You write LinkedIn posts that sound like a specific real person — not like a brand, not like AI.",
+  "Open with a sharp 6-8 word hook. Short lines, white space. One framework, one clear CTA.",
+  "No em-dashes, no curly quotes, max 2 hashtags. No corporate/AI filler words.",
+  "The writer's real posts (below) are the source of truth for voice — match them.",
+].join("\n");
 
+const GUIDELINES: string = (() => {
+  try {
+    const raw = readFileSync(path.join(process.cwd(), "writing-guidelines", "SYSTEM-PROMPT.md"), "utf8");
+    return raw
+      .replaceAll("{{BRAND_DNA}}", "(provided in COMPANY CONTEXT below)")
+      .replaceAll("{{VOICE_SAMPLES}}", "(provided in WRITER CONTEXT below — their real posts, verbatim)")
+      .replaceAll("{{POV_AND_CORRECTIONS}}", "(provided in WRITER CONTEXT below)")
+      .replace(/Write one LinkedIn post about:\s*\n\{\{TOPIC\}\} — angle: \{\{ANGLE\}\}/, "(The specific post brief is in the next message.)")
+      .replaceAll("{{TOPIC}}", "(see the brief in the next message)")
+      .replaceAll("{{ANGLE}}", "");
+  } catch {
+    return GUIDELINES_FALLBACK;
+  }
+})();
+
+export function buildSystemPrompt(org: Org, member: Member): string {
+  // --- L2: company context (the website research) ---
+  const atoms = org.brand_dna.narrative_atoms;
+  const companyContext = [
+    `# COMPANY CONTEXT${org.website ? ` — researched from ${org.website}` : ""}`,
+    `These are TRUE facts. Never contradict them and never invent metrics beyond them.`,
+    ``,
+    `Company: ${org.name} — ${org.positioning}`,
+    `Audience: ${atoms.audience}`,
+    `Problem we solve: ${atoms.problem}`,
+    `Outcome we deliver: ${atoms.outcome}`,
+    `Proof: ${atoms.proof}`,
+    atoms.offer ? `Offer: ${atoms.offer}` : ``,
+    org.icp.pains.length
+      ? `\nAudience pains (each with the recurring moment it's felt — strong hook material):\n` +
+        org.icp.pains.map((p) => `- ${p.pain} — felt: ${p.weekly_trigger} [${p.severity}]`).join("\n")
+      : ``,
+    org.competitors.length
+      ? `\nCompetitors (context only — do not name them in a post): ${org.competitors.map((c) => c.name).join(", ")}`
+      : ``,
+    org.brand_dna.voice_rules.length
+      ? `\nBrand voice rules:\n` + org.brand_dna.voice_rules.map((r) => `- ${r}`).join("\n")
+      : ``,
+  ].filter(Boolean).join("\n");
+
+  // --- L3: writer context (their LinkedIn voice) ---
   const corrections = member.corrections.slice(-6).map((c) => {
-    if (c.kind === "edit") return `- The author edited a draft: changed "${trunc(c.before)}" → "${trunc(c.after)}".`;
-    if (c.kind === "reject") return `- The author rejected a draft about "${c.topic}". Avoid that approach.`;
-    return `- Note from author: ${c.note}`;
+    if (c.kind === "edit") return `- They edited a draft: "${trunc(c.before)}" → "${trunc(c.after)}".`;
+    if (c.kind === "reject") return `- They rejected a draft about "${c.topic}". Avoid that approach.`;
+    return `- Note from them: ${c.note}`;
   });
 
-  return [
-    `You write LinkedIn posts AS ${member.name}. You must sound exactly like them — not like a brand, not like a consultant, not like AI.`,
+  const writerContext = [
+    `# WRITER CONTEXT — you are writing AS ${member.name}${member.headline ? `, ${member.headline}` : ""}`,
+    `This is the voice source of truth. It outranks every guideline above on voice — match it.`,
     ``,
-    `## How ${member.name} actually writes (HOW)`,
+    `## How ${member.name} writes`,
     `Traits: ${member.voice_dna.traits.join(", ")}`,
     `Sentence patterns: ${member.voice_dna.sentence_patterns.join("; ")}`,
     `Signature terms they really use: ${member.voice_dna.signature_terms.join(", ")}`,
-    `Never use these: ${member.voice_dna.phrases_to_avoid.join(", ")}`,
+    `Words they never use: ${member.voice_dna.phrases_to_avoid.join(", ")}`,
     ``,
-    `## What ${member.name} believes (WHAT) — the POV, the defensible half`,
+    `## What ${member.name} believes (their POV — the defensible half)`,
     `Beliefs: ${member.expert_pov.beliefs.join(" | ")}`,
     `Hot takes: ${member.expert_pov.hot_takes.join(" | ")}`,
     `Topics they own: ${member.expert_pov.topics.join(", ")}`,
     ``,
-    `## REAL posts they wrote (anchor your voice to THESE verbatim — match rhythm, length, punctuation)`,
+    `## ${member.name}'s REAL posts — study rhythm, length, and punctuation; sound like THIS`,
     ...member.prose_samples.map((s, i) => `### Sample ${i + 1}\n${s}`),
-    ``,
-    `## TRUE facts (never contradict; never invent metrics not implied here)`,
-    ...trueFacts.map((f) => `- ${f}`),
-    ``,
-    `## Brand voice rules`,
-    ...org.brand_dna.voice_rules.map((r) => `- ${r}`),
     corrections.length ? `\n## Learned corrections (respect these)\n${corrections.join("\n")}` : ``,
-    ``,
-    `## Hard rules`,
-    `- No em-dashes (use periods). No curly quotes. Max 2 hashtags, ideally zero.`,
-    `- Banned words/phrases: ${BAN_LIST.join(", ")}.`,
-    `- Open with a real, specific hook. Short lines. White space. Sound human and a little spiky.`,
-    `- One clear POV per post. End with a question or a sharp line, not a CTA.`,
-  ].join("\n");
+  ].filter(Boolean).join("\n");
+
+  return [GUIDELINES, companyContext, writerContext].join("\n\n---\n\n");
 }
 
 export function buildUserPrompt(topic: string, angle: string, retryViolations?: SlopViolation[]): string {
