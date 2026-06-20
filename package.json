@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@openrouter/ai-sdk-provider": "^2.9.1",
+    "@vapi-ai/web": "^2.5.2",
     "ai": "^6.0.208",
     "exa-js": "^2.14.0",
     "next": "16.2.9",

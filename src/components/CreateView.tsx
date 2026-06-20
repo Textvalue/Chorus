@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Avatar } from "./Avatar";
+import { MicButton } from "./MicButton";
 import { useToast } from "./Toast";
 import { IconSpark, IconCheck, IconRefresh, IconEdit, IconX, IconCopy } from "./Icons";
 
@@ -136,6 +137,7 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
             />
             <div className="composer-foot">
               <span className="hint">Tutti writes it in your voice, then catches the off-brand notes before you see it.</span>
+              <MicButton value={brief} onChange={setBrief} />
               <button className="btn pri" onClick={() => generate()} disabled={!brief.trim()}>
                 <IconSpark /> Write in my voice
               </button>

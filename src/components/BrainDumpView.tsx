@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "./Avatar";
+import { MicButton } from "./MicButton";
 import { useToast } from "./Toast";
 import { IconSpark, IconCheck } from "./Icons";
 
@@ -67,6 +68,7 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
         />
         <div className="composer-foot">
           <span className="hint">This both spawns post ideas and corrects your POV — the part that gets smarter over time.</span>
+          <MicButton value={text} onChange={setText} />
           <button className="btn pri" onClick={process} disabled={!text.trim() || loading}>
             {loading ? <><span className="spinner" /> Processing…</> : <><IconSpark /> Process</>}
           </button>
