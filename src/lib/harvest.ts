@@ -15,6 +15,7 @@ type HarvestProfile = {
   lastName?: string;
   headline?: string;
   about?: string;
+  photo?: string;
   followerCount?: number;
   connectionsCount?: number;
   location?: { linkedinText?: string };
@@ -25,6 +26,7 @@ export type LinkedInProfile = {
   name: string;
   headline: string;
   about: string;
+  photo: string;
   location: string;
   followers: number;
   experience: { company: string; position: string }[];
@@ -66,6 +68,7 @@ export async function fetchProfileFull(profileUrl: string): Promise<LinkedInProf
     name: [el.firstName, el.lastName].filter(Boolean).join(" ").trim() || "Member",
     headline: el.headline ?? "",
     about: el.about ?? "",
+    photo: el.photo ?? "",
     location: el.location?.linkedinText ?? "",
     followers: el.followerCount ?? el.connectionsCount ?? 0,
     experience: (el.experience ?? [])

@@ -9,6 +9,7 @@ export function mockProfile(member: Member): LinkedInProfile {
     name: member.name,
     headline: member.headline || "",
     about: member.prose_samples[0] ? member.prose_samples[0].slice(0, 220) : "",
+    photo: "",
     location: "",
     followers: 0,
     experience: member.headline ? [{ company: "", position: member.headline }] : [],
