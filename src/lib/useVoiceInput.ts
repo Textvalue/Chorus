@@ -1,66 +1,62 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// Voice dictation via Vapi (transcription-focused: a silent assistant, we only read the user's
-// final transcript). Renders inert when NEXT_PUBLIC_VAPI_PUBLIC_KEY is absent. Vapi is imported
-// dynamically inside the effect so it never runs during SSR.
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
-
-const DICTATION_ASSISTANT = {
-  firstMessage: "",
-  transcriber: { provider: "deepgram", model: "nova-3", language: "en-US" },
-  model: {
-    provider: "openai",
-    model: "gpt-4o-mini",
-    messages: [{ role: "system", content: "You are a silent transcriber. Never speak or respond." }],
-  },
-  voice: { provider: "vapi", voiceId: "Elliot" },
-};
-
-type Msg = { type?: string; role?: string; transcriptType?: string; transcript?: string };
+// Pure dictation via the browser-native Web Speech API (speech-to-text only — no LLM, no voice,
+// so nothing ever talks back). Free, no key. Chrome / Edge / Safari (not Firefox). Same interface
+// as before, so MicButton and its wiring are unchanged.
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export function useVoiceInput() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const vapiRef = useRef<any>(null);
-  const available = !!PUBLIC_KEY;
+  const recRef = useRef<any>(null);
+  const [available, setAvailable] = useState(false);
   const [listening, setListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
-  const [partial, setPartial] = useState("");
+  const [transcript, setTranscript] = useState(""); // committed (final) text
+  const [partial, setPartial] = useState(""); // in-progress words
 
   useEffect(() => {
-    if (!PUBLIC_KEY) return;
-    let disposed = false;
-    (async () => {
-      const Vapi = (await import("@vapi-ai/web")).default;
-      if (disposed) return;
-      const v = new Vapi(PUBLIC_KEY);
-      vapiRef.current = v;
-      v.on("call-start", () => setListening(true));
-      v.on("call-end", () => { setListening(false); setPartial(""); });
-      v.on("error", (e: unknown) => { console.error("[vapi]", e); setListening(false); });
-      v.on("message", (m: Msg) => {
-        if (m.type !== "transcript" || m.role !== "user" || !m.transcript) return;
-        if (m.transcriptType === "final") {
-          setTranscript((prev) => (prev ? prev + " " : "") + m.transcript!.trim());
-          setPartial("");
-        } else {
-          setPartial(m.transcript);
-        }
-      });
-    })();
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) return;
+    setAvailable(true);
+
+    const rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = "en-US";
+
+    rec.onresult = (e: any) => {
+      let fin = "";
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const text = e.results[i][0].transcript;
+        if (e.results[i].isFinal) fin += text;
+        else interim += text;
+      }
+      if (fin) setTranscript((prev) => (prev ? prev + " " : "") + fin.trim());
+      setPartial(interim);
+    };
+    rec.onend = () => { setListening(false); setPartial(""); };
+    rec.onerror = () => { setListening(false); setPartial(""); };
+
+    recRef.current = rec;
     return () => {
-      disposed = true;
-      vapiRef.current?.stop?.();
-      vapiRef.current = null;
+      try { rec.stop(); } catch { /* ignore */ }
+      recRef.current = null;
     };
   }, []);
 
   const start = useCallback(() => {
     setTranscript("");
     setPartial("");
-    vapiRef.current?.start?.(DICTATION_ASSISTANT);
+    try {
+      recRef.current?.start();
+      setListening(true);
+    } catch { /* already started */ }
   }, []);
-  const stop = useCallback(() => vapiRef.current?.stop?.(), []);
+
+  const stop = useCallback(() => {
+    try { recRef.current?.stop(); } catch { /* ignore */ }
+    setListening(false);
+  }, []);
 
   const live = (transcript + " " + partial).trim();
   return { available, listening, transcript, live, start, stop };
