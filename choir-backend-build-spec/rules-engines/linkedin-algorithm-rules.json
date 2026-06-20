@@ -1,0 +1,252 @@
+{
+  "$schema_note": "Deterministic LinkedIn algorithm + scheduling + pre-publish-linter rules engine for Choir. All thresholds are numeric and implementable. Data extracted verbatim from KB primary-source files; each block cites path:line. Layer = global_library (app-wide read-only seed; identical for every org/member). Engineers load this into a rules table or evaluate it in a pure function at draft/publish time. The Interest Graph model (360Brew, 150B params) is the authoritative 2025-2026 mechanic — pre-2024 reach/follower metrics are NOT comparable.",
+  "version": "1.0",
+  "layer": "global_library",
+  "source_authority": "primary-research-synthesis (van der Blom Algorithm InSights 2025 — 1.8M posts; Meet Lea / Paul Irolla PhD synthesis Feb 2026; Manca Korelc 360Brew Jan 2026; Christopher Penn / Trust Insights Sep 2025; Agorapulse 2025; LinkedIn official). See linkedin-algorithm-2025-2026.md:234-247 Source Registry.",
+
+  "distribution_pipeline": {
+    "note": "4 sequential gates; fail an early stage and the post dies. Drives WHY golden_hour and content_velocity matter. Source: linkedin-algorithm-2025-2026.md:89-104.",
+    "stages": [
+      { "stage": 1, "name": "Quality Filter", "what_happens": "AI classifies post as spam / low-quality / clear. Checks engagement-bait patterns, AI-generated signals, policy violations.", "timeframe": "Seconds", "source": "linkedin-algorithm-2025-2026.md:95" },
+      { "stage": 2, "name": "Initial Test", "what_happens": "Post shown to a small slice of network + topically-similar users (~8-15% of followers). Measures early engagement signals.", "timeframe": "First 60-90 minutes", "source": "linkedin-algorithm-2025-2026.md:96; velocity slice 8-15% from scheduling/SKILL.md:48" },
+      { "stage": 3, "name": "Scoring & Expansion", "what_happens": "Scores engagement QUALITY (dwell time, comments, saves). Above threshold = expands to broader interest-matched audience.", "timeframe": "Hours 2-24", "source": "linkedin-algorithm-2025-2026.md:97" },
+      { "stage": 4, "name": "Extended Distribution", "what_happens": "Top performers keep reaching new audiences up to 5 days (previously 2-3). Posts grow 3x slower but live 5 days.", "timeframe": "Days 1-5", "source": "linkedin-algorithm-2025-2026.md:98,102" }
+    ]
+  },
+
+  "ranking_factors": [
+    { "factor": "dwell_time", "label": "Dwell time (read time on post)", "weight_or_effect": "HIGHEST signal. 15.6% engagement rate at 61+ sec dwell vs 1.2% at 0-3 sec. Outweighs likes by 3:1+.", "rank": 1, "numeric": { "engagement_rate_at_61plus_sec_pct": 15.6, "engagement_rate_at_0to3_sec_pct": 1.2, "vs_likes_ratio": "3:1+" }, "source": "linkedin-algorithm-2025-2026.md:116; platform-rules/linkedin.md:50" },
+    { "factor": "comments_threaded", "label": "Comments (especially threaded / 2nd-degree)", "weight_or_effect": "Comments are 15x more impactful than likes. 2nd-degree comments have 2.6x the impact of 1st-degree.", "rank": 2, "numeric": { "comment_vs_like_multiplier": 15, "second_degree_vs_first_degree_multiplier": 2.6 }, "source": "linkedin-algorithm-2025-2026.md:117; platform-rules/linkedin.md:51" },
+    { "factor": "saves_bookmarks", "label": "Saves / Bookmarks", "weight_or_effect": "HIGH and rising. 'A like means little. A save means everything.' Saves drive future content recommendations.", "rank": 3, "numeric": null, "source": "linkedin-algorithm-2025-2026.md:118; platform-rules/linkedin.md:52" },
+    { "factor": "shares_reposts", "label": "Shares / Reposts", "weight_or_effect": "HIGH. Introduces content to entirely new audiences.", "rank": 4, "numeric": null, "source": "linkedin-algorithm-2025-2026.md:119" },
+    { "factor": "clicks", "label": "Clicks (see more, profile visits)", "weight_or_effect": "MEDIUM. Signals genuine interest.", "rank": 5, "numeric": null, "source": "linkedin-algorithm-2025-2026.md:120" },
+    { "factor": "likes_reactions", "label": "Likes / Reactions", "weight_or_effect": "LOW. Easiest action, least signal value. Still better than nothing.", "rank": 6, "numeric": null, "source": "linkedin-algorithm-2025-2026.md:121" },
+    { "factor": "early_engagement_velocity", "label": "Early engagement velocity (golden hour)", "weight_or_effect": "First 60-90 minutes determine 80%+ of total reach. Speed of early engagement matters, not just volume: 20 comments in 30 min > 50 comments in 24 hr. High early velocity = expanded distribution to followers-of-followers.", "rank": "gate-multiplier", "numeric": { "first_minutes_window": 90, "share_of_total_reach_pct": 80 }, "source": "scheduling/SKILL.md:44-49; platform-rules/linkedin.md:53" },
+    { "factor": "topic_consistency", "label": "Topic / niche consistency", "weight_or_effect": "Posting on the same 2-3 topics consistently raises distribution. Algorithm builds a per-user 'creator topic graph'. Pivoting topics too often RESETS distribution baseline. Interest Graph: niche authority > network size.", "rank": "structural", "numeric": { "recommended_topic_count_min": 2, "recommended_topic_count_max": 3 }, "source": "scheduling/SKILL.md:66-71; linkedin-algorithm-2025-2026.md:78,85" },
+    { "factor": "format_choice", "label": "Content format multiplier", "weight_or_effect": "Carousel/document 3.7-6.6x engagement vs text; formatted text 2.1x vs unformatted; image post 2x vs text-only. See format_performance for full hierarchy.", "rank": "structural", "numeric": { "carousel_vs_text_min": 3.7, "carousel_vs_text_max": 6.6, "formatted_vs_unformatted": 2.1, "image_vs_textonly": 2.0 }, "source": "linkedin-algorithm-2025-2026.md:164-166; platform-rules/linkedin.md:55-56" }
+  ],
+
+  "format_performance": [
+    { "format": "carousel_document", "tier": "Highest", "multiplier_vs_text": "3.7-6.6x", "numeric_min": 3.7, "numeric_max": 6.6, "notes": "Still king. Swiping increases dwell time. Confirmed across multiple 2025-2026 studies.", "source": "linkedin-algorithm-2025-2026.md:164" },
+    { "format": "text_plus_image", "tier": "High", "multiplier_vs_text": "2x", "numeric_min": 2.0, "numeric_max": 2.0, "notes": "Image posts get 2x engagement vs text-only.", "source": "linkedin-algorithm-2025-2026.md:165" },
+    { "format": "formatted_text", "tier": "High", "multiplier_vs_text": "2.1x vs unformatted", "numeric_min": 2.1, "numeric_max": 2.1, "notes": "Use bold, bullets, whitespace, emojis-as-bullets.", "source": "linkedin-algorithm-2025-2026.md:166" },
+    { "format": "text_only", "tier": "Baseline", "multiplier_vs_text": "1x", "numeric_min": 1.0, "numeric_max": 1.0, "notes": "Still works well with strong hooks and structure.", "source": "linkedin-algorithm-2025-2026.md:167" },
+    { "format": "video", "tier": "Declining", "multiplier_vs_text": "reach dropped ~300% since 2023", "numeric_min": null, "numeric_max": null, "notes": "Subtitles non-negotiable. Short-form (<60s) critical. Native > external links.", "source": "linkedin-algorithm-2025-2026.md:168" },
+    { "format": "poll", "tier": "Low", "multiplier_vs_text": "low engagement, low authority", "numeric_min": null, "numeric_max": null, "notes": "Avoid for serious brand building.", "source": "linkedin-algorithm-2025-2026.md:169" },
+    { "format": "external_link_post", "tier": "Penalized", "multiplier_vs_text": "~60% reach reduction", "numeric_min": -0.60, "numeric_max": -0.60, "notes": "Links in body AND in comments are suppressed.", "source": "linkedin-algorithm-2025-2026.md:170" }
+  ],
+
+  "suppression_signals": [
+    { "signal": "external_links_in_body", "penalty": "~60% reach reduction", "penalty_numeric_pct": -60, "detectable": true, "detection_rule": "Post body contains a URL (http://, https://, www., or bare-domain pattern like example.com/...).", "source": "linkedin-algorithm-2025-2026.md:170,212; platform-rules/linkedin.md:30,41" },
+    { "signal": "external_links_in_comments", "penalty": "~60% reach reduction (links in comments no longer avoid the penalty — King-Comment technique deprecated)", "penalty_numeric_pct": -60, "detectable": true, "detection_rule": "First-party comment (or planned pinned comment) contains a URL. Use 'DM me [keyword]' or 'Link in my profile' instead.", "source": "linkedin-algorithm-2025-2026.md:212; platform-rules/linkedin.md:41,54; checklist note linkedin-post-optimization-checklist.md:118" },
+    { "signal": "engagement_bait", "penalty": "Active filtering and suppression", "penalty_numeric_pct": null, "detectable": true, "detection_rule": "Phrase-match (case-insensitive) on bait patterns: 'comment YES', 'comment yes if', 'like if you agree', 'like this if', 'tag a friend who', 'comment below if you want', 'drop a YES'.", "source": "linkedin-algorithm-2025-2026.md:210; platform-rules/linkedin.md:32,59" },
+    { "signal": "ai_generated_comments", "penalty": "Can kill post growth entirely. LinkedIn detects and penalizes.", "penalty_numeric_pct": null, "detectable": "partial", "detection_rule": "Route all generated comments through the anti-slop / sanitize-copy gate before posting (em-dash density, kill-list, banned phrases). AI tells = penalty risk.", "source": "linkedin-algorithm-2025-2026.md:211; feature-map.json:168 (comment generation must pass same anti-slop gate as posts)" },
+    { "signal": "posting_twice_in_24h", "penalty": "Cannibalizes reach on BOTH posts by up to 50%", "penalty_numeric_pct": -50, "detectable": true, "detection_rule": "A second post scheduled/published <24h (86400 sec) after the member's previous post on the same account. Cross-ref cadence_rules.minimum_spacing_hours.", "source": "linkedin-algorithm-2025-2026.md:183,213; scheduling/SKILL.md:39" },
+    { "signal": "hashtag_stuffing", "penalty": "-5% reach at 6+; neutral-to-slightly-negative at 4-5", "penalty_numeric_pct": -5, "detectable": true, "detection_rule": "Count '#' tokens in body. >=6 = -5% penalty. 4-5 = neutral/slight-negative (warn). 1-3 = +12.6% (optimal). 0 = misses the +12.6% lift (warn).", "source": "linkedin-algorithm-2025-2026.md:191-194,214; platform-rules/linkedin.md:43" },
+    { "signal": "editing_post_within_first_hour", "penalty": "Can reset distribution", "penalty_numeric_pct": null, "detectable": true, "detection_rule": "Edit event on a post < 3600 sec after publish. Warn the member: editing within the first hour can reset distribution.", "source": "linkedin-algorithm-2025-2026.md:215" },
+    { "signal": "key_content_below_fold", "penalty": "Hook/key message hidden behind 'see more' fold kills dwell time and click-through", "penalty_numeric_pct": null, "detectable": true, "detection_rule": "First visible block (before ~210 chars / first line group) lacks a complete hook+rehook. Critical content must be fully visible without clicking 'see more'. See pre_publish_linter.hook_past_fold for the numeric threshold.", "source": "linkedin-algorithm-2025-2026.md (format hierarchy) + copywriting-rules.md:60-61,450; feature-map.json:140,146 (210-char fold)" },
+    { "signal": "missing_cta", "penalty": "Up to 40% less engagement; ending with a question adds 20-40%", "penalty_numeric_pct": -40, "detectable": true, "detection_rule": "No CTA in the closing block (no question mark, no save/repost/comment/follow/DM prompt). See pre_publish_linter.missing_cta.", "source": "copywriting-rules.md:92,190; checklist linkedin-post-optimization-checklist.md:91; feature-map.json:146" },
+    { "signal": "polls_for_brand_building", "penalty": "Low engagement, low authority", "penalty_numeric_pct": null, "detectable": true, "detection_rule": "Format == poll on a serious brand-building post. Warn (not hard block).", "source": "linkedin-algorithm-2025-2026.md:169; platform-rules/linkedin.md:57" },
+    { "signal": "video_no_subtitles", "penalty": "Video reach already -300% since 2023; missing subtitles compounds loss", "penalty_numeric_pct": null, "detectable": "partial", "detection_rule": "Format == video and no subtitle track flagged. Warn: subtitles non-negotiable; keep <60s.", "source": "linkedin-algorithm-2025-2026.md:168; platform-rules/linkedin.md:56" }
+  ],
+
+  "best_time_slots": {
+    "note": "Times are in the RECIPIENT'S / audience local timezone, not the poster's. Primary window: Tuesday-Thursday 7:30-8:30 AM = single best B2B slot. Use as scheduler defaults.",
+    "primary_window": { "days": ["Tuesday", "Wednesday", "Thursday"], "time": "07:30-08:30", "label": "Best slot for B2B audiences", "source": "scheduling/SKILL.md:29" },
+    "by_day": [
+      { "day": "Tuesday", "best_times": ["07:30-08:30", "12:00-13:00"], "rank": "Top-performing day", "source": "scheduling/SKILL.md:21" },
+      { "day": "Wednesday", "best_times": ["07:30-08:30", "12:00-13:00"], "rank": "Second-best", "source": "scheduling/SKILL.md:22" },
+      { "day": "Thursday", "best_times": ["07:30-08:30", "12:00-13:00"], "rank": "Strong for B2B", "source": "scheduling/SKILL.md:23" },
+      { "day": "Monday", "best_times": ["08:00-09:00"], "rank": "Good but competing with email catch-up", "source": "scheduling/SKILL.md:24" },
+      { "day": "Friday", "best_times": ["07:30-08:30"], "rank": "Moderate; drops after noon", "source": "scheduling/SKILL.md:25" },
+      { "day": "Saturday", "best_times": ["09:00-11:00"], "rank": "Less competition, lower volume", "source": "scheduling/SKILL.md:26" },
+      { "day": "Sunday", "best_times": ["19:00-21:00"], "rank": "Sunday evening prep window", "source": "scheduling/SKILL.md:27" }
+    ],
+    "platform_rules_secondary": {
+      "note": "Broader (less precise) windows from the platform-rules voice-DNA file. Use the scheduling SKILL table above as canonical; this is a corroborating range.",
+      "best_days": ["Tuesday", "Wednesday", "Thursday"],
+      "best_times_local": ["07:00-08:00", "12:00", "17:00-18:00"],
+      "source": "platform-rules/linkedin.md:13"
+    }
+  },
+
+  "cadence_rules": [
+    { "rule": "optimal_weekly_frequency", "value": "3-4 posts per week (sweet spot). 3x/week = optimal per algorithm research.", "value_numeric": { "min_per_week": 3, "max_per_week": 4 }, "enforcement": "scheduler default; soft-cap warn above 4", "source": "scheduling/SKILL.md:36,41; linkedin-algorithm-2025-2026.md:182" },
+    { "rule": "frequency_band_1x_week", "value": "1x/week = baseline presence (beginners, busy execs)", "value_numeric": { "per_week": 1 }, "enforcement": "informational", "source": "scheduling/SKILL.md:35" },
+    { "rule": "frequency_band_5x_week", "value": "5x/week = diminishing returns (full-time creators only)", "value_numeric": { "per_week": 5 }, "enforcement": "warn: diminishing returns", "source": "scheduling/SKILL.md:37" },
+    { "rule": "frequency_band_daily", "value": "Daily (7x/week) can hurt quality — not recommended unless quality stays high", "value_numeric": { "per_week": 7 }, "enforcement": "warn: daily-posting reach-cannibalization anti-pattern", "source": "scheduling/SKILL.md:38; feature-map.json:140" },
+    { "rule": "frequency_band_2x_day", "value": "2x/day = counterproductive, NEVER recommended", "value_numeric": { "per_day": 2 }, "enforcement": "HARD BLOCK", "source": "scheduling/SKILL.md:39" },
+    { "rule": "minimum_spacing", "value": "24+ hours between posts. Posting twice within 24h cannibalizes reach by up to 50%.", "value_numeric": { "minimum_spacing_hours": 24, "minimum_spacing_seconds": 86400, "cannibalization_penalty_pct": -50 }, "enforcement": "HARD BLOCK on schedule/publish if <24h since member's previous post", "source": "linkedin-algorithm-2025-2026.md:183; scheduling/SKILL.md:39; feature-map.json:140" },
+    { "rule": "spacing_benefit", "value": "24hr spacing = +120% visibility vs back-to-back posts", "value_numeric": { "visibility_lift_pct": 120 }, "enforcement": "informational (the upside of the minimum_spacing block)", "source": "linkedin-algorithm-2025-2026.md:184; feature-map.json:140" },
+    { "rule": "topic_consistency", "value": "Stick to the same 2-3 topics; pivoting too often resets distribution baseline", "value_numeric": { "topic_count_min": 2, "topic_count_max": 3 }, "enforcement": "warn on topic drift across recent posts", "source": "scheduling/SKILL.md:66-71" }
+  ],
+
+  "golden_hour_checklist": {
+    "note": "Post-publish engagement routine. The poster's OWN activity signals the algorithm they're active, boosting distribution; fast comment replies invite more comments (4x weight). First 60-90 min determine 80%+ of reach. Choir fires these as a post-publish task checklist with relative-time triggers.",
+    "source": "scheduling/SKILL.md:52-64; first-60-90-min from scheduling/SKILL.md:48 + linkedin-algorithm-2025-2026.md:96",
+    "steps": [
+      { "t_plus_min": 0, "t_plus_max_min": 0, "action": "Post goes live.", "source": "scheduling/SKILL.md:56" },
+      { "t_plus_min": 0, "t_plus_max_min": 5, "action": "Respond to every immediate comment.", "source": "scheduling/SKILL.md:57" },
+      { "t_plus_min": 5, "t_plus_max_min": 15, "action": "Engage with 5-10 other posts in your niche.", "source": "scheduling/SKILL.md:58" },
+      { "t_plus_min": 15, "t_plus_max_min": 30, "action": "Check back, respond to all new comments.", "source": "scheduling/SKILL.md:59" },
+      { "t_plus_min": 30, "t_plus_max_min": 60, "action": "Continue engaging on others' posts + responding.", "source": "scheduling/SKILL.md:60" },
+      { "t_plus_min": 60, "t_plus_max_min": 120, "action": "Final check, respond to remaining comments.", "source": "scheduling/SKILL.md:61" }
+    ]
+  },
+
+  "engagement_weights": {
+    "note": "Multipliers used to score / nudge engagement quality, e.g. in the commenting feature's quality nudge. The 4x figure is the algorithm's reward for fast/quality comment replies (scheduling/SKILL.md:64). The >15-word qualifier is NOT a verbatim KB figure — it is the feature-map's operational interpretation of the commenting strategy's quality-over-quantity principle (a meaningful, substantive comment vs a 'Great post!' one-liner). Flagged in net_new; do not present >15 words as a sourced LinkedIn metric.",
+    "actions": [
+      { "action": "comment_reply_fast", "multiplier": 4, "condition": "Responding quickly to comments encourages more comments; carries 4x engagement weight.", "source": "scheduling/SKILL.md:64" },
+      { "action": "comment_vs_like", "multiplier": 15, "condition": "A comment is 15x more impactful than a like.", "source": "linkedin-algorithm-2025-2026.md:117" },
+      { "action": "second_degree_comment_vs_first", "multiplier": 2.6, "condition": "2nd-degree comments have 2.6x the impact of 1st-degree.", "source": "linkedin-algorithm-2025-2026.md:117" },
+      { "action": "dwell_time_vs_likes", "multiplier": 3, "condition": "Dwell time outweighs likes by 3:1+.", "source": "linkedin-algorithm-2025-2026.md:116" },
+      { "action": "meaningful_comment_threshold", "multiplier": 4, "condition": "OPERATIONAL NUDGE (feature-map interpretation, NOT a verbatim KB metric): a substantive comment (>=15 words, contains an insight, ideally a question) is treated as a 'meaningful' comment worth ~4x a one-liner. Used to gate comment quality, not as a sourced algorithm figure.", "source": "feature-map.json:168; derived from linkedin-commenting-strategy.md:94-120 (quality-over-quantity principle) + scheduling/SKILL.md:64 (4x)" }
+    ]
+  },
+
+  "comment_quality_linter": {
+    "note": "Real-time linter for the AI comment-generation feature (separate from the post pre_publish_linter). Blocks low-value comments at draft time and routes output through the anti-slop gate (AI comments are penalized by the algorithm). Source: feature-map.json:168,174; linkedin-commenting-strategy.md:119-120,267-273.",
+    "checks": [
+      { "check": "generic_praise_block", "rule": "Block / hard-warn if comment matches generic-praise patterns (case-insensitive): 'great post', 'great post!', 'love this', 'so true', 'thanks for sharing', 'well said', 'spot on' with no added insight.", "threshold": "phrase-match", "penalty": "BLOCK (zero value, zero visibility)", "message": "This reads as generic praise. Add a specific insight or experience — '“Great post!” comments have zero visibility.'", "source": "linkedin-commenting-strategy.md:119,269" },
+      { "check": "min_length", "rule": "Comment word count >= 15 for a quality/expansion comment (Support-type comments are exempt — they are intentionally one-liners).", "threshold": 15, "penalty": "WARN (below meaningful-comment threshold)", "message": "Under 15 words. Quality comments (Expansion/Call-Out/Sidecar) need substance to earn the ~4x weight; one-liners are fine only as Support comments.", "source": "feature-map.json:168; linkedin-commenting-strategy.md:94-120" },
+      { "check": "no_question_or_insight", "rule": "Quality comment should contain a question (?) OR a first-person insight ('I', 'in my experience', 'we found') OR a specific reference to the post's content.", "threshold": "presence-check", "penalty": "WARN", "message": "Add a question or a specific insight — comment for the audience, not just the author.", "source": "linkedin-commenting-strategy.md:113-120,131" },
+      { "check": "anti_slop_gate", "rule": "Route the generated comment through sanitize-copy (em-dash density <=1/paragraph, kill-list, banned phrases) before allowing post. AI-detectable tells risk algorithm penalty.", "threshold": "sanitize-copy pass", "penalty": "BLOCK on fail", "message": "Comment tripped the anti-slop gate. AI-generated comments are detected and penalized — rewrite to remove AI tells.", "source": "feature-map.json:168; anti-slop-universal.md:88; linkedin-algorithm-2025-2026.md:211" },
+      { "check": "daily_comment_quota", "rule": "Cap at 10-15 quality comments per day (server-side). More can be flagged as spam by LinkedIn.", "threshold": { "min": 10, "max": 15 }, "penalty": "WARN at 15, BLOCK above hard cap", "message": "You're near the daily comment cap. LinkedIn may flag >15 comments/day as spam.", "source": "linkedin-commenting-strategy.md:270; feature-map.json:188" }
+    ],
+    "comment_types_reference": "11 comment types (6 Alic: Personal Advice, Professional Advice, Comparisons, Motivational, Humor, Tags; 5 Browne: Support, Call Out, Expansion, Comedy, Sidecar). Sidecar (full-length post-as-comment on a 10K+ creator's <1hr-old post) is the highest-ROI type. Detail: linkedin-commenting-strategy.md:132-224."
+  },
+
+  "pre_publish_linter": [
+    {
+      "check": "external_link_in_body",
+      "threshold": "0 URLs in post body",
+      "penalty": "-60% reach",
+      "severity": "block",
+      "detection": "Regex match for URLs in body: /(https?:\\/\\/|www\\.)\\S+/i OR bare-domain /\\b[a-z0-9.-]+\\.(com|io|co|ai|net|org|so|dev|app)(\\/\\S*)?\\b/i.",
+      "message": "External link in your post body cuts reach ~60%. Move it to your profile or use 'DM me [keyword]'.",
+      "source": "linkedin-algorithm-2025-2026.md:170,212; platform-rules/linkedin.md:41; feature-map.json:146"
+    },
+    {
+      "check": "external_link_in_planned_comment",
+      "threshold": "0 URLs in first/pinned comment",
+      "penalty": "-60% reach",
+      "severity": "block",
+      "detection": "Same URL regex applied to the planned first-party comment / pinned comment text.",
+      "message": "Links in comments are penalized ~60% too (King-Comment no longer works). Use 'Link in my profile' or 'DM me'.",
+      "source": "linkedin-algorithm-2025-2026.md:212; linkedin-post-optimization-checklist.md:118; platform-rules/linkedin.md:54"
+    },
+    {
+      "check": "hashtag_count",
+      "threshold": { "optimal_min": 1, "optimal_max": 3, "neutral_min": 4, "neutral_max": 5, "penalty_at": 6 },
+      "penalty": "-5% reach at 6+; misses +12.6% lift outside 1-3",
+      "severity": "warn (block configurable at 6+)",
+      "detection": "Count '#' hashtag tokens in body. 1-3 => pass (+12.6% reach). 4-5 => warn (neutral/slight-negative). >=6 => warn/block (-5%). 0 => warn (misses +12.6% lift).",
+      "message": "Use 1-3 niche hashtags (+12.6% reach). 6+ hashtags = -5% reach. You have {n}.",
+      "source": "linkedin-algorithm-2025-2026.md:191-194,214; platform-rules/linkedin.md:43; feature-map.json:146"
+    },
+    {
+      "check": "hook_past_fold",
+      "threshold": { "fold_char_limit": 210 },
+      "penalty": "Hook/key message hidden behind 'see more' fold (kills dwell time + see-more clicks)",
+      "severity": "warn",
+      "detection": "If the post's hook + rehook is not fully contained within the first ~210 characters (the mobile 'see more' fold), or the first 210 chars do not end on a complete compelling line, flag. The hook must work before the fold.",
+      "message": "Your hook runs past the ~210-char 'see more' fold. The first line must stop the scroll before truncation — tighten the opener.",
+      "source": "feature-map.json:140,146 (210-char fold); copywriting-rules.md:60-61,450"
+    },
+    {
+      "check": "missing_cta",
+      "threshold": "1 CTA in closing block",
+      "penalty": "Up to -40% engagement (CTA-less posts); a closing question adds +20-40%",
+      "severity": "warn",
+      "detection": "Closing block (last paragraph) must contain a CTA: a question mark, OR a save/comment/repost/follow/DM prompt. Phrase set (case-insensitive): 'save this', 'save it for later', 'drop a comment', 'what's your', 'what has been your', 'agree?', 'repost', 'follow me', 'follow for', 'DM me', 'let me know'.",
+      "message": "No CTA detected. Posts without a CTA get up to 40% less engagement — end with a question or a 'Save this for later' prompt.",
+      "source": "copywriting-rules.md:90-93,190; linkedin-post-optimization-checklist.md:91; feature-map.json:146"
+    },
+    {
+      "check": "em_dash_density",
+      "threshold": { "max_per_paragraph": 1 },
+      "penalty": "AI-tell; em dash overuse is the single most reliable AI signal (algorithm penalizes AI-generated content)",
+      "severity": "block",
+      "detection": "For each paragraph, count em-dash chars (—, U+2014). >1 per paragraph fails. Same logic as scripts/lib/sanitize-copy.mjs em-dash-density check.",
+      "message": "Paragraph {i} has {n} em-dashes (max 1). Em dashes are the #1 AI tell — use commas, periods, or parentheses.",
+      "source": "anti-slop-universal.md:88,258; scripts/lib/sanitize-copy.mjs:406-415; feature-map.json:146"
+    },
+    {
+      "check": "engagement_bait",
+      "threshold": "0 bait phrases",
+      "penalty": "Active filtering and suppression",
+      "severity": "block",
+      "detection": "Case-insensitive phrase-match: 'comment YES', 'comment yes if', 'like if you agree', 'like this if', 'tag a friend who', 'comment below if', 'drop a YES', 'type YES'.",
+      "message": "Engagement bait ('Comment YES if you agree') is actively filtered and suppressed. Rewrite as a genuine question.",
+      "source": "linkedin-algorithm-2025-2026.md:210; platform-rules/linkedin.md:32,59"
+    },
+    {
+      "check": "post_length_band",
+      "threshold": { "text_post": [600, 1200], "image_post": [900, 1500], "carousel_post": [1200, 1500], "video_post": [500, 800], "recommended_general": [1200, 1500] },
+      "penalty": "Outside optimal band underperforms (top-5% posts run 1,000-1,500 chars)",
+      "severity": "warn",
+      "detection": "Char-count the body; compare to the band for the post's format. Outside band => warn with the target range. Sentences over 12 words also underperform 20% (short-sentence preference).",
+      "message": "This {format} is {n} chars; optimal is {min}-{max}. Top-performing posts run 1,000-1,500 chars with short (<12-word) sentences.",
+      "source": "copywriting-rules.md:99-111; platform-rules/linkedin.md:42"
+    },
+    {
+      "check": "spacing_24h",
+      "threshold": { "minimum_spacing_hours": 24, "minimum_spacing_seconds": 86400 },
+      "penalty": "-50% reach (cannibalization on both posts); 24h spacing = +120% visibility",
+      "severity": "block",
+      "detection": "At schedule/publish time, compute seconds since the member's previous post on the same account. <86400 => block.",
+      "message": "Less than 24h since your last post. Posting twice in 24h cannibalizes reach up to 50%. Spacing 24h gives +120% visibility.",
+      "source": "linkedin-algorithm-2025-2026.md:183-184,213; scheduling/SKILL.md:39; feature-map.json:140"
+    },
+    {
+      "check": "weekly_cadence_cap",
+      "threshold": { "soft_cap_per_week": 4, "hard_block_per_day": 2 },
+      "penalty": "5+/week diminishing returns; daily-posting cannibalization; 2x/day counterproductive",
+      "severity": "warn (soft-cap >4/week); block (2x/day)",
+      "detection": "Rolling 7-day post count for the member. >4 => warn (diminishing returns). 2 posts same calendar day => hard block.",
+      "message": "You're at {n} posts this week. 3-4x/week is the sweet spot; 5+ hits diminishing returns and daily posting cannibalizes reach.",
+      "source": "scheduling/SKILL.md:35-41; feature-map.json:140"
+    },
+    {
+      "check": "video_subtitles",
+      "threshold": "subtitles present; length <60s",
+      "penalty": "Video reach -300% since 2023; missing subtitles compounds the loss",
+      "severity": "warn",
+      "detection": "If format == video: require a subtitle flag and duration < 60 sec.",
+      "message": "Video reach is down ~300% since 2023. Add subtitles (non-negotiable) and keep it under 60 seconds.",
+      "source": "linkedin-algorithm-2025-2026.md:168; platform-rules/linkedin.md:56"
+    },
+    {
+      "check": "poll_brand_building",
+      "threshold": "avoid polls for serious brand-building",
+      "penalty": "Low engagement, low authority",
+      "severity": "warn",
+      "detection": "If format == poll, warn.",
+      "message": "Polls have low engagement and low authority — skip them for serious brand building.",
+      "source": "linkedin-algorithm-2025-2026.md:169; platform-rules/linkedin.md:57"
+    },
+    {
+      "check": "edit_within_first_hour_guard",
+      "threshold": { "lock_seconds_after_publish": 3600 },
+      "penalty": "Editing within the first hour can reset distribution",
+      "severity": "warn",
+      "detection": "If an edit is attempted < 3600 sec after publish, warn the member.",
+      "message": "Editing within the first hour can reset your post's distribution. Wait until the golden hour is over.",
+      "source": "linkedin-algorithm-2025-2026.md:215"
+    }
+  ],
+
+  "organic_reach_context": {
+    "note": "Calibration baseline so Choir analytics don't quote pre-2024 numbers. Measured across 1.8M posts.",
+    "views_impressions_change_2023_to_2025_pct": -50,
+    "engagement_rate_change_2023_to_2025_pct": -25,
+    "follower_growth_change_2023_to_2025_pct": -59,
+    "source": "linkedin-algorithm-2025-2026.md:140-146"
+  },
+
+  "deprecated_mechanics": [
+    { "item": "Creator Mode", "status": "Retired Feb 1, 2024. Features (Follow button, Featured section, LinkedIn Live) distributed to all users. Do NOT instruct members to 'enable Creator Mode'.", "source": "linkedin-algorithm-2025-2026.md:198-202" },
+    { "item": "King Comment / link-in-comment", "status": "Deprecated. Links in comments now penalized ~60% same as body. Use profile link or DM.", "source": "linkedin-algorithm-2025-2026.md:212; linkedin-post-optimization-checklist.md:118" }
+  ]
+}

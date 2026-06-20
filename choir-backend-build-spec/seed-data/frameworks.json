@@ -1,0 +1,338 @@
+{
+  "_meta": {
+    "artifact": "Copywriting framework library + power words + DR register map",
+    "layer": "global_library",
+    "description": "App-wide read-only seed data for Choir. Frameworks + their verbatim LLM prompts are the active ingredient for the post-generation engine. Power words feed the headline/hook generator. dr_register_map governs which DR persuasion techniques are admissible per content register (editorial vs ads/sales).",
+    "primary_source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md",
+    "secondary_sources": [
+      ".claude/skills/copywriting/references/alive-without-slop.md",
+      "my-context-os/05-marketing-demand/copywriting/_index.md",
+      ".claude/voice-dna/_shared/anti-slop-universal.md"
+    ],
+    "extraction_notes": [
+      "13 named frameworks extracted verbatim. PAIPS (the LinkedIn-native framework) and the visual reference table list it, but the source provides NO ready-to-use ChatGPT prompt for PAIPS (only its 5-part structure). llm_prompt for PAIPS is null with a note — do not invent one.",
+      "Frameworks 1-12 (AIDA through Consistent Contrasting) each carry a VERBATIM ChatGPT prompt from the source fenced code blocks (linkedin-copywriting-rules.md lines 238-424). Extracted character-for-character including [YOUR TOPIC] / [YOUR AUDIENCE] placeholders.",
+      "Source numbering quirk preserved: the source's '10 Copywriting Frameworks' section actually numbers items 1-12 (AIDA=1 ... Consistent Contrasting=12) plus PAIPS as a separate preceding section = 13 named frameworks total.",
+      "100 power words = exactly 20 per category x 5 categories, verbatim from lines 506-519.",
+      "dr_register_map columns extracted verbatim from 05-marketing-demand/copywriting/_index.md section 2 (lines 49-64). The 11 gate-matched urgency phrases are the deterministically-enforced subset (anti-slop-universal.md lines 220-230) — these hard-fail ONLY under --register editorial."
+    ]
+  },
+  "frameworks": [
+    {
+      "id": "paips",
+      "name": "PAIPS",
+      "full_name": "Problem, Agitate, Intrigue, Paint a Positive Future, Present Your Solution",
+      "description": "A LinkedIn-specific copywriting framework. Moves the reader from a painful problem, deepens it, opens an intrigue loop, paints the better future, then delivers the solution.",
+      "when_to_use": "LinkedIn-native content (general-purpose default framework for the platform).",
+      "structure": [
+        "P -- Problem: First line highlights a painful problem your target audience experiences. It must elicit a strong emotion and compel the reader to the next line.",
+        "A -- Agitate: Expand on the pain/problem by detailing it. Make the reader feel the full weight of the problem. Describe the consequences, the frustration, the cost of inaction.",
+        "I -- Intrigue: Introduce something intriguing that makes the audience think 'wait, what's that?' Create an open loop that must be resolved.",
+        "P -- Paint a Positive Future: Show what life looks like after the problem is solved. Make the reader visualize the better outcome. Paint it in specific, sensory terms.",
+        "S -- Present Your Solution: Deliver the solution. This is where you provide the framework, steps, tool, or approach that resolves the problem established in the first line."
+      ],
+      "llm_prompt": null,
+      "llm_prompt_note": "Source provides PAIPS structure only (linkedin-copywriting-rules.md lines 203-221) with NO ready-to-use ChatGPT prompt. Engineers: either author one mirroring the 12 prompts that DO exist, or omit PAIPS from the prompt-driven generator. Do not fabricate as if it came from the KB.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:203-221"
+    },
+    {
+      "id": "aida",
+      "name": "AIDA",
+      "full_name": "Attention, Interest, Desire, Action",
+      "description": "Grab attention, build interest with details, create desire for the outcome, drive action.",
+      "when_to_use": "Product launches, offer posts, lead magnet promotions.",
+      "structure": [
+        "Attention: Bold hook that stops the scroll",
+        "Interest: Expand with relevant details or data",
+        "Desire: Show the transformation or benefit",
+        "Action: Clear CTA"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the AIDA framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Start with an attention-grabbing hook, build interest with specific details, create desire by showing the transformation, end with a clear call to action.\nKeep sentences under 12 words. Use whitespace between lines.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:228-244"
+    },
+    {
+      "id": "acca",
+      "name": "ACCA",
+      "full_name": "Awareness, Comprehension, Conviction, Action",
+      "description": "Make the reader aware of a problem, help them comprehend its impact, build conviction in your solution, drive action.",
+      "when_to_use": "Educational content, thought leadership, methodology posts.",
+      "structure": [
+        "Awareness: Surface a problem or gap",
+        "Comprehension: Explain why it matters",
+        "Conviction: Provide evidence or logic for your approach",
+        "Action: Tell them what to do next"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the ACCA framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Start by making the reader aware of a key problem, help them comprehend its full impact, build conviction with evidence or logic, end with a clear action step.\nKeep it concise and scannable.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:246-262"
+    },
+    {
+      "id": "bab",
+      "name": "BAB",
+      "full_name": "Before, After, Bridge",
+      "description": "Show the current painful state, show the desired future state, bridge with your solution.",
+      "when_to_use": "Transformation stories, case studies, service/product showcases.",
+      "structure": [
+        "Before: Paint the current painful reality",
+        "After: Paint the desired outcome",
+        "Bridge: Show how to get from Before to After"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the BAB (Before-After-Bridge) framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Describe the painful current state (Before), paint the ideal future (After), then bridge the gap with a clear solution or approach.\nUse short, punchy sentences.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:264-279"
+    },
+    {
+      "id": "cc",
+      "name": "CC",
+      "full_name": "Clear and Concise",
+      "description": "Strip all fluff. Say what matters in as few words as possible.",
+      "when_to_use": "Hot takes, opinion posts, quote-style posts.",
+      "structure": [
+        "State the point directly",
+        "Support with 1-2 lines",
+        "Close with conviction"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the Clear and Concise framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Make your point in the first line, support it with 1-2 short supporting statements, close with conviction. Maximum 5-7 lines total. No filler.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:281-295"
+    },
+    {
+      "id": "fab",
+      "name": "FAB",
+      "full_name": "Features, Advantages, Benefits",
+      "description": "State what it does (feature), why that matters (advantage), what it means for the reader (benefit).",
+      "when_to_use": "Product/tool recommendations, feature announcements, comparison posts.",
+      "structure": [
+        "Feature: What it is/does",
+        "Advantage: Why that capability matters",
+        "Benefit: How it improves the reader's life/work"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the FAB (Features-Advantages-Benefits) framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Start with a key feature, explain the advantage it provides, then translate into a concrete benefit for the reader. Repeat for 2-3 features.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:297-311"
+    },
+    {
+      "id": "fe",
+      "name": "FE",
+      "full_name": "Frustration, Encouragement",
+      "description": "Acknowledge a shared frustration, then provide encouragement and a path forward.",
+      "when_to_use": "Motivational content, community building, relatable posts.",
+      "structure": [
+        "Frustration: Validate the reader's struggle",
+        "Encouragement: Provide hope and direction"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the Frustration-Encouragement framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Open by acknowledging a real frustration your audience faces. Validate their struggle. Then shift to encouragement with practical hope and direction.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:313-326"
+    },
+    {
+      "id": "ppf",
+      "name": "PPF",
+      "full_name": "Past, Present, Future",
+      "description": "Share the past situation, describe the present state, project the future trajectory.",
+      "when_to_use": "Journey posts, industry trend analysis, personal growth narratives.",
+      "structure": [
+        "Past: Where things were",
+        "Present: Where things are now",
+        "Future: Where things are heading"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the PPF (Past-Present-Future) framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Start with how things used to be (Past), describe the current state (Present), then paint where things are heading (Future). Use specific details for each time period.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:328-342"
+    },
+    {
+      "id": "pas",
+      "name": "PAS",
+      "full_name": "Problem, Agitate, Solution",
+      "description": "State the problem, agitate it by deepening the pain, deliver the solution.",
+      "when_to_use": "Pain-point content, educational posts, product/service posts.",
+      "structure": [
+        "Problem: Name the specific problem",
+        "Agitate: Twist the knife -- show consequences, emotional toll, cascading effects",
+        "Solution: Provide the resolution"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the PAS (Problem-Agitate-Solution) framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: State a specific problem your audience faces, agitate it by detailing the consequences and emotional impact, then deliver a clear solution.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:344-358"
+    },
+    {
+      "id": "pastor",
+      "name": "PASTOR",
+      "full_name": "Problem, Amplify, Story, Transformation, Offer, Response",
+      "description": "A comprehensive narrative framework that moves through the full persuasion arc.",
+      "when_to_use": "Long-form posts, sales-oriented content, case study posts.",
+      "structure": [
+        "Problem: Identify the pain",
+        "Amplify: Show what happens if the problem persists",
+        "Story: Share a relevant narrative",
+        "Transformation: Show the before/after",
+        "Offer: Present your solution",
+        "Response: Ask for action"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the PASTOR framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Identify a key problem (Problem), amplify the consequences (Amplify), share a relevant story (Story), show the transformation (Transformation), present your solution (Offer), ask for a response (Response).",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:360-377"
+    },
+    {
+      "id": "pppp",
+      "name": "PPPP",
+      "full_name": "Promise, Picture, Proof, Push",
+      "description": "Make a promise, paint a picture of the outcome, prove it with evidence, push toward action.",
+      "when_to_use": "Offer posts, authority-building content, results posts.",
+      "structure": [
+        "Promise: State the outcome the reader will get",
+        "Picture: Help them visualize achieving it",
+        "Proof: Back it up with evidence, data, or testimonials",
+        "Push: Drive them to act"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the 4P (Promise-Picture-Proof-Push) framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Open with a bold promise, paint a vivid picture of the outcome, provide proof through data or examples, then push toward a specific action.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:379-394"
+    },
+    {
+      "id": "friend_expert",
+      "name": "Friend-Expert",
+      "full_name": "Friend-Expert",
+      "description": "Position yourself as both a trustworthy friend AND a knowledgeable expert. The friend component builds approachability; the expert component establishes authority.",
+      "when_to_use": "Consultative sales content, service positioning, trust-building posts, personal brand posts.",
+      "structure": [
+        "Friend: Be approachable, relatable, trustworthy -- speak like a peer who genuinely cares",
+        "Expert: Demonstrate deep knowledge, provide real solutions backed by experience"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the Friend-Expert framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: Open with a relatable, approachable tone (like a friend sharing advice), then transition to authoritative insight with specific expertise and solutions. Balance warmth with credibility throughout.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:396-409"
+    },
+    {
+      "id": "consistent_contrasting",
+      "name": "Consistent Contrasting",
+      "full_name": "Consistent Contrasting",
+      "description": "Highlight what makes you aligned with your audience's needs (consistent) while differentiating from competitors or conventional wisdom (contrasting).",
+      "when_to_use": "Competitive differentiation, comparison content, 'why us' messaging, positioning posts.",
+      "structure": [
+        "Consistent: Show alignment with what the customer values, needs, or expects",
+        "Contrasting: Differentiate from alternatives -- what you do differently and why it matters"
+      ],
+      "llm_prompt": "Write a LinkedIn post using the Consistent Contrasting framework.\nTopic: [YOUR TOPIC]\nTarget audience: [YOUR AUDIENCE]\nStructure: First establish common ground with what the audience values (consistent), then sharply differentiate your approach from the norm or competitors (contrasting). Make the contrast specific and evidence-based.",
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:411-424"
+    }
+  ],
+  "power_words": {
+    "_description": "100 captivating words that trigger stronger emotional responses in readers, organized by function. Exactly 20 per category. Feeds the headline/hook/wording generator. Source: linkedin-copywriting-rules.md:502-519 (from 100_captivating_words.jpeg, Notion export).",
+    "source": "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md:502-519",
+    "by_category": {
+      "attention_grabbers": [
+        "Unbelievable", "Revealed", "Jaw-Dropping", "Stunning", "Eye-Opening",
+        "Shocking", "Alarming", "Electrifying", "Riveting", "Gripping",
+        "Startling", "Astonishing", "Astounding", "Mind-Blowing", "Breathtaking",
+        "Thrilling", "Spellbinding", "Explosive", "Sensational", "Show-Stopping"
+      ],
+      "emotional_appeal": [
+        "Shocking", "Must-See", "Irresistible", "Remarkable", "Captivating",
+        "Unforgettable", "Compelling", "Mesmerizing", "Enchanting", "Engrossing",
+        "Intriguing", "Fascinating", "Moving", "Enthralling", "Stirring",
+        "Hypnotic", "Alluring", "Gripping", "Absorbing", "Heart-Stopping"
+      ],
+      "authority_and_trust": [
+        "Proven", "Insider", "Unexpected", "Expert", "Evidence-Based",
+        "Backed-by-Data", "Authoritative", "Verified", "Trusted", "Credible",
+        "Reliable", "Established", "Tested", "Certified", "Endorsed",
+        "Research-Backed", "Time-Tested", "Industry-Leading", "Gold-Standard", "Battle-Tested"
+      ],
+      "exclusivity": [
+        "Exclusive", "Ultimate", "Transformative", "Limited Edition", "Members Only",
+        "First Access", "Elite", "Premium", "VIP", "Invitation-Only",
+        "Behind-the-Scenes", "Classified", "Privileged", "Restricted", "Handpicked",
+        "Curated", "Select", "Bespoke", "Rare", "One-of-a-Kind"
+      ],
+      "impact_and_change": [
+        "Unleashed", "Essential", "Breakthrough", "Game-Changing", "Revolutionary",
+        "Disruptive", "Paradigm-Shifting", "Groundbreaking", "Trailblazing", "Pioneering",
+        "Innovative", "Transformational", "Monumental", "Seismic", "Catalytic",
+        "Watershed", "Defining", "Landmark", "Historic", "World-Class"
+      ]
+    },
+    "flat_list": [
+      "Unbelievable", "Revealed", "Jaw-Dropping", "Stunning", "Eye-Opening", "Shocking", "Alarming", "Electrifying", "Riveting", "Gripping", "Startling", "Astonishing", "Astounding", "Mind-Blowing", "Breathtaking", "Thrilling", "Spellbinding", "Explosive", "Sensational", "Show-Stopping",
+      "Shocking", "Must-See", "Irresistible", "Remarkable", "Captivating", "Unforgettable", "Compelling", "Mesmerizing", "Enchanting", "Engrossing", "Intriguing", "Fascinating", "Moving", "Enthralling", "Stirring", "Hypnotic", "Alluring", "Gripping", "Absorbing", "Heart-Stopping",
+      "Proven", "Insider", "Unexpected", "Expert", "Evidence-Based", "Backed-by-Data", "Authoritative", "Verified", "Trusted", "Credible", "Reliable", "Established", "Tested", "Certified", "Endorsed", "Research-Backed", "Time-Tested", "Industry-Leading", "Gold-Standard", "Battle-Tested",
+      "Exclusive", "Ultimate", "Transformative", "Limited Edition", "Members Only", "First Access", "Elite", "Premium", "VIP", "Invitation-Only", "Behind-the-Scenes", "Classified", "Privileged", "Restricted", "Handpicked", "Curated", "Select", "Bespoke", "Rare", "One-of-a-Kind",
+      "Unleashed", "Essential", "Breakthrough", "Game-Changing", "Revolutionary", "Disruptive", "Paradigm-Shifting", "Groundbreaking", "Trailblazing", "Pioneering", "Innovative", "Transformational", "Monumental", "Seismic", "Catalytic", "Watershed", "Defining", "Landmark", "Historic", "World-Class"
+    ],
+    "_warning": "Power words OVERLAP heavily with the editorial kill-list. 'Shocking' appears in BOTH attention_grabbers and emotional_appeal (the source lists it twice; total distinct words < 100). Many entries (Revolutionary, Ultimate, Game-Changing, World-Class, Breakthrough, Disruptive, Groundbreaking, Best/Leading-adjacent) are register-GATED: legitimate for ads/sales/LinkedIn-hooks, but HARD-FAIL under editorial register via sanitize-copy.mjs. The generator MUST consult dr_register_map.register_gated_phrases + anti-slop kill-list before surfacing power words for editorial-register output."
+  },
+  "dr_register_map": {
+    "_description": "The DR Register Map — the firewall doctrine that governs which direct-response persuasion techniques are admissible per content register. register_neutral techniques are safe in ANY register including editorial. register_gated techniques convert on paid ads / long-form sales letters but POISON an editorial website page (suppressed/hard-failed under --register editorial). Source: 05-marketing-demand/copywriting/_index.md section 2 (lines 46-65).",
+    "source": "my-context-os/05-marketing-demand/copywriting/_index.md:46-65",
+    "editorial": {
+      "_label": "register_neutral — import into ANY register, INCLUDING editorial. This IS the editorial-admissible column.",
+      "techniques": [
+        "Specificity / exact figures (cut onboarding from six weeks to four days)",
+        "Reason-why behind every claim (the because-clause)",
+        "Concrete proof + demonstration (show the mechanism)",
+        "The 'you' attitude (reader self-interest first)",
+        "Benefit over feature",
+        "Clarity: one idea per sentence, plain words",
+        "Honest, counted social proof (52 nations, not 'the world over')",
+        "Admit-a-minor-fault credibility",
+        "One focal idea per piece",
+        "Research the reader before writing",
+        "Positive framing (no competitor-knocking)",
+        "Genuine, non-manufactured urgency (a real deadline)",
+        "One low-friction CTA"
+      ]
+    },
+    "ads_sales": {
+      "_label": "register_gated — ads + long-form sales ONLY, suppressed for editorial. Available in addition to the neutral column when register is ads/sales.",
+      "techniques": [
+        "Exclamation / caps energy",
+        "Superlatives + hype vocabulary (best, ultimate, revolutionary)",
+        "Benefit-piling / claim-stacking walls",
+        "Manufactured urgency + fake scarcity",
+        "Curiosity / teaser headlines that withhold",
+        "Hyperbolic before/after narrative",
+        "Personality-forward pitchman voice (permitted ONLY on a first-person-founder /about page)",
+        "Price / scarcity spectacle",
+        "High-voltage fear / vanity amplitude",
+        "Stunt interrupts",
+        "Repeated-claim padding"
+      ]
+    },
+    "register_gated_phrases": {
+      "_description": "The 11 manufactured-urgency/scarcity CTA phrases that are DETERMINISTICALLY enforced. sanitize-copy.mjs hard-fails (exit 1) on these ONLY under --register editorial, matched on word boundaries (so 'act now' never fires inside 'react now'), and stays SILENT for ads/sales/default register. This is the code-enforced half of the DR Register Map. Engineers: replicate this gate in Choir's copy-quality pipeline for editorial-register output. Source: anti-slop-universal.md:220-230 (canonical, gate-matched).",
+      "source": ".claude/voice-dna/_shared/anti-slop-universal.md:220-230",
+      "enforcement": "hard_fail_editorial_only",
+      "match": "word_boundary",
+      "phrases": [
+        "act now",
+        "don't delay",
+        "before it's too late",
+        "last chance",
+        "limited time",
+        "limited-time",
+        "while supplies last",
+        "while stocks last",
+        "don't miss out",
+        "offer ends",
+        "offer expires"
+      ]
+    },
+    "slop_structural_tells": {
+      "_description": "S1-S7 structural slop tells from alive-without-slop.md. S1-S5 are DETERMINISTICALLY enforced (hard-fail under --register editorial via sanitize-copy.mjs Pattern 11). S6-S7 are taste-level (hostile-editor critic only, no code detector). These are the structural complement to the kill-list vocabulary — copy can read clean of banned WORDS and still trip these. Source: alive-without-slop.md:59-69.",
+      "source": ".claude/skills/copywriting/references/alive-without-slop.md:59-69",
+      "deterministic_S1_S5": [
+        {"id": "S1", "tell": "'THE X is THE Y' aphorism", "definition": "A noun equated to a noun for portentous effect", "killed_example": "The list is the message."},
+        {"id": "S2", "tell": "contrast-reframe family", "definition": "X, not Y / not just Z / is never Y / rather than / 'X isn't Y. It's Z.'", "killed_example": "Posts in your voice, not a ghostwriter's."},
+        {"id": "S3", "tell": "'[Noun] that/who [verb]s' vendor headline", "definition": "Product-as-subject + relative clause", "killed_example": "Outbound that survives the AI flood."},
+        {"id": "S4", "tell": "imperative punchy-pair CTA", "definition": "Two terse commands = ad cadence", "killed_example": "Bring your setup. Leave with a plan."},
+        {"id": "S5", "tell": "rule-of-N aphoristic fragment", "definition": "Spelled cardinals in a short headline", "killed_example": "Four parts, one memory."}
+      ],
+      "advisory_S6_S7": [
+        {"id": "S6", "tell": "colon-aphorism", "definition": "[short setup]: [punchy payoff]", "killed_example": "Ask any engineer: read access only."},
+        {"id": "S7", "tell": "balanced billboard declarative", "definition": "Short, witty, rhythmically balanced; reads like a slogan", "killed_example": "Relationship over volume."}
+      ]
+    },
+    "alive_craft_doctrine": {
+      "_description": "The four sources of life in copy (none of them rhetoric) — the positive craft register that solves both AI-slop AND flat-after-de-slopping. Used to steer the generator toward ALIVE output, not just to filter slop. Source: alive-without-slop.md:20-51.",
+      "source": ".claude/skills/copywriting/references/alive-without-slop.md:20-51",
+      "governing_test": "The dinner test: Would the author SAY this sentence out loud to a peer at a dinner — or is it written-for-a-website? If the latter, cut it. A slightly long, plain, specific sentence beats a short clever one every time. Punchy is the defect, not the merit.",
+      "four_sources_of_life": [
+        {"source": "Specificity, to the point of being checkable (Hopkins)", "test": "Could a competitor paste this exact sentence onto their own site? If yes, it's a platitude — cut it.", "de_slop_direction": "When a line goes flat, go MORE specific, not blander."},
+        {"source": "Reason-why — the mechanism is the interesting part (Hopkins / Schwartz)", "test": "For every claim, can you write the next sentence starting with 'because' or 'here's how'? If not, you have a slogan, not a claim. Delete it.", "de_slop_direction": "The mechanism IS the headline; the promise is the subhead."},
+        {"source": "Demonstration — put the reader inside one true scene (Caples / Collier)", "test": "Convert every abstract benefit into a concrete moment the reader steps into. An adjective labels; a scene is lived.", "de_slop_direction": "A real scene is neither a dry spec nor a hollow zinger."},
+        {"source": "Channeled desire + gradualization (Schwartz / Collier)", "test": "If a line is doing rhetorical work to SEEM exciting, it's almost always not aimed at a real desire. Name the ONE strongest want the buyer already has, and point the plain sentence at that.", "de_slop_direction": "Each line earns the next with 'which means', 'the reason for that', 'here's how' — gradualization gives flat copy direction."}
+      ],
+      "fifth_governing_principle": "Respect the reader (Ogilvy): 'The consumer is not a moron; she is your wife.' Assume intelligence, explain depth without condescending, never mansplain ('Here's why 👇'), never over-explain the obvious."
+    }
+  }
+}

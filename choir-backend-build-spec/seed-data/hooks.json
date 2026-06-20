@@ -1,0 +1,414 @@
+{
+  "_meta": {
+    "artifact": "hooks.json",
+    "layer": "global_library",
+    "description": "Hook / headline persuasion library for Choir. App-wide read-only seed data. Engineers load into global_library.hooks, global_library.emotional_hook_types, global_library.fill_in_templates, global_library.hook_prompts, global_library.headline_formulas. Members reference these by id; no member/org FK on this layer.",
+    "extraction_note": "The 'LinkedIn Hooks Database CSV' cited in linkedin-hooks-playbook.md (141 hooks) is NOT materialized as rows in the KB. Only the category-count summary table + ~15 sample hook templates by category are rendered. Every CONCRETE hook string present in the four source files is extracted below verbatim. The 141 number is the documented category breakdown, not 141 retrievable strings. See unresolved_citations + net_new_flags. Counts: hooks[]=72 concrete entries, emotional_hook_types[]=12, fill_in_templates[]=10, hook_prompts[]=30, headline_formulas[]=34.",
+    "category_breakdown_141_db": {
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-hooks-playbook.md:403-415",
+      "note": "Documented composition of the 141-hook database. The full per-row CSV was not exported into the KB; only counts + samples below.",
+      "categories": [
+        { "category": "Observations/Opinion", "count": 36, "description": "Personal takes, industry commentary, contrarian views" },
+        { "category": "Guide & Tips", "count": 31, "description": "How-to frameworks, step-by-step processes, tool recommendations" },
+        { "category": "Resources", "count": 18, "description": "Curated lists, tool roundups, reference collections" },
+        { "category": "Result", "count": 17, "description": "Achievement posts, before/after, metrics-driven content" },
+        { "category": "Lesson", "count": 11, "description": "Learnings from experience, mistakes made, wisdom gained" },
+        { "category": "Mistake", "count": 6, "description": "What went wrong, common errors, anti-patterns" },
+        { "category": "Framework", "count": 5, "description": "Mental models, systems, structured approaches" },
+        { "category": "Niche-Specific", "count": 4, "description": "Industry-targeted hooks for specific verticals" },
+        { "category": "Case Study", "count": 2, "description": "In-depth analysis of a specific example or campaign" },
+        { "category": "Product", "count": 2, "description": "Product-related hooks (use sparingly to avoid being salesy)" },
+        { "category": "Data", "count": 1, "description": "Pure data-driven hooks with statistics" }
+      ],
+      "total_documented": 141
+    },
+    "five_hook_rules": {
+      "source": "my-context-os/04-linkedin-content/copywriting/linkedin-hooks-playbook.md:44-61",
+      "note": "Validation gate every hook must pass before publish. Engineer: use as a checklist scorer on member-authored hooks.",
+      "rules": [
+        { "name": "Valuable", "test": "Promises something the reader genuinely wants; signals the post is worth their time." },
+        { "name": "Actionable", "test": "Hints the post contains something the reader can act on; promises a concrete takeaway." },
+        { "name": "Efficient", "test": "Short. Ideal hook is 6 to 8 words. Performs better on mobile." },
+        { "name": "Enticing", "test": "Creates an open loop (question, tension, curiosity gap) compelling a 'see more' click." },
+        { "name": "Engaging", "test": "Something the reader wants to comment on, share, or save; speaks to their situation/identity/aspirations." }
+      ]
+    },
+    "hook_formatting_thresholds": {
+      "source": "linkedin-hooks-playbook.md:288-301 + linkedin-hooks/SKILL.md:11",
+      "ideal_word_count_min": 6,
+      "ideal_word_count_max": 8,
+      "see_more_fold_char_limit": 210,
+      "use_numbers": true,
+      "prefer_how_i_over_how_to": true,
+      "no_orphan_words": true,
+      "active_voice": true,
+      "reading_level": "5th grade",
+      "retention_lift_strong_hook_pct": 30
+    }
+  },
+
+  "hooks": [
+    { "id": "hook_001", "text": "I went from 0 to 10,000 followers in 6 months.", "category": "Result", "emotional_trigger": "inspiration", "when_to_use": "Success stories, milestone posts, transformation narratives", "source": "linkedin-hooks-playbook.md:73" },
+    { "id": "hook_002", "text": "Your LinkedIn profile is costing you clients.", "category": "Observations/Opinion", "emotional_trigger": "fear", "when_to_use": "Warning posts, 'stop doing this' content, mistake-based posts", "source": "linkedin-hooks-playbook.md:79" },
+    { "id": "hook_003", "text": "The #1 reason your LinkedIn posts fail (it's not your content).", "category": "Observations/Opinion", "emotional_trigger": "curiosity", "when_to_use": "Educational content, myth-busting, list posts", "source": "linkedin-hooks-playbook.md:88" },
+    { "id": "hook_004", "text": "After writing 500+ LinkedIn posts, here's what actually works.", "category": "Guide & Tips", "emotional_trigger": "credibility", "when_to_use": "Framework posts, how-to content, case studies", "source": "linkedin-hooks-playbook.md:94" },
+    { "id": "hook_005", "text": "Posting every day on LinkedIn is a terrible strategy.", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "Contrarian takes, opinion pieces, industry challenges", "source": "linkedin-hooks-playbook.md:100" },
+    { "id": "hook_006", "text": "The best LinkedIn posts don't teach anything.", "category": "Observations/Opinion", "emotional_trigger": "counter_intuitive", "when_to_use": "Reframing posts, unconventional advice, fresh takes", "source": "linkedin-hooks-playbook.md:106" },
+    { "id": "hook_007", "text": "Most meetings could have been a Slack message.", "category": "Observations/Opinion", "emotional_trigger": "eloquence", "when_to_use": "Observation posts, career truths, relatable content", "source": "linkedin-hooks-playbook.md:112" },
+    { "id": "hook_008", "text": "7 ChatGPT prompts that save me 5 hours/week.", "category": "Resources", "emotional_trigger": "education", "when_to_use": "How-to posts, framework posts, tool recommendations", "source": "linkedin-hooks-playbook.md:124" },
+    { "id": "hook_009", "text": "48% of all LinkedIn posts are text + image.", "category": "Data", "emotional_trigger": "surprise", "when_to_use": "Data-driven posts, results posts, research-based content", "source": "linkedin-hooks-playbook.md:130" },
+    { "id": "hook_010", "text": "We just closed our Series A.", "category": "Result", "emotional_trigger": "celebration", "when_to_use": "Fundraising announcements, new job posts, milestone celebrations. WARNING: celebration hooks get high engagement but low saves; use sparingly.", "source": "linkedin-hooks-playbook.md:136-137" },
+    { "id": "hook_011", "text": "If you're a solo founder doing your own marketing...", "category": "Niche-Specific", "emotional_trigger": "identity", "when_to_use": "Niche-targeted content, role-specific advice, community posts", "source": "linkedin-hooks-playbook.md:143" },
+
+    { "id": "hook_012", "text": "Unpopular opinion: [your take]", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "Sample template for the 36 Observations/Opinion hooks; personal takes, industry commentary, contrarian views", "source": "linkedin-hooks-playbook.md:420" },
+    { "id": "hook_013", "text": "Everyone is talking about [X]. Nobody is talking about [Y].", "category": "Observations/Opinion", "emotional_trigger": "curiosity", "when_to_use": "Sample template for the 36 Observations/Opinion hooks; surfaces a hidden truth/gap", "source": "linkedin-hooks-playbook.md:421" },
+    { "id": "hook_014", "text": "The [industry] doesn't have a [common problem] problem. It has a [real problem] problem.", "category": "Observations/Opinion", "emotional_trigger": "counter_intuitive", "when_to_use": "Sample template for the 36 Observations/Opinion hooks; reframing a perceived problem", "source": "linkedin-hooks-playbook.md:422" },
+    { "id": "hook_015", "text": "[X] [things] every [role] should know about [topic]", "category": "Guide & Tips", "emotional_trigger": "education", "when_to_use": "Sample template for the 31 Guide & Tips hooks; how-to / knowledge promise", "source": "linkedin-hooks-playbook.md:425" },
+    { "id": "hook_016", "text": "The ultimate guide to [topic] (bookmark this)", "category": "Guide & Tips", "emotional_trigger": "education", "when_to_use": "Sample template for the 31 Guide & Tips hooks; comprehensive reference, drives saves", "source": "linkedin-hooks-playbook.md:426" },
+    { "id": "hook_017", "text": "I spent [time] testing [thing]. Here's what actually works.", "category": "Guide & Tips", "emotional_trigger": "credibility", "when_to_use": "Sample template for the 31 Guide & Tips hooks; test/research-backed advice", "source": "linkedin-hooks-playbook.md:427" },
+    { "id": "hook_018", "text": "[X] [tools/resources] that changed how I [activity]", "category": "Resources", "emotional_trigger": "education", "when_to_use": "Sample template for the 18 Resources hooks; curated tool/resource roundup", "source": "linkedin-hooks-playbook.md:430" },
+    { "id": "hook_019", "text": "Steal my [tool/framework/template] for [outcome]", "category": "Resources", "emotional_trigger": "education", "when_to_use": "Sample template for the 18 Resources hooks; high social-currency giveaway", "source": "linkedin-hooks-playbook.md:431" },
+    { "id": "hook_020", "text": "I [achieved result] in [timeframe]. Here's the playbook.", "category": "Result", "emotional_trigger": "credibility", "when_to_use": "Sample template for the 17 Result hooks; achievement + structured promise", "source": "linkedin-hooks-playbook.md:434" },
+    { "id": "hook_021", "text": "[Metric] up [X]% in [timeframe]. Here's exactly what I did.", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "Sample template for the 17 Result hooks; metrics-driven before/after", "source": "linkedin-hooks-playbook.md:435" },
+    { "id": "hook_022", "text": "[X] years of [activity] taught me [lesson]", "category": "Lesson", "emotional_trigger": "credibility", "when_to_use": "Sample template for the 11 Lesson hooks; wisdom-from-experience", "source": "linkedin-hooks-playbook.md:438" },
+    { "id": "hook_023", "text": "I wish someone told me this when I started [activity]", "category": "Lesson", "emotional_trigger": "eloquence", "when_to_use": "Sample template for the 11 Lesson hooks; relatable retrospective", "source": "linkedin-hooks-playbook.md:439" },
+    { "id": "hook_024", "text": "I wasted [time/money] on [thing]. Don't make the same mistake.", "category": "Mistake", "emotional_trigger": "fear", "when_to_use": "Sample template for the 6 Mistake hooks; loss-aversion warning", "source": "linkedin-hooks-playbook.md:442" },
+    { "id": "hook_025", "text": "The #1 mistake [role] make with [topic]", "category": "Mistake", "emotional_trigger": "fear", "when_to_use": "Sample template for the 6 Mistake hooks; common-error callout", "source": "linkedin-hooks-playbook.md:443" },
+
+    { "id": "hook_026", "text": "B2B founders: here's how to get inbound leads without spending a dollar on ads.", "category": "Guide & Tips", "emotional_trigger": "identity", "when_to_use": "WHAT+WHO+WHY formula worked example (WHAT=LinkedIn growth, WHO=B2B founders, WHY=inbound leads no ads)", "source": "linkedin-hooks-playbook.md:216" },
+
+    { "id": "hook_027", "text": "The one thing I changed that 3x'd my engagement (it took 5 minutes).", "category": "Result", "emotional_trigger": "curiosity", "when_to_use": "Curiosity-gap psychology example: state enough to create interest but not satisfy it", "source": "linkedin-hooks-playbook.md:325" },
+    { "id": "hook_028", "text": "500+ founders use this framework", "category": "Framework", "emotional_trigger": "credibility", "when_to_use": "Social-proof psychology example; more compelling than 'this framework works'", "source": "linkedin-hooks-playbook.md:328" },
+    { "id": "hook_029", "text": "You're losing leads every day because of this one mistake.", "category": "Mistake", "emotional_trigger": "fear", "when_to_use": "Loss-aversion psychology example; outperforms 'here's how to get more leads'", "source": "linkedin-hooks-playbook.md:331" },
+
+    { "id": "hook_030", "text": "LinkedIn is the #1 business platform in the world.", "category": "Observations/Opinion", "emotional_trigger": "credibility", "when_to_use": "Rehook Method step 1 (Jasmin Alic): write a statement most people agree with", "source": "linkedin-hooks-playbook.md:347" },
+    { "id": "hook_031", "text": "But it's the worst platform to sell your products.", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "Rehook Method step 2 (Jasmin Alic): challenge the hook with a surprising opinion; PEAK reader interest", "source": "linkedin-hooks-playbook.md:348" },
+
+    { "id": "hook_032", "text": "I've attended over 200 webinars in the past 12 months", "category": "Result", "emotional_trigger": "credibility", "when_to_use": "AI Hook Generator prompt few-shot example", "source": "linkedin-hooks-playbook.md:367" },
+    { "id": "hook_033", "text": "STOP writing LinkedIn posts the wrong way", "category": "Observations/Opinion", "emotional_trigger": "fear", "when_to_use": "AI Hook Generator prompt few-shot example; pattern-interrupt opener", "source": "linkedin-hooks-playbook.md:368" },
+    { "id": "hook_034", "text": "The LinkedIn algorithm works in mysterious ways", "category": "Observations/Opinion", "emotional_trigger": "curiosity", "when_to_use": "AI Hook Generator prompt few-shot example", "source": "linkedin-hooks-playbook.md:369" },
+    { "id": "hook_035", "text": "I published 1000 LinkedIn posts in the last 12 months", "category": "Result", "emotional_trigger": "credibility", "when_to_use": "AI Hook Generator prompt few-shot example", "source": "linkedin-hooks-playbook.md:370" },
+    { "id": "hook_036", "text": "29 principles to master LinkedIn", "category": "Resources", "emotional_trigger": "education", "when_to_use": "AI Hook Generator prompt few-shot example; numbered listicle promise", "source": "linkedin-hooks-playbook.md:371" },
+    { "id": "hook_037", "text": "Your LinkedIn SSI doesn't matter", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "AI Hook Generator prompt few-shot example; contrarian take", "source": "linkedin-hooks-playbook.md:372" },
+    { "id": "hook_038", "text": "LinkedIn Algorithm decoded", "category": "Guide & Tips", "emotional_trigger": "curiosity", "when_to_use": "AI Hook Generator prompt few-shot example", "source": "linkedin-hooks-playbook.md:373" },
+    { "id": "hook_039", "text": "How to turn a LinkedIn post into a Lead magnet", "category": "Guide & Tips", "emotional_trigger": "education", "when_to_use": "AI Hook Generator prompt few-shot example", "source": "linkedin-hooks-playbook.md:374" },
+    { "id": "hook_040", "text": "In the last 30 days, I generated $25,000 from one LinkedIn post", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "AI Hook Generator prompt few-shot example; specific revenue result", "source": "linkedin-hooks-playbook.md:375" },
+
+    { "id": "hook_041", "text": "I grew by 1,493 followers last week. The week before: 958 followers.", "category": "Result", "emotional_trigger": "credibility", "when_to_use": "8-part format Signpost example (linkedin-copywriting-rules); signals authority", "source": "linkedin-copywriting-rules.md:65" },
+    { "id": "hook_042", "text": "LinkedIn growth needs killer content. Killer content takes time I don't have.", "category": "Observations/Opinion", "emotional_trigger": "eloquence", "when_to_use": "8-part format Problem example (linkedin-copywriting-rules); resonates with reader's experience", "source": "linkedin-copywriting-rules.md:71" },
+
+    { "id": "hook_043", "text": "This tech stack generates $1.5M in monthly pipeline", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "ColdIQ Type 1 Revenue/Growth Results (production-proven, 200-3,400+ engagement). Formula: [Specific result]+[timeframe]+[entity]", "source": "linkedin-hooks/SKILL.md:54" },
+    { "id": "hook_044", "text": "We went from 0 to $7M ARR. Here's every tool we use.", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "ColdIQ Type 1 Revenue/Growth Results; tool-stack reveal", "source": "linkedin-hooks/SKILL.md:55" },
+    { "id": "hook_045", "text": "I spent 300+ hours using Claude Code to run our GTM. Here's my stack:", "category": "Result", "emotional_trigger": "credibility", "when_to_use": "ColdIQ Type 2 Personal Journey + Numbers. Formula: [milestone]+[metric]+[promise of breakdown]", "source": "linkedin-hooks/SKILL.md:60" },
+    { "id": "hook_046", "text": "I built 244 AI skills and 204 agents in a weekend. Here's what I made:", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "ColdIQ Type 2 Personal Journey + Numbers", "source": "linkedin-hooks/SKILL.md:61" },
+    { "id": "hook_047", "text": "Founder: 'There are too many sales tools.' Me: 'Start with these 5.'", "category": "Guide & Tips", "emotional_trigger": "identity", "when_to_use": "ColdIQ Type 3 Dialogue Hook. Formula: [Persona]:'[Problem]'+Me:'[Solution]'", "source": "linkedin-hooks/SKILL.md:67" },
+    { "id": "hook_048", "text": "SDR: 'Cold email doesn't work anymore.' Me: 'Your list doesn't work.'", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "ColdIQ Type 3 Dialogue Hook", "source": "linkedin-hooks/SKILL.md:68" },
+    { "id": "hook_049", "text": "I spent 100+ hours testing 59 AI Agents.", "category": "Result", "emotional_trigger": "credibility", "when_to_use": "ColdIQ Type 4 Test/Research Hook. Formula: [I spent X hours]+[testing Y]+[here's what I found]", "source": "linkedin-hooks/SKILL.md:73" },
+    { "id": "hook_050", "text": "I analyzed every campaign we ran in 2025. The patterns were obvious.", "category": "Case Study", "emotional_trigger": "curiosity", "when_to_use": "ColdIQ Type 4 Test/Research Hook", "source": "linkedin-hooks/SKILL.md:74" },
+    { "id": "hook_051", "text": "We've sent over 23M cold emails. These 54 intent signals got us 5-11% reply rates. Comment INTENT below and I'll share it.", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "ColdIQ Type 5 Comment-Gated Lead Magnet. Formula: [bold claim+metric]+[comment keyword to get it]", "source": "linkedin-hooks/SKILL.md:81" },
+    { "id": "hook_052", "text": "10 hours X 8 reps = 80 hrs. That's $10,000 saved monthly.", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "ColdIQ Type 6 ROI Math. Formula: [input numbers]+[= specific savings/gains]", "source": "linkedin-hooks/SKILL.md:87" },
+
+    { "id": "hook_053", "text": "Cold outreach is dead. Here's what replaced it.", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "First-line strategy 1: Bold Contrarian Statement", "source": "linkedin-hooks/SKILL.md:34" },
+    { "id": "hook_054", "text": "147 sales calls. 0 deals. Then I changed one thing.", "category": "Result", "emotional_trigger": "curiosity", "when_to_use": "First-line strategy 2: Specific Number + Unexpected Outcome", "source": "linkedin-hooks/SKILL.md:35" },
+    { "id": "hook_055", "text": "My biggest career mistake cost me $200K.", "category": "Mistake", "emotional_trigger": "fear", "when_to_use": "First-line strategy 3: Personal Confession", "source": "linkedin-hooks/SKILL.md:36" },
+    { "id": "hook_056", "text": "What if everything you know about hiring is wrong?", "category": "Observations/Opinion", "emotional_trigger": "counter_intuitive", "when_to_use": "First-line strategy 4: Question That Reframes", "source": "linkedin-hooks/SKILL.md:37" },
+    { "id": "hook_057", "text": "One change to my morning routine made everything click.", "category": "Lesson", "emotional_trigger": "curiosity", "when_to_use": "Curiosity gap: withhold the key detail", "source": "linkedin-hooks/SKILL.md:42" },
+    { "id": "hook_058", "text": "Most people don't know this about LinkedIn's algorithm.", "category": "Guide & Tips", "emotional_trigger": "curiosity", "when_to_use": "Curiosity gap: imply a secret", "source": "linkedin-hooks/SKILL.md:43" },
+    { "id": "hook_059", "text": "There are 3 types of LinkedIn posts. Most people only know 2.", "category": "Guide & Tips", "emotional_trigger": "curiosity", "when_to_use": "Curiosity gap: numbered incompleteness", "source": "linkedin-hooks/SKILL.md:44" },
+
+    { "id": "hook_060", "text": "We hit $1M ARR in 11 months. But month 4 nearly killed us.", "category": "Result", "emotional_trigger": "curiosity", "when_to_use": "Example set 1: startup founder sharing a growth lesson", "source": "linkedin-hooks/SKILL.md:101" },
+    { "id": "hook_061", "text": "I spent $50K on marketing. $48K was wasted. Here's what the $2K taught me.", "category": "Lesson", "emotional_trigger": "surprise", "when_to_use": "Example set 1: startup founder sharing a growth lesson", "source": "linkedin-hooks/SKILL.md:102" },
+    { "id": "hook_062", "text": "Every SaaS founder makes this mistake at $500K ARR. I made it twice.", "category": "Mistake", "emotional_trigger": "identity", "when_to_use": "Example set 1: startup founder sharing a growth lesson", "source": "linkedin-hooks/SKILL.md:103" },
+    { "id": "hook_063", "text": "I sent 1,000 cold emails last quarter. 3 turned into $400K pipeline.", "category": "Result", "emotional_trigger": "surprise", "when_to_use": "Example set 2: GTM leader on outbound strategy", "source": "linkedin-hooks/SKILL.md:106" },
+    { "id": "hook_064", "text": "Our best-performing channel isn't what you'd expect. It's not ads. Not SEO.", "category": "Observations/Opinion", "emotional_trigger": "curiosity", "when_to_use": "Example set 2: GTM leader on outbound strategy", "source": "linkedin-hooks/SKILL.md:107" },
+    { "id": "hook_065", "text": "If your SDRs are booking <5 meetings/week, the problem isn't effort.", "category": "Observations/Opinion", "emotional_trigger": "identity", "when_to_use": "Example set 2: GTM leader on outbound strategy; direct-address + reframe", "source": "linkedin-hooks/SKILL.md:108" },
+    { "id": "hook_066", "text": "6 months ago: 200 followers. Today: 15,000. I changed exactly 3 things.", "category": "Result", "emotional_trigger": "inspiration", "when_to_use": "Example set 3: content creator growing audience; before/after", "source": "linkedin-hooks/SKILL.md:111" },
+    { "id": "hook_067", "text": "I posted daily for 90 days. Biggest waste of time on LinkedIn. Here's why.", "category": "Observations/Opinion", "emotional_trigger": "counter_narrative", "when_to_use": "Example set 3: content creator growing audience", "source": "linkedin-hooks/SKILL.md:112" },
+    { "id": "hook_068", "text": "The LinkedIn algorithm doesn't care about your content. It cares about this.", "category": "Observations/Opinion", "emotional_trigger": "curiosity", "when_to_use": "Example set 3: content creator growing audience", "source": "linkedin-hooks/SKILL.md:113" },
+
+    { "id": "hook_069", "text": "Most companies spend $50K/month on ads", "category": "Data", "emotional_trigger": "surprise", "when_to_use": "Anchoring-effect example: lead with a high number to anchor expectations (pair with $0 organic counter)", "source": "linkedin-copywriting-rules.md:600" },
+    { "id": "hook_070", "text": "You're 1 framework away from doubling your pipeline", "category": "Framework", "emotional_trigger": "inspiration", "when_to_use": "Goal-gradient-effect example: show the reader they are almost there", "source": "linkedin-copywriting-rules.md:604" },
+    { "id": "hook_071", "text": "Goals in pen. Plans in pencil.", "category": "Observations/Opinion", "emotional_trigger": "eloquence", "when_to_use": "Two-Line Proverb pattern; ultra-low effort, 2K-3K+ reactions; hot takes / values statements", "source": "linkedin-copywriting-rules.md:830" },
+    { "id": "hook_072", "text": "Starting a business is hard. Working a job you hate is harder.", "category": "Observations/Opinion", "emotional_trigger": "eloquence", "when_to_use": "Two-Line Proverb pattern; juxtaposition insight", "source": "linkedin-copywriting-rules.md:832" }
+  ],
+
+  "emotional_hook_types": [
+    {
+      "id": 1,
+      "name": "Inspiration",
+      "reader_reaction": "Damn, I want that",
+      "emotion": "Aspiration, desire",
+      "mechanism": "Show an aspirational outcome. The reader sees a result or lifestyle they desire and is drawn in by the possibility.",
+      "when_to_use": "Success stories, milestone posts, transformation narratives",
+      "example": "I went from 0 to 10,000 followers in 6 months.",
+      "source": "linkedin-hooks-playbook.md:69-73"
+    },
+    {
+      "id": 2,
+      "name": "Fear",
+      "reader_reaction": "I don't want to lose that",
+      "emotion": "Loss aversion, anxiety",
+      "mechanism": "Trigger loss aversion. Humans are more motivated to avoid losing something than to gain something of equal value.",
+      "when_to_use": "Warning posts, 'stop doing this' content, mistake-based posts",
+      "example": "Your LinkedIn profile is costing you clients.",
+      "source": "linkedin-hooks-playbook.md:75-79"
+    },
+    {
+      "id": 3,
+      "name": "Curiosity",
+      "reader_reaction": "Wait, what?",
+      "emotion": "Intrigue, need to know",
+      "mechanism": "Create an information gap. Three subtypes: Shocking truth ('The truth about X that nobody talks about'); Promise value ('Here are 7 ways to do X better'); Strong words ('secret', 'hidden', 'unexpected').",
+      "subtypes": ["Shocking truth", "Promise value", "Strong words"],
+      "when_to_use": "Educational content, myth-busting, list posts",
+      "example": "The #1 reason your LinkedIn posts fail (it's not your content).",
+      "source": "linkedin-hooks-playbook.md:81-88"
+    },
+    {
+      "id": 4,
+      "name": "Credibility",
+      "reader_reaction": "They've done the work",
+      "emotion": "Trust, respect",
+      "mechanism": "Lead with a result, credential, or experience that signals authority. The reader trusts the content because the author has earned the right to teach.",
+      "when_to_use": "Framework posts, how-to content, case studies",
+      "example": "After writing 500+ LinkedIn posts, here's what actually works.",
+      "source": "linkedin-hooks-playbook.md:90-94"
+    },
+    {
+      "id": 5,
+      "name": "Counter-Narrative",
+      "reader_reaction": "That's the opposite of what I believe",
+      "emotion": "Cognitive dissonance, defensiveness",
+      "mechanism": "Challenge a widely held belief. When a hook contradicts what the reader assumes to be true, they need to read on to understand why.",
+      "when_to_use": "Contrarian takes, opinion pieces, industry challenges",
+      "example": "Posting every day on LinkedIn is a terrible strategy.",
+      "source": "linkedin-hooks-playbook.md:96-100"
+    },
+    {
+      "id": 6,
+      "name": "Counter-Intuitive",
+      "reader_reaction": "I never thought of it like that",
+      "emotion": "Surprise, intellectual curiosity",
+      "mechanism": "Present a perspective the reader has never considered. Unlike counter-narrative (challenges existing beliefs), counter-intuitive reveals a genuinely new angle.",
+      "when_to_use": "Reframing posts, unconventional advice, fresh takes",
+      "example": "The best LinkedIn posts don't teach anything.",
+      "source": "linkedin-hooks-playbook.md:102-106"
+    },
+    {
+      "id": 7,
+      "name": "Eloquence",
+      "reader_reaction": "That's so damn true",
+      "emotion": "Recognition, resonance, validation",
+      "mechanism": "Crystallize a feeling or experience the reader has had but never articulated. The hook puts words to what they already know.",
+      "when_to_use": "Observation posts, career truths, relatable content",
+      "example": "Most meetings could have been a Slack message.",
+      "source": "linkedin-hooks-playbook.md:108-112"
+    },
+    {
+      "id": 8,
+      "name": "Faces",
+      "reader_reaction": "I recognize that person",
+      "emotion": "Social recognition, connection",
+      "mechanism": "Human faces are hardwired attention magnets. The brain processes faces before text. Posts with recognizable or expressive faces get more initial stops in the feed.",
+      "when_to_use": "Personal story posts, selfie + insight posts, team posts",
+      "example": "I met [Name] at [Event]",
+      "note": "Applies more to image selection than text hooks, but text can reference specific people.",
+      "source": "linkedin-hooks-playbook.md:114-118"
+    },
+    {
+      "id": 9,
+      "name": "Education",
+      "reader_reaction": "I should learn this",
+      "emotion": "Self-improvement drive, FOMO on knowledge",
+      "mechanism": "Signal that the post contains genuinely useful information. The reader recognizes the topic as relevant to their growth or work.",
+      "when_to_use": "How-to posts, framework posts, tool recommendations",
+      "example": "7 ChatGPT prompts that save me 5 hours/week.",
+      "source": "linkedin-hooks-playbook.md:120-124"
+    },
+    {
+      "id": 10,
+      "name": "Surprise",
+      "reader_reaction": "That's a crazy stat",
+      "emotion": "Shock, disbelief",
+      "mechanism": "Lead with an unexpected data point, result, or fact. Surprise breaks the pattern of predictable content and forces the reader to engage.",
+      "when_to_use": "Data-driven posts, results posts, research-based content",
+      "example": "48% of all LinkedIn posts are text + image.",
+      "source": "linkedin-hooks-playbook.md:126-130"
+    },
+    {
+      "id": 11,
+      "name": "Celebration",
+      "reader_reaction": "Congratulations!",
+      "emotion": "Joy, shared excitement, community",
+      "mechanism": "Announce a win, milestone, or achievement. People are drawn to celebrate with others due to social bonding instincts.",
+      "when_to_use": "Fundraising announcements, new job posts, milestone celebrations",
+      "example": "We just closed our Series A.",
+      "warning": "Celebration hooks get high engagement but low saves. Use sparingly.",
+      "source": "linkedin-hooks-playbook.md:132-137"
+    },
+    {
+      "id": 12,
+      "name": "Identity",
+      "reader_reaction": "Hey, that's me!",
+      "emotion": "Belonging, self-recognition",
+      "mechanism": "Speak directly to a specific group. When readers see themselves described, they feel personally addressed.",
+      "when_to_use": "Niche-targeted content, role-specific advice, community posts",
+      "example": "If you're a solo founder doing your own marketing...",
+      "source": "linkedin-hooks-playbook.md:139-143"
+    }
+  ],
+
+  "fill_in_templates": [
+    {
+      "id": 1,
+      "name": "Dream Outcome Without Obstacle",
+      "format": "How to [dream outcome] (without [obstacle])",
+      "example": "How to grow on LinkedIn (without posting every day)",
+      "why_it_works": "Removes the perceived barrier, making the goal feel more achievable.",
+      "source": "linkedin-hooks-playbook.md:151-154"
+    },
+    {
+      "id": 2,
+      "name": "Achievement in Steps",
+      "format": "I [big achievement] in [X] steps",
+      "example": "I built a 6-figure agency in 5 steps",
+      "why_it_works": "Combines credibility (the achievement) with a promise of structure (the steps).",
+      "source": "linkedin-hooks-playbook.md:156-159"
+    },
+    {
+      "id": 3,
+      "name": "Things to Overcome and Achieve",
+      "format": "[X] [things] to [overcome obstacle] and [achieve dream outcome]",
+      "example": "9 habits to stop procrastinating and double your output",
+      "why_it_works": "Dual benefit structure increases perceived value.",
+      "source": "linkedin-hooks-playbook.md:161-164"
+    },
+    {
+      "id": 4,
+      "name": "Dream Outcome in Timeframe",
+      "format": "This is how I [dream outcome] in [timeframe]",
+      "example": "This is how I got 10K followers in 90 days",
+      "why_it_works": "Timeframe adds specificity and urgency.",
+      "source": "linkedin-hooks-playbook.md:166-169"
+    },
+    {
+      "id": 5,
+      "name": "Bold Opinion",
+      "format": "I don't care if [bold/polarizing opinion]",
+      "example": "I don't care if you disagree -- cold outreach still works",
+      "why_it_works": "Polarization drives engagement. People who agree feel validated; people who disagree feel compelled to comment.",
+      "source": "linkedin-hooks-playbook.md:171-174"
+    },
+    {
+      "id": 6,
+      "name": "Popular Opinion Challenge",
+      "format": "Most [type of people] think [popular opinion]",
+      "example": "Most marketers think content is king. They're wrong.",
+      "why_it_works": "Counter-narrative hook that creates an open loop.",
+      "source": "linkedin-hooks-playbook.md:176-179"
+    },
+    {
+      "id": 7,
+      "name": "Dream Outcome + Solution",
+      "format": "Want [dream outcome]? [your solution]",
+      "example": "Want more inbound leads? Stop selling in your posts.",
+      "why_it_works": "Starts with desire, delivers unexpected advice.",
+      "source": "linkedin-hooks-playbook.md:181-184"
+    },
+    {
+      "id": 8,
+      "name": "Risk Taken + Fortunate Outcome",
+      "format": "[X] years ago I [risk taken], but [fortunate outcome]",
+      "example": "3 years ago I quit my $200K job. Best decision I ever made.",
+      "why_it_works": "Story arc in one line. Risk + reward = compelling narrative.",
+      "source": "linkedin-hooks-playbook.md:186-189"
+    },
+    {
+      "id": 9,
+      "name": "Biggest Mistake",
+      "format": "The biggest mistake I made as [job role]: [the mistake]",
+      "example": "The biggest mistake I made as a founder: hiring too fast",
+      "why_it_works": "Vulnerability + authority. People learn from mistakes more than successes.",
+      "source": "linkedin-hooks-playbook.md:191-194"
+    },
+    {
+      "id": 10,
+      "name": "Obstacle to Dream Outcome in Timeframe",
+      "format": "How I went from [obstacle] to [dream outcome] in [timeframe]",
+      "example": "How I went from 0 clients to fully booked in 6 months",
+      "why_it_works": "Transformation narrative with time-bound proof.",
+      "source": "linkedin-hooks-playbook.md:196-199"
+    }
+  ],
+
+  "hook_prompts": [
+    { "id": 1, "set": "A: Achievement and Transformation", "prompt": "I [achievement] in [timeframe]. Here's how.", "source": "linkedin-hooks-playbook.md:249" },
+    { "id": 2, "set": "A: Achievement and Transformation", "prompt": "[X] years ago, I [starting point]. Today, I [current state].", "source": "linkedin-hooks-playbook.md:250" },
+    { "id": 3, "set": "A: Achievement and Transformation", "prompt": "The #1 thing that helped me [achievement].", "source": "linkedin-hooks-playbook.md:251" },
+    { "id": 4, "set": "A: Achievement and Transformation", "prompt": "I spent [time/money] learning [skill]. Here's what I found.", "source": "linkedin-hooks-playbook.md:252" },
+    { "id": 5, "set": "A: Achievement and Transformation", "prompt": "I studied [X] [things]. Here's what they had in common.", "source": "linkedin-hooks-playbook.md:253" },
+    { "id": 6, "set": "A: Achievement and Transformation", "prompt": "[X] lessons I learned from [experience/person].", "source": "linkedin-hooks-playbook.md:254" },
+    { "id": 7, "set": "A: Achievement and Transformation", "prompt": "I used to think [old belief]. I was wrong.", "source": "linkedin-hooks-playbook.md:255" },
+    { "id": 8, "set": "A: Achievement and Transformation", "prompt": "The hardest part of [role/activity] isn't what you think.", "source": "linkedin-hooks-playbook.md:256" },
+    { "id": 9, "set": "A: Achievement and Transformation", "prompt": "[Famous person] taught me [lesson]. Here's the story.", "source": "linkedin-hooks-playbook.md:257" },
+    { "id": 10, "set": "A: Achievement and Transformation", "prompt": "If I had to start [activity] from scratch, I'd do this.", "source": "linkedin-hooks-playbook.md:258" },
+    { "id": 11, "set": "A: Achievement and Transformation", "prompt": "[X] things I'd tell my younger self about [topic].", "source": "linkedin-hooks-playbook.md:259" },
+    { "id": 12, "set": "A: Achievement and Transformation", "prompt": "I failed at [thing] [X] times. Here's what finally worked.", "source": "linkedin-hooks-playbook.md:260" },
+    { "id": 13, "set": "A: Achievement and Transformation", "prompt": "The difference between [average] and [great] at [skill].", "source": "linkedin-hooks-playbook.md:261" },
+    { "id": 14, "set": "A: Achievement and Transformation", "prompt": "I made [amount] from [activity]. Here's the breakdown.", "source": "linkedin-hooks-playbook.md:262" },
+    { "id": 15, "set": "A: Achievement and Transformation", "prompt": "[X] tools I use every day that most people don't know about.", "source": "linkedin-hooks-playbook.md:263" },
+    { "id": 16, "set": "B: Opinion and Insight", "prompt": "Unpopular opinion: [your take on industry topic].", "source": "linkedin-hooks-playbook.md:266" },
+    { "id": 17, "set": "B: Opinion and Insight", "prompt": "Stop [common activity]. Start [better alternative].", "source": "linkedin-hooks-playbook.md:267" },
+    { "id": 18, "set": "B: Opinion and Insight", "prompt": "[X]% of [group] get [topic] wrong. Here's why.", "source": "linkedin-hooks-playbook.md:268" },
+    { "id": 19, "set": "B: Opinion and Insight", "prompt": "The [industry] is broken. Here's what needs to change.", "source": "linkedin-hooks-playbook.md:269" },
+    { "id": 20, "set": "B: Opinion and Insight", "prompt": "You don't need [perceived requirement]. You need [actual requirement].", "source": "linkedin-hooks-playbook.md:270" },
+    { "id": 21, "set": "B: Opinion and Insight", "prompt": "[Common advice] is the worst advice in [industry].", "source": "linkedin-hooks-playbook.md:271" },
+    { "id": 22, "set": "B: Opinion and Insight", "prompt": "Everyone talks about [topic]. Nobody talks about [hidden truth].", "source": "linkedin-hooks-playbook.md:272" },
+    { "id": 23, "set": "B: Opinion and Insight", "prompt": "[X] signs you're [negative state]. And how to fix it.", "source": "linkedin-hooks-playbook.md:273" },
+    { "id": 24, "set": "B: Opinion and Insight", "prompt": "What [successful people] do differently about [topic].", "source": "linkedin-hooks-playbook.md:274" },
+    { "id": 25, "set": "B: Opinion and Insight", "prompt": "The real reason [common problem] happens.", "source": "linkedin-hooks-playbook.md:275" },
+    { "id": 26, "set": "B: Opinion and Insight", "prompt": "I asked [X] [experts/customers] one question. Here's what they said.", "source": "linkedin-hooks-playbook.md:276" },
+    { "id": 27, "set": "B: Opinion and Insight", "prompt": "[Topic] is not about [common assumption]. It's about [reality].", "source": "linkedin-hooks-playbook.md:277" },
+    { "id": 28, "set": "B: Opinion and Insight", "prompt": "The biggest lie in [industry] is [the lie].", "source": "linkedin-hooks-playbook.md:278" },
+    { "id": 29, "set": "B: Opinion and Insight", "prompt": "[X] mistakes that are killing your [desired outcome].", "source": "linkedin-hooks-playbook.md:279" },
+    { "id": 30, "set": "B: Opinion and Insight", "prompt": "Here's why [counterintuitive thing] actually works.", "source": "linkedin-hooks-playbook.md:280" }
+  ],
+
+  "headline_formulas": [
+    { "id": 1, "category": "Help Statement + Credibility", "pattern": "Helping [Target Audience] [Achieve Outcome] | [Credential]", "template": "Helping [Target audience] + [Get specific outcome] & [Benefit]", "exemplar_creator": "Florian Decludt", "exemplar_headline": "Helping B2B Sales Pros Earn $50K-$100K+ MORE This Year and Become the Top 1%", "source": "linkedin-profile-optimization-guide.md:151" },
+    { "id": 2, "category": "Help Statement + Credibility", "pattern": "Helping [Target Audience] [Achieve Outcome] | [Credential]", "template": "[Position at company], Helping [Target audience + outcome + tool]", "exemplar_creator": "Nial Ratcliffe", "exemplar_headline": "CEO at Ratcliffe Brothers, Helping industry leading businesses sign high-paying, high-quality clients through nurturing", "source": "linkedin-profile-optimization-guide.md:152" },
+    { "id": 3, "category": "Help Statement + Credibility", "pattern": "Helping [Target Audience] [Achieve Outcome] | [Credential]", "template": "[Age], [Position at company], Helping [Target audience + service]", "exemplar_creator": "Shoaib Ahmed", "exemplar_headline": "24, Founder: Yello Hippo, Helping Founders, Creators and C-Suite Executives Build Authority on LinkedIn", "source": "linkedin-profile-optimization-guide.md:153" },
+    { "id": 4, "category": "Help Statement + Credibility", "pattern": "Helping [Target Audience] [Achieve Outcome] | [Credential]", "template": "I will teach you [Market] without [Objection], Helping [Audience] with [Service]", "exemplar_creator": "Luke Shalom", "exemplar_headline": "I will teach you how to build an audience without getting lucky, Helping CEOs become thought leaders with LinkedIn Ghostwriting", "source": "linkedin-profile-optimization-guide.md:154" },
+    { "id": 5, "category": "I-Statement (Action-Oriented)", "pattern": "I [verb] [outcome] for [audience]", "template": "I build [Outcome], [Title #1], [Title #2], [Position]", "exemplar_creator": "Jason Vana", "exemplar_headline": "I build category-dominating brands, Brand Strategist, Content Strategist, Founder at SHFT Agency", "source": "linkedin-profile-optimization-guide.md:161" },
+    { "id": 6, "category": "I-Statement (Action-Oriented)", "pattern": "I [verb] [outcome] for [audience]", "template": "I [Service] for [Target audience], [Position], [Passion #1], [Passion #2]", "exemplar_creator": "Jane Kisnica", "exemplar_headline": "I design epic content for exciting brands, Freelance Graphic Designer", "source": "linkedin-profile-optimization-guide.md:162" },
+    { "id": 7, "category": "I-Statement (Action-Oriented)", "pattern": "I [verb] [outcome] for [audience]", "template": "I save [Specific audience] time + [Benefit] [Service]", "exemplar_creator": "Matt Barker", "exemplar_headline": "I save busy 7 figure agency founders time + attract more ideal clients with my LinkedIn Ghostwriting", "source": "linkedin-profile-optimization-guide.md:163" },
+    { "id": 8, "category": "I-Statement (Action-Oriented)", "pattern": "I [verb] [outcome] for [audience]", "template": "Winning [Benefit] for [Target audience]", "exemplar_creator": "Lara Acosta", "exemplar_headline": "Winning the organic marketing game for people and brands", "source": "linkedin-profile-optimization-guide.md:164" },
+    { "id": 9, "category": "Credibility + Value Proposition", "pattern": "[Role at Company] | [What you do for whom]", "template": "[Credibility attribute], Using [Mechanism] to [Desired result]", "exemplar_creator": "Jasmin Alic", "exemplar_headline": "Fortune 500 Copywriter & Strategist, Using words to increase your brand's awareness, authority & revenue", "source": "linkedin-profile-optimization-guide.md:171" },
+    { "id": 10, "category": "Credibility + Value Proposition", "pattern": "[Role at Company] | [What you do for whom]", "template": "[Position], Building [What & for who], [Authority], [Credibility]", "exemplar_creator": "Isobel Cowell", "exemplar_headline": "Head of Social @Kurogo, Building POWERFUL Personal Brands for Founders and CEOs", "source": "linkedin-profile-optimization-guide.md:172" },
+    { "id": 11, "category": "Credibility + Value Proposition", "pattern": "[Role at Company] | [What you do for whom]", "template": "[Position at company], [Service #1] + [Service #2 with audience]", "exemplar_creator": "Ryan Musselman", "exemplar_headline": "VP Creators at Cinemark, Ghostwriting + Launching Content Programs for Marketers, Sales Leaders, and Recruiters", "source": "linkedin-profile-optimization-guide.md:173" },
+    { "id": 12, "category": "Credibility + Value Proposition", "pattern": "[Role at Company] | [What you do for whom]", "template": "[Position at company] - [Specific market]", "exemplar_creator": "Justin Rowe", "exemplar_headline": "Founder/CMO @ Impactable - B2B LinkedIn Ads Agency", "source": "linkedin-profile-optimization-guide.md:174" },
+    { "id": 13, "category": "Curiosity + CTA", "pattern": "[Intriguing statement] | [CTA or proof]", "template": "[Question that confronts viewer], I help [Target audience + life change]", "exemplar_creator": "Jessie van Breugel", "exemplar_headline": "Unable to sell your 4-figure offer? I help online experts wake up to a LinkedIn inbox filled with high-quality leads", "source": "linkedin-profile-optimization-guide.md:181" },
+    { "id": 14, "category": "Curiosity + CTA", "pattern": "[Intriguing statement] | [CTA or proof]", "template": "My [Asset] has the solution to [Main objection], [Social proof], [CTA]", "exemplar_creator": "Tasleem Ahmad Fateh", "exemplar_headline": "My featured section has the solution to all your LinkedIn woes!, Founder at LinkedIn Creator's Club", "source": "linkedin-profile-optimization-guide.md:182" },
+    { "id": 15, "category": "Curiosity + CTA", "pattern": "[Intriguing statement] | [CTA or proof]", "template": "[What you do] + [What you seek], [Credibility] + [Benefit]", "exemplar_creator": "Charles Miller", "exemplar_headline": "Ghostwriter building my income to $1M/yr and sharing everything I learn along the way. Join 14,000+ newsletter subscribers", "source": "linkedin-profile-optimization-guide.md:183" },
+    { "id": 16, "category": "Curiosity + CTA", "pattern": "[Intriguing statement] | [CTA or proof]", "template": "[Call out target], You need [Name], [Service + outcome], [Credential #1]", "exemplar_creator": "Nausheen I. Chen", "exemplar_headline": "Speaking on screen? You need Nausheen, Coaching B2B founders to 10X leads by speaking on camera, 2x TEDx speaker", "source": "linkedin-profile-optimization-guide.md:184" },
+    { "id": 17, "category": "Brand Personality", "pattern": "[Brand attribute] | [Services]", "template": "[Learn X thing, before it becomes too late]", "exemplar_creator": "Ruben Hassid", "exemplar_headline": "Master A.I. before it masters you", "source": "linkedin-profile-optimization-guide.md:191" },
+    { "id": 18, "category": "Brand Personality", "pattern": "[Brand attribute] | [Services]", "template": "[Brand attribute], [Service #1], [Service #2], [Service #3]", "exemplar_creator": "Amy Elliott", "exemplar_headline": "The Mouthy Marketer, Emails, Social Media, LI Personal Branding, and Ads", "source": "linkedin-profile-optimization-guide.md:192" },
+    { "id": 19, "category": "Brand Personality", "pattern": "[Brand attribute] | [Services]", "template": "[Doing what] with [Mechanism]", "exemplar_creator": "Jake Ward", "exemplar_headline": "Scaling companies with SEO and content", "source": "linkedin-profile-optimization-guide.md:193" },
+    { "id": 20, "category": "Brand Personality", "pattern": "[Brand attribute] | [Services]", "template": "[Brand attribute], [Service #1], [Service #2], [Service #3], [Benefit]", "exemplar_creator": "Lea Turner", "exemplar_headline": "If Carlsberg made LinkedIn Trainers..., Corporate Training, Keynote Speaker, Membership Community", "source": "linkedin-profile-optimization-guide.md:194" },
+    { "id": 21, "category": "Story + Social Proof", "pattern": "[Your story] | [How you help] | [Proof]", "template": "[Your story], Sharing [Topic] to help you [Outcome], [Purpose]", "exemplar_creator": "Anthony Carlton", "exemplar_headline": "ex-Wealth Advisor turned Solopreneur, Sharing actionable advice to help you build a wealthy life", "source": "linkedin-profile-optimization-guide.md:201" },
+    { "id": 22, "category": "Story + Social Proof", "pattern": "[Your story] | [How you help] | [Proof]", "template": "I help you [Outcome] through [Process], [Credibility #1] & [Credibility #2]", "exemplar_creator": "Dina Calakovic", "exemplar_headline": "I help you attract & convert clients through Power Writing. Ranked No.37 LinkedIn Creator in the world", "source": "linkedin-profile-optimization-guide.md:202" },
+    { "id": 23, "category": "Story + Social Proof", "pattern": "[Your story] | [How you help] | [Proof]", "template": "[Title] built publicly. Follow for posts about [Topic #1], [Topic #2], [Topic #3]", "exemplar_creator": "Sam Szuchan", "exemplar_headline": "Solopreneur building publicly. Follow for posts about business, social, & personal growth", "source": "linkedin-profile-optimization-guide.md:203" },
+    { "id": 24, "category": "Story + Social Proof", "pattern": "[Your story] | [How you help] | [Proof]", "template": "[Position], THE [Intro about company], [Purpose], [Services]", "exemplar_creator": "Sophie Miller", "exemplar_headline": "Founder of Pretty Little Marketer, THE community for people in social media", "source": "linkedin-profile-optimization-guide.md:204" },
+
+    { "id": 25, "category": "Wording Construction (book a sentence)", "pattern": "[Adjective] + [Category] + to + [Verb] + [Noun] + [Timeline]", "template": "A [Adjective] [Category] to [Verb] your [Noun] [Timeline]", "exemplar_creator": "Vlad Oleksiienko (Post Structure Cheat Sheet)", "exemplar_headline": "A simple framework to scale your pipeline in 30 days", "source": "linkedin-copywriting-rules.md:497-498" },
+    { "id": 26, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Specific Result", "template": "I [action] [timeframe]. Here's [result].", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "I sent 1,000 cold emails last quarter. 3 turned into $400K pipeline.", "source": "linkedin-hooks/SKILL.md:23" },
+    { "id": 27, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Myth Buster", "template": "[Common belief] is wrong. Here's why.", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "Cold outreach is dead. Here's what replaced it.", "source": "linkedin-hooks/SKILL.md:24" },
+    { "id": 28, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Listicle Tease", "template": "[Number] [things] that [outcome]. #[X] is underrated.", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "5 cold email tactics that book meetings. #3 is underrated.", "source": "linkedin-hooks/SKILL.md:25" },
+    { "id": 29, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Before/After", "template": "Last year: [bad state]. Today: [good state]. The difference?", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "6 months ago: 200 followers. Today: 15,000. The difference?", "source": "linkedin-hooks/SKILL.md:26" },
+    { "id": 30, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Curiosity Gap", "template": "I discovered [something] that [category] don't want you to know.", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "I discovered a LinkedIn tactic that ghostwriters don't want you to know.", "source": "linkedin-hooks/SKILL.md:27" },
+    { "id": 31, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Social Proof", "template": "[Authority/Number] taught me [lesson].", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "Working with 200+ SaaS companies taught me one thing.", "source": "linkedin-hooks/SKILL.md:28" },
+    { "id": 32, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Direct Address", "template": "If you're [situation], read this.", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "If you're a solo founder doing your own marketing, read this.", "source": "linkedin-hooks/SKILL.md:29" },
+    { "id": 33, "category": "Hook Formula (ColdIQ/SKILL)", "pattern": "Controversial Take", "template": "[Strong opinion]. And I'll die on this hill.", "exemplar_creator": "ColdIQ 8 Hook Formulas", "exemplar_headline": "Posting every day on LinkedIn is a terrible strategy. And I'll die on this hill.", "source": "linkedin-hooks/SKILL.md:30" },
+    { "id": 34, "category": "Profile Headline Core Formula", "pattern": "[Who You Help] + [How You Help] + [Proof/Differentiator]", "template": "[Who You Help] + [How You Help] + [Proof/Differentiator]", "exemplar_creator": "linkedin-profile-optimization-guide core formula", "exemplar_headline": "I help B2B founders get inbound leads through LinkedIn ghostwriting | 200+ programs launched", "source": "linkedin-profile-optimization-guide.md:142" }
+  ]
+}

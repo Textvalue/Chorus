@@ -1,0 +1,453 @@
+{
+  "_meta": {
+    "title": "Choir — Dimension Enums (DB CHECK-constraint source of truth)",
+    "purpose": "Every controlled vocabulary used as a DB column constraint, scoring band, or staleness rule across the Choir context data model. An engineer loads these directly into CHECK constraints, ENUM types, or a seed/lookup table. Values are VERBATIM from KB sources; do not paraphrase enum labels.",
+    "generated": "2026-06-20",
+    "layer_legend": {
+      "global_library": "app-wide read-only seed data, every org references it",
+      "org": "shared per-org record (company-context / ICP / brand DNA)",
+      "member": "per-member record (voice_dna + prose_samples + expert_pov), org_id FK"
+    },
+    "primary_sources": [
+      ".claude/skills/icp-research/references/dimension-schemas.md",
+      ".claude/skills/icp-research/references/output-template.md",
+      "my-context-os/01-gtm-strategy/positioning/persona-development-playbook.md",
+      ".claude/skills/expert-pov-extractor/SKILL.md",
+      ".claude/voice-dna/_owner/core-voice.md",
+      "brainstorms/content-os-app/deep-context-layer-architecture.md"
+    ]
+  },
+
+  "company_size_band": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].firmographics.size_band",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:11-19",
+    "detection_rule": "Use employee count as primary signal; revenue as secondary when employee data unavailable. Detection signals: pricing page tier names, LinkedIn employee count, Crunchbase headcount, job posting volume, office count. (dimension-schemas.md:9, :21)",
+    "values": [
+      { "code": "Micro", "employee_range": "1-10", "revenue_proxy": "<$1M", "typical_funding": "Pre-seed / Bootstrapped", "label": "Micro/Solo" },
+      { "code": "Small", "employee_range": "11-50", "revenue_proxy": "$1M-$10M", "typical_funding": "Seed", "label": "Small Business" },
+      { "code": "Mid-Small", "employee_range": "51-200", "revenue_proxy": "$10M-$50M", "typical_funding": "Series A", "label": "Growing SMB" },
+      { "code": "Mid-Market", "employee_range": "201-500", "revenue_proxy": "$50M-$200M", "typical_funding": "Series B-C", "label": "Mid-Market" },
+      { "code": "Upper-Mid", "employee_range": "501-1,000", "revenue_proxy": "$200M-$500M", "typical_funding": "Series C-D", "label": "Upper Mid-Market" },
+      { "code": "Enterprise", "employee_range": "1,001-5,000", "revenue_proxy": "$500M-$2B", "typical_funding": "Late-stage / Public", "label": "Enterprise" },
+      { "code": "Large Enterprise", "employee_range": "5,000+", "revenue_proxy": "$2B+", "typical_funding": "Public / PE", "label": "Large Enterprise" }
+    ]
+  },
+
+  "industry_level_1": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].firmographics.industry_l1",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:31-52",
+    "usage_rule": "Always record both Level-1 and a Level-2 subsector. If a company spans sectors (e.g. FinTech = Technology + Financial Services), record the primary sector the company self-identifies with, then note secondary verticals. (dimension-schemas.md:54)",
+    "values": [
+      { "code": "Technology / SaaS", "level_2_examples": ["DevTools", "MarTech", "FinTech", "HealthTech", "EdTech", "HRTech", "SecOps"], "naics_range": "5112, 5182" },
+      { "code": "E-commerce / Retail", "level_2_examples": ["D2C", "Marketplace", "Omnichannel", "Luxury"], "naics_range": "4541, 4511" },
+      { "code": "Financial Services", "level_2_examples": ["Banking", "Insurance", "Wealth Management", "Payments", "Crypto"], "naics_range": "5221-5239" },
+      { "code": "Healthcare", "level_2_examples": ["Hospitals", "Pharma", "MedTech", "Digital Health", "Biotech"], "naics_range": "6211-6244" },
+      { "code": "Manufacturing", "level_2_examples": ["Discrete", "Process", "Automotive", "Aerospace", "Electronics"], "naics_range": "3111-3399" },
+      { "code": "Professional Services", "level_2_examples": ["Consulting", "Legal", "Accounting", "Staffing"], "naics_range": "5411-5419" },
+      { "code": "Media & Entertainment", "level_2_examples": ["Publishing", "Streaming", "Gaming", "Advertising"], "naics_range": "5111, 5121" },
+      { "code": "Education", "level_2_examples": ["Higher Ed", "K-12", "EdTech", "Corporate Training"], "naics_range": "6111-6117" },
+      { "code": "Telecommunications", "level_2_examples": ["Carriers", "ISPs", "Infrastructure", "UCaaS"], "naics_range": "5171-5179" },
+      { "code": "Real Estate", "level_2_examples": ["Commercial", "Residential", "PropTech", "Construction"], "naics_range": "5311-5313" },
+      { "code": "Energy & Utilities", "level_2_examples": ["Oil & Gas", "Renewables", "Utilities", "CleanTech"], "naics_range": "2111-2213" },
+      { "code": "Transportation & Logistics", "level_2_examples": ["Shipping", "Freight", "Fleet", "Supply Chain"], "naics_range": "4811-4931" },
+      { "code": "Agriculture & Food", "level_2_examples": ["AgTech", "Food Production", "Restaurants", "CPG"], "naics_range": "1111-3121" },
+      { "code": "Government & Public Sector", "level_2_examples": ["Federal", "State/Local", "Defense", "Civic Tech"], "naics_range": "9211-9281" },
+      { "code": "Nonprofit & NGO", "level_2_examples": ["Foundations", "Associations", "Social Impact"], "naics_range": "8131-8134" },
+      { "code": "Hospitality & Travel", "level_2_examples": ["Hotels", "Airlines", "Tourism", "Events"], "naics_range": "7211-7224" },
+      { "code": "Consumer Goods", "level_2_examples": ["Apparel", "Beauty", "Home", "Pet", "Sports"], "naics_range": "3151-3399" },
+      { "code": "Automotive", "level_2_examples": ["OEM", "Dealerships", "Fleet", "Mobility"], "naics_range": "3361-3369" },
+      { "code": "Aerospace & Defense", "level_2_examples": ["Commercial Aviation", "Military", "Space"], "naics_range": "3364, 9271" },
+      { "code": "Construction & Engineering", "level_2_examples": ["General Contractors", "Architecture", "Civil"], "naics_range": "2361-2389" }
+    ]
+  },
+
+  "geo_region": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].firmographics.hq_region",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:64-80",
+    "values": ["North America", "EMEA", "APAC", "LATAM", "Global"],
+    "raw_input_mapping": [
+      { "raw": "United States, USA, America", "normalized_country": "US", "normalized_region": "North America" },
+      { "raw": "Canada, US & Canada", "normalized_region": "North America" },
+      { "raw": "UK, Europe, European, Germany, France, Nordics", "normalized_region": "EMEA" },
+      { "raw": "Asia, Japan, Australia, Singapore, India", "normalized_region": "APAC" },
+      { "raw": "Brazil, Mexico, South America, Latin America", "normalized_region": "LATAM" },
+      { "raw": "Worldwide, International, Global", "normalized_region": "Global" }
+    ],
+    "hq_country_format": "ISO 3166-1 alpha-2 (e.g. US, DE, GB, JP) (dimension-schemas.md:66)"
+  },
+
+  "geographic_focus": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].firmographics.geographic_focus",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:69, output-template.md:103",
+    "values": ["Primary", "Secondary", "Global"]
+  },
+
+  "seniority_band": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.personas[].identity.seniority_band; member.persona_ref resolves to one of these",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:90-96; persona-development-playbook.md:88-90; output-template.md:167",
+    "mapping_rules": [
+      "'Head of' -> Director band (unless company is <50 people, then VP equivalent)",
+      "'Lead' -> Manager band (unless 'Tech Lead' at enterprise = Director equivalent)",
+      "Co-founder/Founder at startup (<50) -> C-Suite. At larger company -> depends on title."
+    ],
+    "values": [
+      { "code": "C-Suite", "title_examples": ["CEO", "CTO", "CRO", "CMO", "CFO", "COO", "CISO"], "buying_authority": "Economic Buyer (final sign-off)", "typical_role": "Approves budget, sets strategic direction" },
+      { "code": "VP", "title_examples": ["VP Sales", "VP Marketing", "VP Engineering", "SVP", "EVP"], "buying_authority": "Budget Authority (owns budget line)", "typical_role": "Champions internally, owns success metrics" },
+      { "code": "Director", "title_examples": ["Director of Ops", "Head of X", "Senior Director"], "buying_authority": "Champion / Influencer", "typical_role": "Drives evaluation, shapes requirements" },
+      { "code": "Manager", "title_examples": ["Team Lead", "Manager", "Senior Manager"], "buying_authority": "Influencer / End User", "typical_role": "Day-to-day user, surfaces problems" },
+      { "code": "IC", "title_examples": ["Senior Engineer", "Account Executive", "Analyst"], "buying_authority": "End User", "typical_role": "Uses product, provides feedback" }
+    ]
+  },
+
+  "buying_committee_role": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.personas[].buying_role",
+    "source": "output-template.md:160, :273-277; persona-development-playbook.md:255-266",
+    "note": "output-template.md §8 uses a 5-role committee map (Economic Buyer / Champion / Influencer / Technical Evaluator / Gatekeeper). persona-playbook.md:255-266 uses Economic Buyer / Champion / Influencer / Blocker / End User. Union of both supplied; engineer picks canonical set.",
+    "values": ["Economic Buyer", "Champion", "Influencer", "Technical Evaluator", "Gatekeeper", "Blocker", "End User", "Decision-maker", "User"]
+  },
+
+  "segment_priority": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].priority",
+    "source": "output-template.md:138-140",
+    "values": ["PRIMARY", "HIGH", "SECONDARY"]
+  },
+
+  "icp_attribute_weight": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].attributes[].weight",
+    "source": "output-template.md:117-120 (Attribute-Based ICP weighting)",
+    "values": ["High", "Med", "Low"]
+  },
+
+  "pain_severity": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.pains[].severity AND org.icp.personas[].pain_hierarchy[].rank",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:159-165; persona-development-playbook.md:113-117",
+    "rule": "Always lead outreach with P1/P2 pains. P3-P5 are follow-up angles for later sequence steps or content marketing. (dimension-schemas.md:167, persona-playbook.md:109)",
+    "values": [
+      { "code": "P1", "label": "Critical", "characteristics": "Revenue/survival threat, board-level visibility", "budget_authority": "Full authority, emergency budget", "outreach_priority": "Lead with this — immediate urgency" },
+      { "code": "P2", "label": "High", "characteristics": "Significant efficiency loss, measurable cost", "budget_authority": "Needs approval, but fast-tracked", "outreach_priority": "Strong opening angle" },
+      { "code": "P3", "label": "Medium-High", "characteristics": "Visibility/control gap, growing frustration", "budget_authority": "Can champion internally", "outreach_priority": "Good follow-up angle" },
+      { "code": "P4", "label": "Medium", "characteristics": "Talent/competitive pressure, strategic concern", "budget_authority": "Shared decision", "outreach_priority": "Later sequence steps" },
+      { "code": "P5", "label": "Medium-Low", "characteristics": "Process/documentation gaps, nice-to-have", "budget_authority": "Low priority, discretionary", "outreach_priority": "Nurture content only" }
+    ]
+  },
+
+  "pain_urgency_label": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.personas[].pain_hierarchy[].urgency (free-form ranked label in output-template; enumerated here for constraint)",
+    "source": "output-template.md:176-178; persona-development-playbook.md:113-117",
+    "values": ["Critical", "High", "Medium-High", "Medium", "Medium-Low"]
+  },
+
+  "buying_signal_category": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.buying_signals[].category",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:135-144; output-template.md:252-259",
+    "note": "Ranks 1-6 are the standard intent-buying-signals categories; 7-8 are extensions.",
+    "values": [
+      { "rank": 1, "code": "Former Customers / Alumni", "examples": "Past users at new company, product alumni", "detection_source": "LinkedIn, CRM, product usage data" },
+      { "rank": 2, "code": "Job Changes (Champions)", "examples": "Target persona moved to new company within 90d", "detection_source": "LinkedIn alerts, Sales Navigator" },
+      { "rank": 3, "code": "Hiring Signals", "examples": "Posting for roles your product serves", "detection_source": "Careers page, job boards, LinkedIn" },
+      { "rank": 4, "code": "Funding Events", "examples": "Series raise, PE investment, IPO", "detection_source": "Crunchbase, press, Exa search" },
+      { "rank": 5, "code": "Technology Changes", "examples": "New tool adoption, stack migration, vendor switch", "detection_source": "BuiltWith, job postings, press" },
+      { "rank": 6, "code": "Content Engagement", "examples": "BOFU page visits, competitor comparison searches", "detection_source": "Website analytics, intent data providers" },
+      { "rank": 7, "code": "Regulatory Triggers", "examples": "New compliance requirements, policy changes", "detection_source": "Government sites, industry news", "extension": true },
+      { "rank": 8, "code": "Market Expansion", "examples": "New geography, new product line, M&A", "detection_source": "Press releases, SEC filings", "extension": true }
+    ]
+  },
+
+  "signal_strength_tier": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.buying_signals[].strength_tier",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:148-151",
+    "values": [
+      { "code": "A-tier", "definition": "Direct buying indicator (demo request, pricing page visit, RFP issued)" },
+      { "code": "B-tier", "definition": "Strong indirect indicator (hiring signal + funding + tech change)" },
+      { "code": "C-tier", "definition": "Weak indirect indicator (single blog engagement, generic content download)" }
+    ]
+  },
+
+  "technology_category": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].technology[].category",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:111-120",
+    "record_format": "Category (Tool Name) — e.g. 'CRM (HubSpot)'",
+    "values": [
+      { "code": "CRM", "purpose": "Customer relationship management", "examples": ["Salesforce", "HubSpot", "Pipedrive", "Zoho"] },
+      { "code": "Analytics", "purpose": "Product and web analytics", "examples": ["GA4", "Mixpanel", "Amplitude", "PostHog", "Heap"] },
+      { "code": "Communication", "purpose": "Team and customer communication", "examples": ["Slack", "Teams", "Intercom", "Zendesk"] },
+      { "code": "Marketing Automation", "purpose": "Email, campaigns, automation", "examples": ["Marketo", "Pardot", "Mailchimp", "Braze", "Klaviyo"] },
+      { "code": "Data / CDP", "purpose": "Customer data, warehousing", "examples": ["Segment", "mParticle", "Snowflake", "BigQuery"] },
+      { "code": "Engineering", "purpose": "Development and project management", "examples": ["GitHub", "GitLab", "Jira", "Linear", "Asana"] },
+      { "code": "Cloud", "purpose": "Infrastructure and hosting", "examples": ["AWS", "GCP", "Azure", "Vercel", "Netlify"] },
+      { "code": "AI / ML", "purpose": "AI models and tooling", "examples": ["OpenAI", "Anthropic", "Hugging Face", "custom"] }
+    ]
+  },
+
+  "technology_fit_classification": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.segments[].technology[].fit",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:122-125; output-template.md:329 (Required/Preferred)",
+    "values": [
+      { "code": "Required", "definition": "Product cannot function without this tool/category (hard dependency)" },
+      { "code": "Preferred", "definition": "Better fit — faster time-to-value or stronger integration" },
+      { "code": "Compatible", "definition": "Works with, but not a significant factor" }
+    ]
+  },
+
+  "confidence_level": {
+    "applies_to_layer": ["org", "member"],
+    "applies_to_column": "every sourced field (org.icp.pains[].confidence, org.identity fields, etc.) + overall_confidence rollup",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:175-179; output-template.md:14",
+    "values": [
+      { "code": "High", "definition": "Official primary source, verified same day", "citation_tag": "[VERIFIED: URL]", "source_examples": "Official website, press release, SEC filing, named case study with URL" },
+      { "code": "Medium", "definition": "Credible secondary source or company-stated", "citation_tag": "[COMPANY-STATED] or [VERIFIED: URL]", "source_examples": "G2/Capterra reviews, TechCrunch/Forbes reporting, company blog, conference talk" },
+      { "code": "Low", "definition": "Single indirect source, estimated, or inferred", "citation_tag": "[INFERRED: source] or [UNVERIFIABLE]", "source_examples": "Reddit comment, single blog mention, LinkedIn post, job posting inference" }
+    ],
+    "shorthand_alias": "High|Med|Low (Med == Medium); the deep-context schema uses Med — accept both in the CHECK constraint",
+    "overall_confidence_rollup": {
+      "source": "dimension-schemas.md:187-190; output-template.md:14",
+      "rule": "Section confidence = majority level (>50% of data points). Overall report confidence: High if 8+ sections at High/Medium; Medium if 5-7; Low if <5."
+    }
+  },
+
+  "staleness_rule": {
+    "applies_to_layer": ["org", "member"],
+    "applies_to_column": "computed flag on any sourced field (org.identity.*, org.icp.*); drives the staleness_flags counter on the org record",
+    "source": ".claude/skills/icp-research/references/dimension-schemas.md:181-185",
+    "rules": [
+      { "field_class": "company_website_data", "threshold": "accessed > 90 days ago", "action": "tag [STALE: accessed YYYY-MM-DD]" },
+      { "field_class": "pricing_data", "threshold": "> 30 days old", "action": "tag [STALE: pricing from YYYY-MM-DD]" },
+      { "field_class": "review_data", "threshold": "> 90 days old", "action": "downgrade confidence to Medium max" },
+      { "field_class": "market_size_data", "threshold": "> 2 years old", "action": "tag [STALE] and note in Data Gaps" }
+    ],
+    "anti_fabrication_rule": "If data is not found, record [NOT FOUND — searched: query1, query2]. Never estimate or fabricate. 'Not available' is always acceptable. (dimension-schemas.md:192)"
+  },
+
+  "authority_tier": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp source_index[].authority_tier",
+    "source": "output-template.md:416-418",
+    "values": [
+      { "code": "Tier-1", "label": "Official" },
+      { "code": "Tier-2", "label": "Credible reporting" },
+      { "code": "Tier-3", "label": "Community/social" }
+    ]
+  },
+
+  "business_model": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.identity.business_model",
+    "source": "output-template.md:42",
+    "values": ["SaaS", "Open-core", "Marketplace", "Other"],
+    "note": "output-template lists 'SaaS/Open-core/Marketplace/etc.' — open enum; constrain to these + 'Other' free-text."
+  },
+
+  "post_status": {
+    "applies_to_layer": "org",
+    "applies_to_column": "posts.status (the canonical db-schema.sql CHECK constraint) AND the RBAC draft-lifecycle state machine",
+    "source": "db-schema.sql posts.status CHECK; multi-tenancy-spec.md §4.3 draft lifecycle state machine",
+    "note": "Single source of truth for the post/draft lifecycle. db-schema.sql posts.status CHECK lists these EXACT values and multi-tenancy-spec §4.3 mirrors them (R-G5 / decision 8 added 'changes_requested' + 'archived' so the RBAC state machine is loadable). Keep all three in sync.",
+    "values": ["draft", "pending", "approved", "scheduled", "published", "rejected", "changes_requested", "archived"],
+    "value_notes": {
+      "draft": "author is editing; generation gate passed",
+      "pending": "submitted for approval",
+      "approved": "approver/admin greenlit; not yet published",
+      "scheduled": "approved + queued for a future publish slot",
+      "published": "live on platform (== posts.published_at set)",
+      "rejected": "approver/admin rejected (reason required)",
+      "changes_requested": "approver/admin asked for edits; routes back to draft",
+      "archived": "retired; terminal"
+    }
+  },
+
+  "stage": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.identity.stage",
+    "source": "deep-context-layer-architecture.md:181 (intake Q1.1.3); inferred funding ladder from dimension-schemas.md:13-19",
+    "note": "Architecture cites stage='growth' as example from intake Q1.1.3. No closed enum is fixed in the KB source; recommended canonical ladder below aligned to the company_size_band funding column.",
+    "recommended_values": ["pre-seed", "seed", "series-a", "series-b", "series-c", "growth", "late-stage", "public", "bootstrapped"],
+    "net_new": true
+  },
+
+  "sales_motion_type": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.sales_motion.type",
+    "source": "output-template.md:290, :356",
+    "values": ["PLG", "SLG", "Hybrid", "Community-Led"]
+  },
+
+  "audience_sophistication": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.brand_dna.audience_sophistication",
+    "source": "deep-context-layer-architecture.md:214 (config knob: drives persuasion register)",
+    "note": "Architecture cites 'Enterprise' as example value; this is a persuasion-register config knob (Schwartz awareness/sophistication lineage). No closed enum fixed in source.",
+    "recommended_values": ["Unaware", "Problem-Aware", "Solution-Aware", "Product-Aware", "Most-Aware", "Enterprise"],
+    "net_new": true
+  },
+
+  "competitor_threat_level": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.competitors[].threat_level",
+    "source": "output-template.md:305-308",
+    "values": ["High", "Med", "Low"]
+  },
+
+  "competitor_category": {
+    "applies_to_layer": "org",
+    "applies_to_column": "org.icp.competitors[].category",
+    "source": "output-template.md:306-308",
+    "values": ["Direct", "Indirect", "Status Quo"]
+  },
+
+  "contrarian_intensity": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.expert_pov.core_beliefs[].contrarian_intensity AND member.expert_pov.hot_takes[].contrarian_intensity",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:145-149; deep-context-layer-architecture.md:112",
+    "values": [
+      { "code": "H", "label": "High", "definition": "Industry would actively push back. Challenges a dominant practice or widely-held assumption. Content using this will generate debate." },
+      { "code": "M", "label": "Medium", "definition": "Some practitioners would disagree. Challenges a common but not universal practice. Content using this attracts engaged niche audiences." },
+      { "code": "L", "label": "Low", "definition": "Directionally accepted but under-practiced. Most would nod but few actually do it. Works for credibility-building, not differentiation." }
+    ]
+  },
+
+  "hot_take_scope": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.expert_pov.hot_takes[].scope",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:159-161; deep-context-layer-architecture.md:252",
+    "values": [
+      { "code": "content-safe", "definition": "Safe to publish in external-facing content (LinkedIn, blog, talk)" },
+      { "code": "sales-only", "definition": "Sales-call-only — too risky for public content; raise only in 1:1 sales context" }
+    ],
+    "note": "SKILL.md phrasing is 'Content-safe' / 'Sales-call-only'; deep-context schema canonicalizes to 'content-safe' / 'sales-only'. Use the lowercase hyphenated forms as the constraint."
+  },
+
+  "hot_take_risk_level": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.expert_pov.hot_takes[].risk_level",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:160",
+    "values": ["Low", "Medium", "High"]
+  },
+
+  "crawford_4test": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.expert_pov.hot_takes[].crawford.{counterintuitive,specific,quantifiable,demonstrable} (booleans) + .score",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:168-182; deep-context-layer-architecture.md:114",
+    "tests": [
+      { "code": "counterintuitive", "question": "Would other practitioners reply 'Actually...'?", "pass_criteria": "Provokes disagreement or surprise" },
+      { "code": "specific", "question": "Can they name exact tools, frameworks, patterns?", "pass_criteria": "Has named, concrete components" },
+      { "code": "quantifiable", "question": "What's the before/after with numbers?", "pass_criteria": "At least one measurable metric" },
+      { "code": "demonstrable", "question": "Can they show this in 5 minutes?", "pass_criteria": "Artifact, demo, or case study exists" }
+    ],
+    "score_enum": ["4/4", "3/4", "2/4", "1/4", "0/4"],
+    "score_action": [
+      { "score": "4/4", "action": "Use for positioning and content pillars. Strongest differentiation." },
+      { "score": "3/4", "action": "Identify the gap. Push for the missing dimension in a follow-up question." },
+      { "score": "<=2/4", "action": "Internal belief only. Not ready for external-facing content. Keep in extraction doc but do not build content pillars around it yet." }
+    ]
+  },
+
+  "obi_test": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.expert_pov.obi.{unifies,differentiates,defines} (booleans — all three must pass)",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:190-193; deep-context-layer-architecture.md:116",
+    "tests": [
+      { "code": "unifies", "question": "Does it connect the core beliefs into a coherent worldview?" },
+      { "code": "differentiates", "question": "Does it set this founder apart from competitors?" },
+      { "code": "defines", "question": "Does it define a new category or redefine how an existing category should be understood?" }
+    ],
+    "rule": "All three must pass for the OBI to be valid. If no single OBI emerges, present 2-3 candidates with rationale; the founder chooses."
+  },
+
+  "expert_pov_extraction_mode": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.expert_pov.extraction_mode (provenance of how this member's POV was captured)",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:39-74",
+    "values": [
+      { "code": "full_interview", "label": "Mode A: Full Interview", "duration": "60-90 min", "questions": "all 18", "output": "Complete extraction document with all 8 sections" },
+      { "code": "async_extract", "label": "Mode B: Async Extract", "duration": "5-10 min voice dictation + 30 min follow-up", "questions": "12 [ASYNC]-tagged", "output": "Complete extraction (may have thinner Taste Profile)" },
+      { "code": "quick_pov", "label": "Mode C: Quick POV", "duration": "30 min", "questions": "6 [CORE]-tagged", "output": "Core Beliefs + Hot Takes Library + POV Clusters; OBI optional" }
+    ]
+  },
+
+  "interview_question_tag": {
+    "applies_to_layer": "global_library",
+    "applies_to_column": "global_library.interview_questions[].tags (which question banks include this question)",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:80, :84-128",
+    "values": [
+      { "code": "CORE", "definition": "Included in Quick POV (Mode C) — 6 questions" },
+      { "code": "ASYNC", "definition": "Included in Async Extract (Mode B) — 12 questions, async-friendly variant" }
+    ]
+  },
+
+  "voice_directness": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.voice_dna.core_attributes.directness",
+    "source": ".claude/voice-dna/_owner/core-voice.md:13",
+    "note": "core-voice.md uses prose descriptors for the worked example (e.g. 'Medium-direct'). These are recommended discretized buckets for a constrainable column; store the verbatim descriptor in a companion free-text column.",
+    "recommended_values": ["low", "medium-low", "medium", "medium-high", "high"],
+    "net_new": true
+  },
+
+  "voice_contrarian_tendency": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.voice_dna.core_attributes.contrarian_tendency",
+    "source": ".claude/voice-dna/_owner/core-voice.md:15",
+    "note": "Worked example value: 'Low-to-moderate'. Recommended discretized buckets below; keep verbatim descriptor alongside.",
+    "recommended_values": ["low", "low-to-moderate", "moderate", "moderate-to-high", "high"],
+    "net_new": true
+  },
+
+  "prose_sample_voice_mode": {
+    "applies_to_layer": "member",
+    "applies_to_column": "member.prose_samples[].mode AND member.prose_samples[].voice_mode",
+    "source": "deep-context-layer-architecture.md:242 (mode example: 'Builder-Teacher'); client-voice-dna-template.md:101 ('Authoritative / Conversational / Analytical / Contrarian / etc.')",
+    "note": "Open enum — client-voice-dna-template.md gives 'Voice mode: [Authoritative / Conversational / Analytical / Contrarian / etc.]'. Recommended seed values below; allow free-text.",
+    "recommended_values": ["Authoritative", "Conversational", "Analytical", "Contrarian", "Builder-Teacher"],
+    "net_new": true
+  },
+
+  "prose_sample_count_constraint": {
+    "applies_to_layer": "member",
+    "applies_to_column": "COUNT(member.prose_samples) and LENGTH(member.prose_samples[].text)",
+    "source": "deep-context-layer-architecture.md:104, :241-243; client-voice-dna-template.md:106, :128",
+    "rules": [
+      "REQUIRED count: 3-5 prose samples per member.",
+      "Each sample: 200-600 words, verbatim, pre-AI preferred.",
+      "DO NOT include samples under 200 words (pattern extraction needs density). (client-voice-dna-template.md:128)",
+      "Absence is NOT a hard schema error for personal-brand content (degrades to description-only fallback, lower fidelity) BUT is a HARD STOP for brand/site copy. (deep-context-layer-architecture.md:104)"
+    ]
+  },
+
+  "fletch_category": {
+    "applies_to_layer": ["global_library", "member"],
+    "applies_to_column": "member.expert_pov.belief_to_content_map[].fletch_category AND member.expert_pov.pov_clusters[].fletch_category",
+    "source": ".claude/skills/expert-pov-extractor/SKILL.md:164, :210, :232",
+    "note": "SKILL.md references 'Fletch Category 3 (POV & Insights)' and 'Cat 1-6'. The full 6-category Fletch taxonomy is NOT enumerated in these source files — only Cat 3 is named. Recorded in net_new for the data-model; engineer must source the full Fletch category list (1-6) from startup-gtm-messaging-framework before constraining.",
+    "known_value": { "code": "Cat 3", "label": "POV & Insights" },
+    "net_new": true
+  },
+
+  "global_library_seed_db": {
+    "applies_to_layer": "global_library",
+    "applies_to_column": "enumerates the app-wide read-only seed DBs every org references (NOT a column constraint — a catalog of seed tables)",
+    "source": "deep-context-layer-architecture.md:167-171 ([VERIFIED split: my-context-os/09-agency/clients/NulaOne/README.md:408-419])",
+    "values": [
+      { "code": "hooks", "approx_count": 141 },
+      { "code": "frameworks", "approx_count": "13 + prompts" },
+      { "code": "body_templates", "approx_count": 74 },
+      { "code": "cta_patterns", "approx_count": null },
+      { "code": "power_words", "approx_count": 100 },
+      { "code": "proven_posts", "approx_count": "86 labeled" }
+    ],
+    "note": "Counts are seed-DB cardinalities cited in the architecture doc; the actual hook/framework/template/power-word CONTENT is extracted in sibling backend-build-spec artifacts (seed-data/, prompts/), not here."
+  }
+}

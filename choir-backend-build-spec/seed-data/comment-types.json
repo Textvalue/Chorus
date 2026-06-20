@@ -1,0 +1,273 @@
+{
+  "_meta": {
+    "layer": "global_library",
+    "description": "Choir comment-type taxonomy. App-wide read-only seed DB. 11 comment types (6 Jasmin Alic + 5 Sam Browne incl. Sidecar). engagement_weight is the LinkedIn algorithm action weight the comment type maps to (the weight model the composer/scorer uses to rank comment quality). Linter rules are deterministic pass/fail checks the comment composer runs before allowing a draft to post.",
+    "engagement_weight_model": {
+      "_source": "github-gtm-skills/.../engagement/SKILL.md:20-28",
+      "save_bookmark": 5,
+      "meaningful_comment_over_15_words": 4,
+      "share_with_commentary": "3-4",
+      "short_comment_under_15_words": 2,
+      "reaction_like": 1,
+      "click_see_more": "0.5-1",
+      "note": "Comment types map to either the meaningful-comment weight (4x, >15 words) or short-comment weight (2x, <15 words) based on their typical word count. Sidecar comments are full-length 'posts as comments' and carry the highest practical distribution value though they share the 4x comment weight."
+    },
+    "authors": {
+      "Alic": "Jasmin (Jay) Alic -- 6 types optimize for DEMONSTRATING EXPERTISE",
+      "Browne": "Sam Browne (sambrowne.co) -- 5 types optimize for BUILDING CONNECTIONS / hijacking distribution"
+    },
+    "primary_source": "my-context-os/04-linkedin-content/engagement/linkedin-commenting-strategy.md",
+    "weights_source": "my-context-os/raw-context/inbox/coldiq-evaluation/github-gtm-skills/master-skills/linkedin-content/.claude/skills/engagement/SKILL.md",
+    "extracted": "2026-06-20"
+  },
+  "comment_types": [
+    {
+      "id": "alic_personal_advice",
+      "name": "Personal Advice",
+      "author": "Alic",
+      "description": "Share something you wish you knew X months or years ago. Relate the post's topic to your own journey.",
+      "example": "The point about quality over quantity is something I see misunderstood constantly. In my experience, 3 high-quality posts per week with 10 thoughtful comments outperforms daily posting by 3x in terms of profile views.",
+      "engagement_weight": 4,
+      "engagement_weight_basis": "meaningful_comment_over_15_words",
+      "optimizes_for": "demonstrating_expertise",
+      "source": "linkedin-commenting-strategy.md:134-135 (example sourced from :120 'Good' model)"
+    },
+    {
+      "id": "alic_professional_advice",
+      "name": "Professional Advice",
+      "author": "Alic",
+      "description": "Share something you normally only share with paying clients. Demonstrates expertise and generosity simultaneously.",
+      "example": null,
+      "engagement_weight": 4,
+      "engagement_weight_basis": "meaningful_comment_over_15_words",
+      "optimizes_for": "demonstrating_expertise",
+      "source": "linkedin-commenting-strategy.md:137-138"
+    },
+    {
+      "id": "alic_comparisons",
+      "name": "Comparisons",
+      "author": "Alic",
+      "description": "Before vs. After. Pros vs. Cons. Add a structured comparison that extends the original post's argument.",
+      "example": null,
+      "engagement_weight": 4,
+      "engagement_weight_basis": "meaningful_comment_over_15_words",
+      "optimizes_for": "demonstrating_expertise",
+      "source": "linkedin-commenting-strategy.md:140-141"
+    },
+    {
+      "id": "alic_motivational",
+      "name": "Motivational",
+      "author": "Alic",
+      "description": "A relevant quote, encouraging advice, or positive reinforcement. People respond to positivity -- but make it specific, not generic.",
+      "example": null,
+      "engagement_weight": 2,
+      "engagement_weight_basis": "short_comment_under_15_words",
+      "optimizes_for": "demonstrating_expertise",
+      "source": "linkedin-commenting-strategy.md:143-144"
+    },
+    {
+      "id": "alic_humor",
+      "name": "Humor",
+      "author": "Alic",
+      "description": "A bit of humor never hurts. Makes you memorable and shows personality. Use sparingly in B2B -- one witty comment among serious ones stands out.",
+      "example": null,
+      "engagement_weight": 2,
+      "engagement_weight_basis": "short_comment_under_15_words",
+      "optimizes_for": "demonstrating_expertise",
+      "source": "linkedin-commenting-strategy.md:146-147"
+    },
+    {
+      "id": "alic_tags",
+      "name": "Tags",
+      "author": "Alic",
+      "description": "Most big creators have notifications disabled -- tag them to get their attention. Tagging also increases your comment's visibility in the tagged person's network.",
+      "example": null,
+      "engagement_weight": 2,
+      "engagement_weight_basis": "short_comment_under_15_words",
+      "optimizes_for": "demonstrating_expertise",
+      "source": "linkedin-commenting-strategy.md:149-150"
+    },
+    {
+      "id": "browne_support",
+      "name": "Support Comment",
+      "author": "Browne",
+      "description": "Simplest, most sustainable comment type. Skim the post, drop a like, leave a one-line acknowledgment. Purpose is relationship maintenance, not showcasing expertise. Builds reciprocity so DMs later are warm, not cold.",
+      "example": "Congrats Yong-Soo! Inspiring!",
+      "engagement_weight": 2,
+      "engagement_weight_basis": "short_comment_under_15_words",
+      "optimizes_for": "building_connections",
+      "when_to_use": "Daily, on allies' and target creators' posts. Low effort, high relationship return.",
+      "source": "linkedin-commenting-strategy.md:160-168"
+    },
+    {
+      "id": "browne_call_out",
+      "name": "Call Out Comment",
+      "author": "Browne",
+      "description": "Tag the creator and call out something specific you loved in their post. Shows you genuinely engaged rather than skimming. Structure: tag the person + call out the specific element ('I love how you...').",
+      "example": "Instant save, Teddy. This is super actionable, zero fluff, just meat and potatoes. Even the top-level thinking is high quality for the first 15 ideas. And then to expand on each of those 15 and create 15 x 15 ideas... genius.",
+      "engagement_weight": 4,
+      "engagement_weight_basis": "meaningful_comment_over_15_words",
+      "optimizes_for": "building_connections",
+      "source": "linkedin-commenting-strategy.md:170-180"
+    },
+    {
+      "id": "browne_expansion",
+      "name": "Expansion Comment",
+      "author": "Browne",
+      "description": "Acknowledge the creator's work, then share insight from your own experience or reading that supports or extends their point. Structure: (1) acknowledge the original point, (2) connect it to your experience, (3) add your own insight or example. Overlaps Alic 'Professional Advice' but emphasis is on extending the post, not independent expertise.",
+      "example": "I've been obsessed with buying certain music tools, hoping they'd magically turn me into a genius musician (they didn't). Turns out, the hard part is just showing up. Remove obstacles to creation. Make it so you can just sit down, get started, and your handful of simple tools are ready to rock.",
+      "engagement_weight": 4,
+      "engagement_weight_basis": "meaningful_comment_over_15_words",
+      "optimizes_for": "building_connections",
+      "source": "linkedin-commenting-strategy.md:182-193"
+    },
+    {
+      "id": "browne_comedy",
+      "name": "Comedy Comment",
+      "author": "Browne",
+      "description": "LinkedIn can be dry. A funny comment shows personality, creativity, and breaks the ice with established creators. Use when you see a natural opening. Maps directly to Alic 'Humor'; Browne's contribution is using comedy specifically as a relationship-building tool with established creators.",
+      "example": "Shout out to all those poor fools doing it tough on $500k per year. Hang in there. It gets better.",
+      "example_note": "Got 50+ likes (on a post about 'struggling on $200K-$500K/year').",
+      "engagement_weight": 2,
+      "engagement_weight_basis": "short_comment_under_15_words",
+      "optimizes_for": "building_connections",
+      "source": "linkedin-commenting-strategy.md:195-201"
+    },
+    {
+      "id": "browne_sidecar",
+      "name": "Sidecar Comment (Growth Hack)",
+      "author": "Browne",
+      "description": "The most powerful comment type for rapid audience growth. When a major creator (10K+ followers) in your niche posts within the past hour, write a FULL-LENGTH 'post' as a comment -- headline, formatting, structured points, the whole thing. Becomes top comment, seen by 10,000+ people, drives profile views and follows. Hidden benefit: the comment is market-tested content you can repurpose as a standalone post later. Highest-ROI comment type in the playbook.",
+      "example": "Sam Browne's sidecar comment on Justin Welsh's post about audience-building became the top comment and was later repurposed as a standalone post.",
+      "engagement_weight": 4,
+      "engagement_weight_basis": "meaningful_comment_over_15_words",
+      "highest_roi": true,
+      "optimizes_for": "building_connections",
+      "requirements": [
+        "Target major creators in your niche only (10K+ followers)",
+        "Post was published within the last hour (early comments get top placement)",
+        "Comment must be genuinely high quality -- treat it like writing a real post",
+        "Format it properly: headline, spacing, structured points"
+      ],
+      "expected_outcome": [
+        "Comment gets 30+ likes",
+        "Becomes the post's top comment",
+        "Seen by 10,000+ people",
+        "Their audience views your profile",
+        "Some choose to follow you"
+      ],
+      "source": "linkedin-commenting-strategy.md:203-224"
+    }
+  ],
+  "linter_rules": [
+    {
+      "rule": "block_generic_great_post",
+      "description": "Block low-value generic praise comments (e.g. 'Great post!', 'Great post, Jay! Really insightful.', 'Hey, great post').",
+      "match": ["great post", "nice post", "love this", "so true", "well said", "thanks for sharing", "great share", "hey, great post"],
+      "match_type": "case_insensitive_substring_when_comment_is_short",
+      "threshold": "comment word_count < 15 AND matches a generic-praise phrase",
+      "severity": "block",
+      "reason": "Zero value, zero visibility, makes you look lazy. Comment #1 Common Mistake. A daily branding opportunity wasted -- you don't want to be the 'Hey, great post' person.",
+      "source": "linkedin-commenting-strategy.md:119-120, 128, 269"
+    },
+    {
+      "rule": "min_word_count",
+      "description": "Comments should be 15+ words to register as a meaningful comment (4x weight vs 2x for short comments).",
+      "threshold": "word_count >= 15 for 4x weight; word_count < 15 downgrades to 2x weight (warn, not block, unless also generic-praise)",
+      "severity": "warn",
+      "reason": "Meaningful comment (>15 words) = 4x engagement weight; short comment (<15 words) = 2x. Write 15+ words: add insight, share experience, ask a question. Exception: Support and Comedy comment types are intentionally short (2x) and pass at <15 words.",
+      "weight_meaningful_comment": 4,
+      "weight_short_comment": 2,
+      "source": "github-gtm-skills/.../engagement/SKILL.md:24,26,36; linkedin-commenting-strategy.md:94-96"
+    },
+    {
+      "rule": "require_question_or_insight",
+      "description": "A high-impact comment format is: strong first sentence, line break, end with a question. Warn if the comment ends without a question AND adds no clear insight/experience.",
+      "threshold": "comment SHOULD contain a question mark OR a first-person insight/experience clause; flag if neither present",
+      "severity": "warn",
+      "reason": "Comment format: strong first sentence, line break, end with a question. End every comment with a specific question (not generic) to invite replies and lift its own engagement.",
+      "source": "github-gtm-skills/.../engagement/SKILL.md:38; linkedin-commenting-strategy.md:104-108"
+    },
+    {
+      "rule": "daily_comment_volume_cap",
+      "description": "Keep total comments to 10-15 (commenting-strategy) / 10-20 (SKILL.md meaningful comments) quality comments per day. Block/throttle past the spam threshold.",
+      "threshold": "soft cap 10-20 meaningful comments/day; hard warn at >15-20/day (commenting too many at once may be flagged as spam)",
+      "severity": "warn",
+      "reason": "Commenting on too many posts at once -- LinkedIn may flag as spam. Common Mistake #2. Also respects the ~100-120 total interactions/day platform ceiling.",
+      "source": "linkedin-commenting-strategy.md:270; github-gtm-skills/.../engagement/SKILL.md:35,61"
+    },
+    {
+      "rule": "diversify_creator_audience_size",
+      "description": "Do not only comment on big creators -- also comment on peers at your level (they reciprocate more reliably). Sidecar is the exception (intentionally targets 10K+ creators).",
+      "threshold": "warn if a member's recent comment targets are skewed >X% toward 10K+ follower creators (recommend a peer:big-creator mix)",
+      "severity": "warn",
+      "reason": "Only commenting on big creators -- comment on peers at your level too. They reciprocate more reliably. Common Mistake #3.",
+      "source": "linkedin-commenting-strategy.md:271"
+    },
+    {
+      "rule": "always_reply_to_comment_replies",
+      "description": "When someone replies to your comment, always reply back -- creates a thread that gets more visibility. (Inbound: also reply to all comments on your OWN post within 1 hour.)",
+      "threshold": "flag any reply-to-your-comment left unanswered > 24h",
+      "severity": "warn",
+      "reason": "Ignoring replies to your comments. Common Mistake #4. Threads get more visibility; validation builds loyal community members.",
+      "source": "linkedin-commenting-strategy.md:272, 283-284, 299-301"
+    },
+    {
+      "rule": "occasional_content_linkback",
+      "description": "Occasionally reference a relevant post you wrote when it genuinely adds value to the conversation -- do not link-back on every comment.",
+      "threshold": "encourage link-back on a low % of comments; warn if a member NEVER links back OR links back excessively (>1 in N comments)",
+      "severity": "info",
+      "reason": "Not linking back to your content. Common Mistake #5. Underused but only valuable when it genuinely adds to the conversation.",
+      "source": "linkedin-commenting-strategy.md:273"
+    },
+    {
+      "rule": "early_comment_timing",
+      "description": "Be early -- comment within the first 30 minutes after someone posts for top-comment positioning (Sidecar requires within the last hour).",
+      "threshold": "boost/flag-as-optimal when post age < 30 minutes; Sidecar requires post age < 60 minutes",
+      "severity": "info",
+      "reason": "First 30 minutes after someone posts = top comment positioning. Early + good = the #1 comment, which gets as much visibility as a standalone post.",
+      "source": "github-gtm-skills/.../engagement/SKILL.md:37; linkedin-commenting-strategy.md:248, 252-256, 217-219"
+    },
+    {
+      "rule": "humor_density_limit",
+      "description": "Use humor/comedy sparingly in B2B -- one witty comment among serious ones stands out; too many reads as unserious.",
+      "threshold": "warn if humor/comedy comment types exceed a small share of a member's recent comments",
+      "severity": "info",
+      "reason": "Use sparingly in B2B contexts -- one witty comment among serious ones stands out.",
+      "source": "linkedin-commenting-strategy.md:147"
+    }
+  ],
+  "reply_to_own_comments_principles": {
+    "_note": "Sam Browne's 4 principles for replying to comments on YOUR OWN posts. Distinct from comment_types (commenting on others' posts). Useful as a second composer mode / linter context.",
+    "principles": [
+      {
+        "id": "validate",
+        "name": "Validate",
+        "description": "Acknowledge that a comment is a good one. Even a quick acknowledgment builds the relationship. Never leave a thoughtful comment without a reply.",
+        "example": "Great point Ilya. Exactly right.",
+        "source": "linkedin-commenting-strategy.md:299-303"
+      },
+      {
+        "id": "use_first_names",
+        "name": "Use First Names",
+        "description": "Tag people in your reply, then delete their last name so just their first name remains. Humanizing touch hardly anyone does.",
+        "example": "Thanks Laura, appreciate it! (warmer than 'Thanks Laura Cassinelli, appreciate it!')",
+        "source": "linkedin-commenting-strategy.md:305-307"
+      },
+      {
+        "id": "reciprocate_effort",
+        "name": "Reciprocate Effort",
+        "description": "When someone leaves a long, thoughtful comment, match their effort with an equally detailed reply. Reciprocate for: comments sharing personal experience, constructive feedback, and consistent engagers.",
+        "example": null,
+        "source": "linkedin-commenting-strategy.md:309-317"
+      },
+      {
+        "id": "reply_with_gif",
+        "name": "Reply with a GIF",
+        "description": "A fun, unexpected touch that creates a memorable moment. Use selectively -- one GIF reply per post maximum, save it for comments where humor fits naturally.",
+        "example": null,
+        "source": "linkedin-commenting-strategy.md:319-320"
+      }
+    ]
+  }
+}

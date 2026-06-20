@@ -1,0 +1,282 @@
+{
+  "_meta": {
+    "artifact": "cta-bank",
+    "layer": "global_library",
+    "description": "App-wide read-only seed bank of LinkedIn CTA patterns, comment-gating templates, and P.S. closers for the Choir content-OS. Goal-mapped so the post-composer can select a CTA by the member's stated objective (lead-gen, engagement, follow, DM, booking). Templates contain {placeholder} tokens an engineer/LLM fills at generation time.",
+    "goals_enum": ["lead-gen", "engagement", "follow", "DM", "booking"],
+    "placeholder_convention": "Square-bracket tokens [like_this] and curly tokens {like_this} are fill-at-generation slots. Preserve them verbatim in the DB; resolve at render.",
+    "sources": [
+      "my-context-os/04-linkedin-content/copywriting/linkedin-copywriting-rules.md",
+      "my-context-os/raw-context/inbox/coldiq-evaluation/github-gtm-skills/master-skills/linkedin-content/.claude/skills/cta/SKILL.md",
+      "my-context-os/raw-context/inbox/coldiq-evaluation/github-gtm-skills/master-skills/linkedin-content/resources/voice/coldiq-writing-guide.md",
+      "my-context-os/raw-context/inbox/coldiq-evaluation/github-gtm-skills/master-skills/linkedin-content/resources/references/content-strategy.md"
+    ],
+    "design_rules": [
+      {
+        "rule": "One CTA per post",
+        "detail": "Multiple CTAs dilute action. Composer must emit exactly one cta_pattern per generated post.",
+        "source": "cta/SKILL.md:31"
+      },
+      {
+        "rule": "Be specific",
+        "detail": "'Comment your biggest hiring mistake' beats 'Let me know what you think'.",
+        "source": "cta/SKILL.md:32"
+      },
+      {
+        "rule": "Lower the barrier",
+        "detail": "'Drop a [emoji]' is easier than 'Write a paragraph'.",
+        "source": "cta/SKILL.md:33"
+      },
+      {
+        "rule": "Match CTA to content",
+        "detail": "frameworks = save, opinions = comment, personal brand = follow.",
+        "source": "cta/SKILL.md:34"
+      },
+      {
+        "rule": "Saves are weighted 5x",
+        "detail": "Always consider 'is this saveable?' when writing.",
+        "source": "cta/SKILL.md:35"
+      },
+      {
+        "rule": "CTA is worth ~10% of writing time",
+        "detail": "Time allocation: 40% hook/rehook, 30% body, 20% editing/formatting, 10% CTA.",
+        "source": "linkedin-copywriting-rules.md:673-677"
+      },
+      {
+        "rule": "Always end with a CTA",
+        "detail": "Posts without CTAs get up to 40% less engagement than posts with CTAs. Ending with a question can increase engagement by 20-40% (Richard van der Blom, Algorithm Insights 2024).",
+        "source": "linkedin-copywriting-rules.md:189-190, 92"
+      }
+    ]
+  },
+
+  "cta_patterns": [
+    {
+      "id": "cta_save_reach",
+      "goal": "engagement",
+      "subtype": "save-prompt",
+      "template": "Save this for your next [situation].",
+      "when_to_use": "Goal = maximize reach. Best for framework, checklist, and reference posts. Saves are weighted ~5x by the algorithm — pair with saveable content.",
+      "source": "cta/SKILL.md:23"
+    },
+    {
+      "id": "cta_save_bookmark",
+      "goal": "engagement",
+      "subtype": "save-prompt",
+      "template": "Bookmark this for next time you [situation]. You'll thank yourself.",
+      "when_to_use": "High-performing save-driving variant. Use on evergreen tactical/how-to posts the reader will want to return to.",
+      "source": "cta/SKILL.md:39"
+    },
+    {
+      "id": "cta_save_repost",
+      "goal": "engagement",
+      "subtype": "save-prompt",
+      "template": "Save this framework for your next [moment, e.g. pipeline review]. Repost if your team needs it too.",
+      "when_to_use": "Framework/system posts where the goal is saves plus organic amplification. Example given for a sales-framework post.",
+      "source": "cta/SKILL.md:118"
+    },
+    {
+      "id": "cta_comment_challenge",
+      "goal": "engagement",
+      "subtype": "comment-prompt",
+      "template": "What's your #1 challenge with [topic]? Drop it below.",
+      "when_to_use": "Goal = boost engagement. Best for opinion posts and discussion starters. Specific ask outperforms 'let me know what you think'.",
+      "source": "cta/SKILL.md:24"
+    },
+    {
+      "id": "cta_comment_add_to_list",
+      "goal": "engagement",
+      "subtype": "comment-prompt",
+      "template": "I'm curious -- what would you add to this list? Drop your #1 in the comments.",
+      "when_to_use": "High-performing comment-driving variant. Use on list/listicle posts to invite additions and lower the barrier (one item, not a paragraph).",
+      "source": "cta/SKILL.md:41"
+    },
+    {
+      "id": "cta_comment_debate",
+      "goal": "engagement",
+      "subtype": "debate-prompt",
+      "template": "Agree or disagree? I'll respond to every comment.",
+      "when_to_use": "Debate-driving. Best for contrarian takes and opinion posts. The promise to reply to every comment boosts dwell time and comment volume.",
+      "source": "cta/SKILL.md:43"
+    },
+    {
+      "id": "cta_comment_contrarian_experience",
+      "goal": "engagement",
+      "subtype": "debate-prompt",
+      "template": "Controversial? Maybe. But I've seen it play out [N]+ times. What's your experience -- does [X] matter more than [Y]? Tell me below.",
+      "when_to_use": "Contrarian/opinion posts (e.g. hiring takes). Anchors authority with a count, then opens a binary debate to drive comments.",
+      "source": "cta/SKILL.md:120-121"
+    },
+    {
+      "id": "cta_question_close",
+      "goal": "engagement",
+      "subtype": "comment-prompt",
+      "template": "What's been your experience with this?",
+      "when_to_use": "Generic question close from the 8-part winning post structure. Ending a post with a question can increase engagement by 20-40%. Use when no more specific prompt fits.",
+      "source": "linkedin-copywriting-rules.md:92-93"
+    },
+    {
+      "id": "cta_agree_comment",
+      "goal": "engagement",
+      "subtype": "comment-prompt",
+      "template": "Drop a comment if you agree.",
+      "when_to_use": "Low-barrier agreement prompt from the 8-part structure example CTAs. Use for values/opinion posts that want quick directional engagement.",
+      "source": "linkedin-copywriting-rules.md:93"
+    },
+    {
+      "id": "cta_save_later",
+      "goal": "engagement",
+      "subtype": "save-prompt",
+      "template": "Save this for later.",
+      "when_to_use": "Minimal save prompt from the 8-part structure example CTAs. Use as a short tail on dense value posts.",
+      "source": "linkedin-copywriting-rules.md:93"
+    },
+    {
+      "id": "cta_follow_weekly_frameworks",
+      "goal": "follow",
+      "subtype": "follow-prompt",
+      "template": "I share [topic] frameworks weekly. Follow for more.",
+      "when_to_use": "Goal = grow followers. Best for personal-brand posts and consistent-niche creators. Signals a recurring value reason to follow.",
+      "source": "cta/SKILL.md:25"
+    },
+    {
+      "id": "cta_follow_breakdowns",
+      "goal": "follow",
+      "subtype": "follow-prompt",
+      "template": "I break down [niche] strategies like this every week. Follow along.",
+      "when_to_use": "High-performing follow-driving variant. Use after a strong breakdown/teardown post to convert one-time readers into followers.",
+      "source": "cta/SKILL.md:45"
+    },
+    {
+      "id": "cta_dm_keyword",
+      "goal": "DM",
+      "subtype": "dm-prompt",
+      "template": "DM me '[keyword]' and I'll send you the template.",
+      "when_to_use": "Goal = generate leads. Best when you have a gated asset (template/checklist/framework). Moves the reader into a 1:1 channel.",
+      "source": "cta/SKILL.md:26"
+    },
+    {
+      "id": "cta_dm_want_full_asset",
+      "goal": "DM",
+      "subtype": "dm-prompt",
+      "template": "Want the full [template/checklist/framework]? DM me '[keyword]' and I'll send it over.",
+      "when_to_use": "High-performing DM-driving variant. Use when teasing a complete resource only partially shown in the post.",
+      "source": "cta/SKILL.md:47"
+    },
+    {
+      "id": "cta_link_in_comments",
+      "goal": "lead-gen",
+      "subtype": "link-in-comments",
+      "template": "I wrote a full guide on this. Link in comments.",
+      "when_to_use": "Goal = build email list / drive off-platform clicks. Keeps the link out of the post body (LinkedIn deprioritizes outbound links in-body) by routing it to the first comment.",
+      "source": "cta/SKILL.md:27"
+    },
+    {
+      "id": "cta_save_action_close",
+      "goal": "lead-gen",
+      "subtype": "save-then-asset",
+      "template": "If you're not measuring [thing], you're waiting for [the bad outcome]. Save this post for the framework I used.",
+      "when_to_use": "AIDA 'Action' close that pairs loss framing with a save-for-the-asset prompt. Use on case-study/transformation posts where the framework is the lead hook.",
+      "source": "content-strategy.md:80-82"
+    },
+    {
+      "id": "cta_booking_profile_about",
+      "goal": "booking",
+      "subtype": "profile-cta",
+      "template": "[CTA - exact next step: DM, email, book a call]",
+      "when_to_use": "Profile About-section closer (not a post CTA). State the exact next step to convert profile visitors into booked calls/leads. The profile is a landing page — every element must convert.",
+      "source": "cta/SKILL.md:71, content-strategy.md:180-182"
+    },
+    {
+      "id": "cta_booking_headline_proof",
+      "goal": "booking",
+      "subtype": "profile-headline",
+      "template": "Helping [audience] [book/achieve specific result] | [Role] @ [Company] | [N]+ companies served",
+      "when_to_use": "Profile headline (220 chars max) that doubles as a booking CTA via social proof. Used in the B2B founder profile-rewrite example. Avoid 'visionary/guru/ninja/thought leader' or job title alone.",
+      "source": "cta/SKILL.md:124, cta/SKILL.md:57-61"
+    }
+  ],
+
+  "comment_gating": [
+    {
+      "id": "gate_keyword_share",
+      "pattern": "Comment \"[KEYWORD]\" below and I'll share it.",
+      "goal": "DM",
+      "mechanism": "keyword-comment-gate",
+      "when_to_use": "Highest-engagement CTA. Comment-gated posts drive 3-5x normal comment volume; the algorithm sees massive comments and boosts distribution. Use the keyword as the trigger to DM the gated asset.",
+      "source": "cta/SKILL.md:90-99, coldiq-writing-guide.md:154-158"
+    },
+    {
+      "id": "gate_keyword_breakdown",
+      "pattern": "Comment \"STACK\" and I'll send you the full breakdown.",
+      "goal": "DM",
+      "mechanism": "keyword-comment-gate",
+      "when_to_use": "Verbatim proven gate (ColdIQ). 'STACK' for tech-stack / tool-breakdown posts where the full breakdown is the gated deliverable.",
+      "source": "cta/SKILL.md:97, coldiq-writing-guide.md:156"
+    },
+    {
+      "id": "gate_keyword_connect_dm",
+      "pattern": "Comment \"[KEYWORD]\" and make sure we're connected so I can DM it to you.",
+      "goal": "DM",
+      "mechanism": "keyword-comment-gate-plus-connect",
+      "when_to_use": "Combines comment-gate + connection request so the DM can actually land (LinkedIn limits DMs to connections). Example keyword shown: 'CLAUDE'. Use when the asset must be delivered via DM.",
+      "source": "cta/SKILL.md:98"
+    },
+    {
+      "id": "gate_emoji_drop",
+      "pattern": "Want the template? Drop a 🔥 below.",
+      "goal": "engagement",
+      "mechanism": "emoji-comment-gate",
+      "when_to_use": "Lowest-barrier comment gate (single emoji, no typing). Maximizes comment count for distribution; pair with DM follow-up to deliver the asset.",
+      "source": "coldiq-writing-guide.md:157"
+    }
+  ],
+
+  "ps_closers": [
+    {
+      "id": "ps_add_to_stack",
+      "pattern": "P.S: What tool should I add to this stack?",
+      "goal": "engagement",
+      "when_to_use": "Proven highest-performing closer. Best for tech-stack / tool-reveal posts. Invites the reader to contribute, driving comments.",
+      "source": "cta/SKILL.md:103, coldiq-writing-guide.md:146"
+    },
+    {
+      "id": "ps_cold_email_status",
+      "pattern": "P.S: How are your cold email campaigns doing right now?",
+      "goal": "engagement",
+      "when_to_use": "Proven closer for outbound / cold-email content. Opens a relatable status-check conversation.",
+      "source": "cta/SKILL.md:104, coldiq-writing-guide.md:147"
+    },
+    {
+      "id": "ps_one_tool",
+      "pattern": "P.S: What's the ONE tool you can't live without?",
+      "goal": "engagement",
+      "when_to_use": "Proven closer for tooling / productivity posts. The 'ONE' constraint lowers the barrier and sharpens replies.",
+      "source": "cta/SKILL.md:105, coldiq-writing-guide.md:148"
+    },
+    {
+      "id": "ps_more_detail",
+      "pattern": "P.S: Which part of this system would you want more detail on?",
+      "goal": "engagement",
+      "when_to_use": "Proven closer for system / playbook posts. Doubles as content-research — surfaces what to write next.",
+      "source": "cta/SKILL.md:106, coldiq-writing-guide.md:149"
+    }
+  ],
+
+  "continuation_tease": [
+    {
+      "id": "tease_continuing_comments",
+      "pattern": "I'm running out of space... Continuing in the comments 👇",
+      "goal": "engagement",
+      "when_to_use": "Drives the reader into the comments (boosting dwell time + comment thread depth) by teasing that the post continues there. Use on long posts that hit the character cap.",
+      "source": "cta/SKILL.md:111, coldiq-writing-guide.md:163"
+    },
+    {
+      "id": "tease_follow_next_breakdown",
+      "pattern": "Make sure to follow so you don't miss the next breakdown.",
+      "goal": "follow",
+      "when_to_use": "Follow tease for serialized / recurring breakdown content. Pair with a continuation tease or end of a multi-part post.",
+      "source": "cta/SKILL.md:112, coldiq-writing-guide.md:164"
+    }
+  ]
+}

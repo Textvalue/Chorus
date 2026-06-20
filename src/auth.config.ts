@@ -9,6 +9,7 @@ export const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const path = nextUrl.pathname;
+      if (path === "/") return true; // public marketing landing page
       if (path === "/api/register") return true; // public: create an account
       const isAuthPage = path === "/login" || path === "/register";
       if (isAuthPage) {
