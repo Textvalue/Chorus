@@ -3,6 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icon } from "@/components/ds";
+import { TextEffect } from "@/components/motion-primitives/text-effect";
+import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import type { OrgExtract } from "@/lib/schemas";
 import type { MemberDraft } from "@/lib/mockOnboard";
 
@@ -149,6 +153,11 @@ export default function Onboarding() {
         <span className="wm" style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.04em", color: "var(--navy)" }}>tutti</span>
       </div>
 
+      {/* Electric-violet step progress — the single accent indicator. */}
+      <div style={{ width: "100%", maxWidth: 560, margin: "0 auto 26px" }}>
+        <Progress value={((step + 1) / STEPS.length) * 100} aria-label="Onboarding progress" />
+      </div>
+
       <Stepper step={step} />
 
       <div className="ob-body">
@@ -156,7 +165,9 @@ export default function Onboarding() {
         {step === 0 && (
           <div className="fade">
             <div className="eyebrow" style={{ textAlign: "center", marginBottom: 8 }}>Onboarding · Tuning</div>
-            <h2 style={{ textAlign: "center", fontSize: 28, margin: "0 0 6px" }}>Let&apos;s get you in tune.</h2>
+            <TextEffect as="h2" className="text-center text-[28px] m-0 mb-1.5" per="word" preset="fade-in-blur">
+              Let&rsquo;s get you in tune.
+            </TextEffect>
             <p style={{ textAlign: "center", color: "var(--text-muted)", margin: "0 0 22px" }}>
               Two links and about a minute. We read your company and your voice at the same time.
             </p>
@@ -203,7 +214,9 @@ export default function Onboarding() {
         {step === 1 && org && (
           <div className="fade">
             <div className="eyebrow" style={{ marginBottom: 6 }}>Step 2 · The Score</div>
-            <h2 style={{ fontSize: 24, margin: "0 0 4px" }}>We researched {org.name}.</h2>
+            <TextEffect as="h2" className="text-[24px] m-0 mb-1" per="word" preset="fade-in-blur">
+              {`We researched ${org.name}.`}
+            </TextEffect>
             <p style={{ color: "var(--text-muted)", margin: "0 0 18px" }}>Verify what&apos;s right. Edit anything — you own the score.</p>
             <div className="card pad6">
               <label className="label">Company</label>
@@ -217,14 +230,14 @@ export default function Onboarding() {
                 style={{ resize: "vertical", marginBottom: 16 }}
               />
               <label className="label">Brand voice rules</label>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
+              <AnimatedGroup className="flex flex-col gap-2 mb-[18px]">
                 {org.brand_dna.voice_rules.map((r, i) => (
                   <div key={i} style={{ display: "flex", gap: 8, fontSize: 14, color: "var(--text-body)", lineHeight: 1.4 }}>
-                    <span style={{ flex: "none", marginTop: 2 }}><Icon.check size={15} color="var(--teal-600)" stroke={2.4} /></span>
+                    <span style={{ flex: "none", marginTop: 2 }}><Icon.check size={15} color="var(--green)" stroke={2.4} /></span>
                     {r}
                   </div>
                 ))}
-              </div>
+              </AnimatedGroup>
               <AssetUpload
                 label="Company logo"
                 hint="Used as a reference image so generated visuals stay on-brand."
@@ -245,26 +258,26 @@ export default function Onboarding() {
             <p style={{ color: "var(--text-muted)", margin: "0 0 18px" }}>Weighted personas tied to the weekly moments your pains hit a desk.</p>
             <div className="card pad6">
               <label className="label">Personas</label>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
+              <AnimatedGroup className="flex flex-wrap gap-2 mb-[18px]">
                 {org.icp.personas.map((p, i) => (
                   <span className="chip" key={i} style={{ whiteSpace: "normal", maxWidth: "100%", textAlign: "left", lineHeight: 1.4, borderRadius: 12 }}>{p}</span>
                 ))}
-              </div>
+              </AnimatedGroup>
               <label className="label">Validated pains</label>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <AnimatedGroup className="flex flex-col gap-3">
                 {org.icp.pains.map((p, i) => (
                   <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ flex: "none", marginTop: 1 }}><Icon.check size={16} color="var(--green-600)" stroke={2.4} /></span>
+                    <span style={{ flex: "none", marginTop: 1 }}><Icon.check size={16} color="var(--green)" stroke={2.4} /></span>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>{p.pain}</div>
                       <div style={{ display: "flex", gap: 8, alignItems: "baseline", flexWrap: "wrap", marginTop: 3 }}>
-                        <span className={`badge ${p.severity === "high" ? "amber" : p.severity === "medium" ? "blue" : "neutral"}`}>{p.severity}</span>
+                        <Badge variant={p.severity === "high" ? "warning" : p.severity === "medium" ? "secondary" : "outline"}>{p.severity}</Badge>
                         <span style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>{p.weekly_trigger}</span>
                       </div>
                     </div>
                   </div>
                 ))}
-              </div>
+              </AnimatedGroup>
             </div>
             <Nav onBack={() => setStep(1)} onNext={() => setStep(3)} nextLabel="Continue" />
           </div>
@@ -276,7 +289,7 @@ export default function Onboarding() {
             <div className="eyebrow" style={{ marginBottom: 6 }}>Step 4 · Team</div>
             <h2 style={{ fontSize: 24, margin: "0 0 4px" }}>Build your ensemble.</h2>
             <p style={{ color: "var(--text-muted)", margin: "0 0 18px" }}>One brand DNA, many distinct voices. Add teammates by email — or do it later.</p>
-            <div className="card pad6">
+            <div className="card pad6" style={{ border: "1px dashed var(--accent)" }}>
               <label className="label">You&apos;re the first player. Invite a few more.</label>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {team.map((email, i) => (
@@ -304,17 +317,19 @@ export default function Onboarding() {
         {step === 4 && member && (
           <div className="fade">
             <div className="eyebrow" style={{ marginBottom: 6 }}>Step 5 · Voice &amp; tone</div>
-            <h2 style={{ fontSize: 24, margin: "0 0 4px" }}>{member.name.split(" ")[0]}&apos;s voice, captured.</h2>
+            <TextEffect as="h2" className="text-[24px] m-0 mb-1" per="word" preset="fade-in-blur">
+              {`${member.name.split(" ")[0]}’s voice, captured.`}
+            </TextEffect>
             <p style={{ color: "var(--text-muted)", margin: "0 0 18px" }}>
               Grounded in {member.prose_samples.length} of your real posts — not a template.
             </p>
             <div className="card pad6" style={{ marginBottom: 14 }}>
               <label className="label">How you sound</label>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+              <AnimatedGroup className="flex flex-wrap gap-[7px]">
                 {member.voice_dna.traits.map((t, i) => (
                   <span className="chip" key={i}>{t}</span>
                 ))}
-              </div>
+              </AnimatedGroup>
               {member.voice_dna.signature_terms.length > 0 && (
                 <div style={{ fontSize: 13, color: "var(--text-body)", marginTop: 13 }}>
                   <b style={{ color: "var(--text-strong)" }}>Signature:</b>{" "}
@@ -324,13 +339,13 @@ export default function Onboarding() {
             </div>
             <div className="card pad6">
               <label className="label">
-                What you believe <span style={{ textTransform: "none", color: "var(--teal-600)" }}>· we guessed this — fix anything wrong later</span>
+                What you believe <span style={{ textTransform: "none", color: "var(--text-muted)" }}>· we guessed this — fix anything wrong later</span>
               </label>
-              <div style={{ fontSize: 13.5, lineHeight: 1.7, color: "var(--text-body)" }}>
+              <AnimatedGroup className="text-[13.5px] leading-[1.7] text-[var(--text-body)]">
                 {member.expert_pov.beliefs.map((b, i) => (
                   <div key={i}>◆ {b}</div>
                 ))}
-              </div>
+              </AnimatedGroup>
             </div>
             <div className="card pad6" style={{ marginTop: 14 }}>
               <AssetUpload

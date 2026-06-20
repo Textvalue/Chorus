@@ -1,28 +1,16 @@
 "use client";
-import { createContext, useCallback, useContext, useState } from "react";
-import { IconCheck } from "./Icons";
 
-const ToastCtx = createContext<(msg: string) => void>(() => {});
-export const useToast = () => useContext(ToastCtx);
+import type { ReactNode } from "react";
+import { toast as sonnerToast } from "sonner";
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [msg, setMsg] = useState("");
-  const [on, setOn] = useState(false);
+/**
+ * Back-compat shim. The custom toast was retired in favor of Sonner (doc
+ * mandate — one `<Toaster/>` at root, see Providers). Existing call sites keep
+ * working: `const toast = useToast(); toast("Approved ✓")`.
+ */
+export const useToast = () => (msg: string) => sonnerToast.success(msg);
 
-  const toast = useCallback((m: string) => {
-    setMsg(m);
-    setOn(true);
-    window.clearTimeout((window as unknown as { __t?: number }).__t);
-    (window as unknown as { __t?: number }).__t = window.setTimeout(() => setOn(false), 2600);
-  }, []);
-
-  return (
-    <ToastCtx.Provider value={toast}>
-      {children}
-      <div className={`toast${on ? " on" : ""}`}>
-        <IconCheck />
-        <span>{msg}</span>
-      </div>
-    </ToastCtx.Provider>
-  );
+/** No-op passthrough — the real <Toaster/> now lives in <Providers/>. */
+export function ToastProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>;
 }

@@ -2,7 +2,12 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "./Avatar";
-import { IconRefresh } from "./Icons";
+import { IconRefresh, IconIdeas, IconSpark } from "./Icons";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Badge } from "@/components/ui/badge";
+import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
+import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 
 type Mem = { id: string; name: string };
 type Idea = { title: string; angle: string; source_type: "belief" | "pain"; source: string; tag: string };
@@ -49,32 +54,44 @@ export function IdeasView({ members }: { members: Mem[] }) {
           <h1>Ideas</h1>
           <p>Pulled from what you believe — discover what&apos;s working on any topic, or reuse something you already made. All turned into posts in your voice.</p>
         </div>
-        <div className="seg">
-          {members.map((m) => (
-            <button
-              key={m.id}
-              className={m.id === authorId ? "on" : ""}
-              onClick={() => { setAuthorId(m.id); setIdeas([]); setErr(""); }}
-            >
-              <Avatar name={m.name} /> {m.name.split(" ")[0]}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          tone="surface"
+          aria-label="Author"
+          value={authorId}
+          onValueChange={(id) => { setAuthorId(id); setIdeas([]); setErr(""); }}
+          options={members.map((m) => ({
+            value: m.id,
+            label: (
+              <span className="inline-flex items-center gap-1.5">
+                <Avatar name={m.name} /> {m.name.split(" ")[0]}
+              </span>
+            ),
+          }))}
+        />
       </div>
 
       {/* Mode switch */}
-      <div className="seg" style={{ marginBottom: 22 }}>
-        <button className={mode === "foryou" ? "on" : ""} onClick={() => setMode("foryou")}>For you</button>
-        <button className={mode === "discover" ? "on" : ""} onClick={() => setMode("discover")}>Discover</button>
-        <button className={mode === "repurpose" ? "on" : ""} onClick={() => setMode("repurpose")}>Repurpose</button>
+      <div style={{ marginBottom: 22 }}>
+        <SegmentedControl
+          tone="accent"
+          size="md"
+          aria-label="Idea mode"
+          value={mode}
+          onValueChange={(v) => setMode(v as Mode)}
+          options={[
+            { value: "foryou", label: (<span className="inline-flex items-center gap-1.5"><IconIdeas className="fill-none stroke-current [stroke-width:1.8]" /> For you</span>) },
+            { value: "discover", label: (<span className="inline-flex items-center gap-1.5"><IconSpark className="fill-none stroke-current [stroke-width:1.8]" /> Discover</span>) },
+            { value: "repurpose", label: (<span className="inline-flex items-center gap-1.5"><IconRefresh className="fill-none stroke-current [stroke-width:1.8]" /> Repurpose</span>) },
+          ]}
+        />
       </div>
 
       {/* ---------- FOR YOU ---------- */}
       {mode === "foryou" && (
         <div className="fade">
           <div className="srcrow" style={{ marginBottom: 18 }}>
-            <span className="chip dot" style={{ color: "var(--teal-600)" }}>Your beliefs</span>
-            <span className="chip dot" style={{ color: "var(--blue-600)" }}>Company pains</span>
+            <Badge variant="success">Your beliefs</Badge>
+            <Badge variant="default">Company pains</Badge>
             {ideas.length > 0 && (
               <button className="btn ghost sm" style={{ marginLeft: "auto" }} onClick={() => load(authorId)} disabled={loading}>
                 <IconRefresh /> {loading ? "Finding…" : "Refresh"}
@@ -82,45 +99,48 @@ export function IdeasView({ members }: { members: Mem[] }) {
             )}
           </div>
 
-          {err && <p style={{ color: "var(--amber-500)" }}>{err}</p>}
+          {err && <p style={{ color: "var(--amber)" }}>{err}</p>}
 
           {loading && ideas.length === 0 ? (
             <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
               <span className="spinner" /> Finding ideas from {who} beliefs…
             </div>
           ) : ideas.length === 0 ? (
-            <div className="card" style={{ padding: 48, textAlign: "center" }}>
-              <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text-strong)", marginBottom: 6 }}>Ready when you are.</div>
-              <p style={{ color: "var(--text-muted)", maxWidth: 380, margin: "0 auto 20px", lineHeight: 1.5 }}>
-                Pull fresh angles from {who} beliefs and the gaps your company can own.
-              </p>
-              <button className="btn pri" onClick={() => load(authorId)} disabled={loading}>
-                <IconRefresh /> Find ideas
-              </button>
-            </div>
+            <Empty style={{ padding: 48 }}>
+              <EmptyHeader>
+                <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Ready when you are.</EmptyTitle>
+                <EmptyDescription>
+                  Pull fresh angles from {who} beliefs and the gaps your company can own.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <button className="btn pri" onClick={() => load(authorId)} disabled={loading}>
+                  <IconRefresh /> Find ideas
+                </button>
+              </EmptyContent>
+            </Empty>
           ) : (
             <div className="card" style={{ padding: "6px 24px" }}>
-              {ideas.map((idea, i) => (
-                <div className="idea" key={i}>
-                  <div className="iic">{ICONS[i % ICONS.length]}</div>
-                  <div className="ib">
-                    <div className="ih">{idea.title}</div>
-                    <div className="ia">{idea.angle}</div>
-                    <div className="im">
-                      <span
-                        className="chip dot"
-                        style={{ color: idea.source_type === "pain" ? "var(--blue-600)" : "var(--teal-600)" }}
-                      >
-                        {idea.source}
-                      </span>
-                      <span className="chip">{idea.tag}</span>
-                    </div>
-                  </div>
-                  <button className="btn sm pri" onClick={() => router.push(`/create?topic=${encodeURIComponent(idea.title)}`)}>
-                    Write
-                  </button>
-                </div>
-              ))}
+              <AnimatedGroup as="div" className="divide-y divide-[var(--line)]">
+                {ideas.map((idea, i) => (
+                  <Item key={i} className="gap-[15px] rounded-none px-0 py-[18px]">
+                    <ItemMedia className="iic">{ICONS[i % ICONS.length]}</ItemMedia>
+                    <ItemContent>
+                      <ItemTitle className="text-[15.5px] font-bold text-[var(--text-strong)]">{idea.title}</ItemTitle>
+                      <ItemDescription className="text-[13.5px] text-[var(--text-body)]">{idea.angle}</ItemDescription>
+                      <div className="im">
+                        <Badge variant={idea.source_type === "pain" ? "default" : "success"}>{idea.source}</Badge>
+                        <Badge variant="secondary">{idea.tag}</Badge>
+                      </div>
+                    </ItemContent>
+                    <ItemActions>
+                      <button className="btn sm ghost" onClick={() => router.push(`/create?topic=${encodeURIComponent(idea.title)}`)}>
+                        Write →
+                      </button>
+                    </ItemActions>
+                  </Item>
+                ))}
+              </AnimatedGroup>
             </div>
           )}
         </div>
@@ -140,13 +160,17 @@ export function IdeasView({ members }: { members: Mem[] }) {
               ))}
             </div>
           </div>
-          <div className="card" style={{ padding: 48, textAlign: "center" }}>
-            <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text-strong)", marginBottom: 6 }}>Discover what&apos;s trending</div>
-            <p style={{ color: "var(--text-muted)", maxWidth: 460, margin: "0 auto", lineHeight: 1.55 }}>
-              Type any topic and Tutti studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context — with the right format and hook.
-            </p>
-            <span className="badge neutral" style={{ marginTop: 18 }}>Coming soon</span>
-          </div>
+          <Empty style={{ padding: 48 }}>
+            <EmptyHeader>
+              <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Discover what&apos;s trending</EmptyTitle>
+              <EmptyDescription style={{ maxWidth: 460 }}>
+                Type any topic and Tutti studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context — with the right format and hook.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Badge variant="secondary">Coming soon</Badge>
+            </EmptyContent>
+          </Empty>
         </div>
       )}
 
@@ -164,13 +188,17 @@ export function IdeasView({ members }: { members: Mem[] }) {
               ))}
             </div>
           </div>
-          <div className="card" style={{ padding: 48, textAlign: "center" }}>
-            <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text-strong)", marginBottom: 6 }}>Turn one thing into many</div>
-            <p style={{ color: "var(--text-muted)", maxWidth: 460, margin: "0 auto", lineHeight: 1.55 }}>
-              Drop in something you already made — a blog post, podcast, webinar, or an old top post. Tutti breaks it into reusable pieces and the highest-leverage ways to turn it into posts, in your voice.
-            </p>
-            <span className="badge neutral" style={{ marginTop: 18 }}>Coming soon</span>
-          </div>
+          <Empty style={{ padding: 48 }}>
+            <EmptyHeader>
+              <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Turn one thing into many</EmptyTitle>
+              <EmptyDescription style={{ maxWidth: 460 }}>
+                Drop in something you already made — a blog post, podcast, webinar, or an old top post. Tutti breaks it into reusable pieces and the highest-leverage ways to turn it into posts, in your voice.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Badge variant="secondary">Coming soon</Badge>
+            </EmptyContent>
+          </Empty>
         </div>
       )}
     </div>

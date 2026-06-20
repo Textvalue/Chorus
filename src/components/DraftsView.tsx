@@ -3,7 +3,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "./Avatar";
 import { useToast } from "./Toast";
-import { IconCheck, IconX, IconEdit } from "./Icons";
+import { IconCheck, IconX, IconEdit, IconSpark } from "./Icons";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
+import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty";
 
 type Row = {
   id: string;
@@ -16,6 +22,12 @@ type Row = {
 };
 
 const FILTERS = ["All", "Needs approval", "Approved"] as const;
+
+function StatusBadge({ status }: { status: Row["status"] }) {
+  if (status === "draft") return <Badge variant="default"><IconSpark /> Needs you</Badge>;
+  if (status === "approved") return <Badge variant="success"><IconCheck /> Approved</Badge>;
+  return <Badge variant="secondary"><IconX /> Passed</Badge>;
+}
 
 export function DraftsView({ posts }: { posts: Row[] }) {
   const router = useRouter();
@@ -50,48 +62,59 @@ export function DraftsView({ posts }: { posts: Row[] }) {
           <h1>Queue</h1>
           <p>Your approved posts, ready to copy &amp; post. Nothing publishes automatically.</p>
         </div>
-        <div className="seg">
-          {FILTERS.map((f) => (
-            <button key={f} className={f === filter ? "on" : ""} onClick={() => setFilter(f)}>{f}</button>
-          ))}
-        </div>
+        <SegmentedControl
+          tone="accent"
+          size="md"
+          aria-label="Filter"
+          value={filter}
+          onValueChange={(v) => setFilter(v as (typeof FILTERS)[number])}
+          options={FILTERS.map((f) => ({ value: f, label: f }))}
+        />
       </div>
 
       {shown.length === 0 ? (
-        <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--ink3)" }}>
-          Nothing here yet. Write one from <b>Create</b>.
-        </div>
+        <Empty className="border border-[var(--line)]">
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><IconSpark /></EmptyMedia>
+            <EmptyTitle>Nothing here yet</EmptyTitle>
+            <EmptyDescription>
+              Write one from <b>Create</b> and it&apos;ll land in your queue.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
-        <div className="card" style={{ padding: "8px 24px" }}>
+        <AnimatedGroup className="flex flex-col gap-3">
           {shown.map((p) => (
-            <div key={p.id}>
-              <div className="qrow">
-                <Avatar name={p.member} lg />
-                <div className="qb">
-                  <div className="qh">{p.topic}</div>
-                  <div className="qm">{p.member}{p.angle ? ` · ${p.angle}` : ""}</div>
-                </div>
-                {p.status === "draft" && <span className="pill need">Needs you</span>}
-                {p.status === "approved" && <span className="pill sched">Approved</span>}
-                {p.status === "rejected" && <span className="pill rejected">Passed</span>}
-                {p.status === "approved" && (
+            <Card key={p.id} size="sm">
+              <Item>
+                <ItemMedia>
+                  <Avatar name={p.member} lg />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>{p.topic}</ItemTitle>
+                  <ItemDescription>{p.member}{p.angle ? ` · ${p.angle}` : ""}</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <StatusBadge status={p.status} />
+                  {p.status === "approved" && (
+                    <button
+                      className="btn ghost sm"
+                      onClick={() => { navigator.clipboard.writeText(p.body); toast("Copied — open LinkedIn to post"); }}
+                    >
+                      Copy
+                    </button>
+                  )}
                   <button
                     className="btn ghost sm"
-                    onClick={() => { navigator.clipboard.writeText(p.body); toast("Copied — open LinkedIn to post"); }}
+                    onClick={() => { setOpenId(openId === p.id ? null : p.id); setEditId(null); }}
                   >
-                    Copy
+                    {openId === p.id ? "Close" : "Review"}
                   </button>
-                )}
-                <button
-                  className="btn ghost sm"
-                  onClick={() => { setOpenId(openId === p.id ? null : p.id); setEditId(null); }}
-                >
-                  {openId === p.id ? "Close" : "Review"}
-                </button>
-              </div>
+                </ItemActions>
+              </Item>
 
               {openId === p.id && (
-                <div className="fade" style={{ padding: "4px 0 18px" }}>
+                <div className="fade" style={{ padding: "0 12px 6px" }}>
                   {editId === p.id ? (
                     <textarea
                       className="field"
@@ -124,9 +147,9 @@ export function DraftsView({ posts }: { posts: Row[] }) {
                   </div>
                 </div>
               )}
-            </div>
+            </Card>
           ))}
-        </div>
+        </AnimatedGroup>
       )}
     </div>
   );

@@ -55,7 +55,7 @@ const MIC_CSS = `
 }
 .tt-mic:hover{color:var(--text-strong,#1a1a1a);border-color:var(--text-muted,#9aa3af);background:var(--gray-50,#f7f8fa)}
 .tt-mic:active{transform:scale(.94)}
-.tt-mic[data-on="true"]{color:#E5484D;border-color:#E5484D;background:#fff;animation:ttmic 1.4s ease-out infinite}
-@keyframes ttmic{0%{box-shadow:0 0 0 0 rgba(229,72,77,.35)}70%{box-shadow:0 0 0 9px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+.tt-mic[data-on="true"]{color:var(--accent-ink,#5a0bcc);border-color:var(--accent,#761fff);background:var(--accent-soft,#ebe6ff);animation:ttmic 1.8s ease-out infinite}
+@keyframes ttmic{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent,#761fff) 32%,transparent)}70%{box-shadow:0 0 0 9px color-mix(in srgb,var(--accent,#761fff) 0%,transparent)}100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent,#761fff) 0%,transparent)}}
 @media (prefers-reduced-motion:reduce){.tt-mic[data-on="true"]{animation:none}}
 `;

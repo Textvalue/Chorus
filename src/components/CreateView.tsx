@@ -5,6 +5,11 @@ import { Avatar } from "./Avatar";
 import { MicButton } from "./MicButton";
 import { useToast } from "./Toast";
 import { IconSpark, IconCheck, IconRefresh, IconEdit, IconX, IconCopy } from "./Icons";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { TextEffect } from "@/components/motion-primitives/text-effect";
+import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 
 type Mem = { id: string; name: string; headline: string; profile_picture_url?: string | null };
 export type Template = { id: string; src: string; category: string; family: string; label: string; score: number };
@@ -194,13 +199,20 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
     <div className="pad narrow">
       <div className="auth-row">
         <span className="al">Writing as</span>
-        <div className="seg">
-          {members.map((m) => (
-            <button key={m.id} className={m.id === authorId ? "on" : ""} onClick={() => setAuthorId(m.id)}>
-              <Avatar name={m.name} src={m.profile_picture_url} /> {m.name.split(" ")[0]}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          tone="surface"
+          aria-label="Writing as"
+          value={authorId}
+          onValueChange={setAuthorId}
+          options={members.map((m) => ({
+            value: m.id,
+            label: (
+              <span className="inline-flex items-center gap-1.5">
+                <Avatar name={m.name} src={m.profile_picture_url} /> {m.name.split(" ")[0]}
+              </span>
+            ),
+          }))}
+        />
       </div>
 
       {phase === "idle" && (
@@ -275,7 +287,9 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
                 {editing ? (
                   <textarea value={draftBody} onChange={(e) => setDraftBody(e.target.value)} />
                 ) : (
-                  <div className="pbody">{result.post.body}</div>
+                  <TextEffect as="div" className="pbody" per="word" preset="fade-in-blur">
+                    {result.post.body}
+                  </TextEffect>
                 )}
                 {image && !editing && (
                   /* eslint-disable-next-line @next/next/no-img-element */
@@ -283,39 +297,43 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
                 )}
               </div>
 
-              <div className="confidence">
-                {result.antislop.pass ? (
-                  <span className="cf ok"><IconCheck /> No AI tells</span>
-                ) : (
-                  <span className="cf warn"><IconX /> {result.antislop.violations.length} AI tell(s) remain</span>
-                )}
-                <span className="cf-sep">·</span>
-                <span className="cf"><b>{result.post.voice_match}%</b>&nbsp;sounds like you</span>
-                {result.mocked && (
-                  <>
-                    <span className="cf-sep">·</span>
-                    <span className="chip" style={{ color: "var(--ink3)" }}>mock draft</span>
-                  </>
-                )}
-                {result.antislop.attempts > 1 && (
-                  <>
-                    <span className="cf-sep">·</span>
-                    <span style={{ color: "var(--ink3)", fontSize: 12 }}>
-                      sanitizer regenerated {result.antislop.attempts - 1}×
-                    </span>
-                  </>
-                )}
-                <button className="cf-why" onClick={() => setShowWhy((v) => !v)}>why?</button>
-              </div>
-
-              {showWhy && (
-                <div className="whyp fade">
-                  <div className="wr"><div className="wk">Belief</div><div className="wvv">{result.why.belief}</div></div>
-                  <div className="wr"><div className="wk">Hook</div><div className="wvv">{result.why.hook}</div></div>
-                  <div className="wr"><div className="wk">Your words</div><div className="wvv">{result.why.your_words}</div></div>
-                  <div className="wr"><div className="wk">Rhythm</div><div className="wvv">{result.why.rhythm}</div></div>
+              <Collapsible open={showWhy} onOpenChange={setShowWhy}>
+                <div className="confidence">
+                  {result.antislop.pass ? (
+                    <Badge variant="success"><IconCheck /> No AI tells</Badge>
+                  ) : (
+                    <Badge variant="warning"><IconX /> {result.antislop.violations.length} AI tell(s) remain</Badge>
+                  )}
+                  <span className="cf-sep">·</span>
+                  <span className="cf">
+                    <b><AnimatedNumber value={result.post.voice_match} format={(n) => `${Math.round(n)}`} />%</b>
+                    &nbsp;sounds like you
+                  </span>
+                  {result.mocked && (
+                    <>
+                      <span className="cf-sep">·</span>
+                      <Badge variant="secondary">mock draft</Badge>
+                    </>
+                  )}
+                  {result.antislop.attempts > 1 && (
+                    <>
+                      <span className="cf-sep">·</span>
+                      <span style={{ color: "var(--ink3)", fontSize: 12 }}>
+                        sanitizer regenerated {result.antislop.attempts - 1}×
+                      </span>
+                    </>
+                  )}
+                  <CollapsibleTrigger className="cf-why">why?</CollapsibleTrigger>
                 </div>
-              )}
+                <CollapsibleContent>
+                  <div className="whyp">
+                    <div className="wr"><div className="wk">Belief</div><div className="wvv">{result.why.belief}</div></div>
+                    <div className="wr"><div className="wk">Hook</div><div className="wvv">{result.why.hook}</div></div>
+                    <div className="wr"><div className="wk">Your words</div><div className="wvv">{result.why.your_words}</div></div>
+                    <div className="wr"><div className="wk">Rhythm</div><div className="wvv">{result.why.rhythm}</div></div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
               {!editing && (
                 <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginTop: 14, fontSize: 13, color: "var(--ink2, #6b6b73)" }}>

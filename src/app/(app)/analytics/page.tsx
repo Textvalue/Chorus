@@ -3,14 +3,20 @@
 // impact board derived from real posts); clearly-labelled demo data for the
 // external LinkedIn metrics we can't read until an account is connected.
 import { getOrg, getMembers, getPosts } from "@/lib/store";
-import { TopBar, Card, Badge, Icon, Avatar } from "@/components/ds";
+import { TopBar, Card, Icon, Avatar } from "@/components/ds";
+import { Badge } from "@/components/ui/badge";
+import { AnalyticsRange } from "@/components/AnalyticsRange";
+import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
+import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 
 export const dynamic = "force-dynamic";
 
-function KpiTile({ value, label, delta, demo }: { value: string; label: string; delta?: string; demo?: boolean }) {
+function KpiTile({ value, label, delta, demo, prefix, suffix, decimals }: { value: number; label: string; delta?: string; demo?: boolean; prefix?: string; suffix?: string; decimals?: number }) {
   return (
     <Card style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 2, position: "relative" }}>
-      <span style={{ fontFamily: "var(--serif)", fontSize: 32, fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1, color: "var(--text-strong)", fontVariantNumeric: "tabular-nums" }}>{value}</span>
+      <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1, color: "var(--text-strong)", fontVariantNumeric: "tabular-nums" }}>
+        <AnimatedNumber value={value} prefix={prefix} suffix={suffix} decimals={decimals} />
+      </span>
       <span style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8, lineHeight: 1.35 }}>{label}</span>
       {delta && <span style={{ fontSize: 12, fontWeight: 700, color: "var(--green-600)", marginTop: 7 }}>{delta}</span>}
       {demo && <span style={{ position: "absolute", top: 12, right: 12, fontSize: 10, fontWeight: 700, color: "var(--text-muted)", background: "var(--paper-2)", borderRadius: 6, padding: "2px 6px" }}>demo</span>}
@@ -64,17 +70,13 @@ export default async function AnalyticsPage() {
     <div className="main-inner">
       <TopBar title="Analytics" subtitle="What your content is doing for pipeline — not vanity likes." />
 
-      <div className="seg" style={{ marginBottom: 18 }}>
-        <button className="on">Last 30 days</button>
-        <button>This quarter</button>
-        <button>All time</button>
-      </div>
+      <AnalyticsRange />
 
       {/* Gamification strip (dark, editorial) */}
       <div style={{ background: "var(--ink)", color: "var(--paper)", borderRadius: "var(--radius-lg)", padding: "18px 22px", marginBottom: 16, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap", boxShadow: "var(--shadow-md)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <span style={{ width: 54, height: 54, borderRadius: 999, flex: "none", display: "grid", placeItems: "center", background: `conic-gradient(var(--brass) ${Math.round((xp % 500) / 500 * 100)}%, rgba(255,255,255,.16) 0)` }}>
-            <span style={{ width: 42, height: 42, borderRadius: 999, background: "var(--ink)", display: "grid", placeItems: "center", fontWeight: 800, fontSize: 14, fontFamily: "var(--serif)" }}>L{level}</span>
+            <span style={{ width: 42, height: 42, borderRadius: 999, background: "var(--ink)", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 14 }}>L{level}</span>
           </span>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700 }}>Creator · Level {level}</div>
@@ -90,18 +92,18 @@ export default async function AnalyticsPage() {
           ))}
         </div>
         <div style={{ marginLeft: "auto", textAlign: "center" }}>
-          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--serif)" }}>🔥 {Math.min(posts.length, 4)}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>🔥 {Math.min(posts.length, 4)}</div>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,.7)" }}>week streak</div>
         </div>
       </div>
 
       {/* KPIs — external metrics are demo until a LinkedIn account is connected */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 13, marginBottom: 14 }}>
-        <KpiTile value="23" label="Warm conversations started" delta="↑ 40% · the metric that matters" demo />
-        <KpiTile value="1,240" label="Profile views" delta="↑ 18%" demo />
-        <KpiTile value="6.2%" label="Engagement rate · vs 2.1% avg" demo />
-        <KpiTile value={`+${312}`} label="New followers" delta="↑ 27%" demo />
-      </div>
+      <AnimatedGroup as="div" stagger={0.06} className="mb-3.5 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+        <KpiTile value={23} label="Warm conversations started" delta="↑ 40% · the metric that matters" demo />
+        <KpiTile value={1240} label="Profile views" delta="↑ 18%" demo />
+        <KpiTile value={6.2} decimals={1} suffix="%" label="Engagement rate · vs 2.1% avg" demo />
+        <KpiTile value={312} prefix="+" label="New followers" delta="↑ 27%" demo />
+      </AnimatedGroup>
 
       <div className="grid2" style={{ marginBottom: 14 }}>
         {/* On-voice proof — REAL */}
@@ -110,11 +112,15 @@ export default async function AnalyticsPage() {
           <p style={{ margin: "0 0 18px", fontSize: 12.5, color: "var(--text-muted)" }}>The metric only Tutti has — how human your output stays.</p>
           <div style={{ display: "flex", gap: 30, flexWrap: "wrap" }}>
             <div>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 34, fontWeight: 400, color: "var(--green-600)", lineHeight: 1 }}>{avgVoice}%</div>
+              <div style={{ fontSize: 34, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--green-600)", lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>
+                <AnimatedNumber value={avgVoice} suffix="%" />
+              </div>
               <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>avg. sounds-like-you ({onVoiceCount}/{scored.length} ≥ 90%)</div>
             </div>
             <div>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 34, fontWeight: 400, color: "var(--text-strong)", lineHeight: 1 }}>{aiTellsCaught}</div>
+              <div style={{ fontSize: 34, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-strong)", lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>
+                <AnimatedNumber value={aiTellsCaught} />
+              </div>
               <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>AI tells caught &amp; fixed before posting</div>
             </div>
           </div>
@@ -144,7 +150,7 @@ export default async function AnalyticsPage() {
           <div key={p.id} style={{ display: "flex", gap: 12, alignItems: "center", padding: "11px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)", fontSize: 14 }}>
             <span style={{ color: "var(--text-strong)", fontWeight: 600, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.topic || p.body.split("\n")[0].slice(0, 60)}</span>
             <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>{nameOf(p.member_id)}</span>
-            <Badge tone="green">{p.voice_match}% you</Badge>
+            <Badge variant="success">{p.voice_match}% you</Badge>
           </div>
         ))}
       </Card>

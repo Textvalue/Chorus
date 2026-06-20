@@ -1,8 +1,15 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Card, Badge, Bar, Icon } from "./ds";
+import { Icon } from "./ds";
 import { useToast } from "./Toast";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
+import { Progress } from "@/components/ui/progress";
+import { InView } from "@/components/motion-primitives/in-view";
+import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 
 type Me = {
   name: string;
@@ -26,7 +33,7 @@ type Company = {
 };
 
 const DemoTag = () => (
-  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", background: "var(--paper-2)", borderRadius: 6, padding: "2px 6px", marginLeft: 8, verticalAlign: "middle" }}>sample</span>
+  <Badge variant="secondary" className="ml-2 align-middle">sample</Badge>
 );
 
 export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCount: number; company: Company; isOwner: boolean }) {
@@ -35,12 +42,18 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
 
   return (
     <div className="pad">
-      <div className="seg" style={{ marginBottom: 24 }}>
-        <button className={tab === "me" ? "on" : ""} onClick={() => setTab("me")}>My Voice</button>
-        <button className={tab === "winning" ? "on" : ""} onClick={() => setTab("winning")}>
-          <Icon.trophy size={14} /> Winning content
-        </button>
-        <button className={tab === "company" ? "on" : ""} onClick={() => setTab("company")}>Company</button>
+      <div style={{ marginBottom: 24 }}>
+        <SegmentedControl
+          tone="accent"
+          aria-label="Voice section"
+          value={tab}
+          onValueChange={(v) => setTab(v as "me" | "winning" | "company")}
+          options={[
+            { value: "me", label: "My Voice" },
+            { value: "winning", label: "Winning content", icon: <Icon.trophy size={14} /> },
+            { value: "company", label: "Company" },
+          ]}
+        />
       </div>
 
       {/* ---------- MY VOICE ---------- */}
@@ -53,44 +66,54 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
 
           <div className="grid2" style={{ marginBottom: 20 }}>
             <Card>
-              <div className="eyebrow" style={{ marginBottom: 12 }}>How you sound</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
-                {me.traits.length ? me.traits.map((t) => <span key={t} className="chip">{t}</span>) : <span style={{ fontSize: 13, color: "var(--text-muted)" }}>Not captured yet.</span>}
-              </div>
-              <div style={{ fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.6 }}>
-                {me.signature.length > 0 && <>Signature: {me.signature.map((s) => `“${s}”`).join(", ")}<br /></>}
-                {me.avoid.length > 0 && <>Never: {me.avoid.map((s) => `“${s}”`).join(", ")}</>}
-              </div>
+              <CardContent>
+                <div className="eyebrow" style={{ marginBottom: 12 }}>How you sound</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
+                  {me.traits.length ? me.traits.map((t) => <Badge key={t} variant="secondary">{t}</Badge>) : <span style={{ fontSize: 13, color: "var(--text-muted)" }}>Not captured yet.</span>}
+                </div>
+                <div style={{ fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.6 }}>
+                  {me.signature.length > 0 && <>Signature: {me.signature.map((s) => `“${s}”`).join(", ")}<br /></>}
+                  {me.avoid.length > 0 && <>Never: {me.avoid.map((s) => `“${s}”`).join(", ")}</>}
+                </div>
+              </CardContent>
             </Card>
-            <Card>
-              <div className="eyebrow muted" style={{ marginBottom: 12 }}>What you believe</div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {me.beliefs.length ? me.beliefs.slice(0, 4).map((b, i) => (
-                  <div key={i} style={{ fontSize: 14, color: "var(--text-body)", padding: "9px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)", lineHeight: 1.45 }}>{b}</div>
-                )) : <span style={{ fontSize: 13, color: "var(--text-muted)" }}>Run the belief interview to capture your POV.</span>}
-              </div>
+            <Card style={{ borderLeft: "3px solid var(--accent)" }}>
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>What you believe</div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {me.beliefs.length ? me.beliefs.slice(0, 4).map((b, i) => (
+                    <div key={i} style={{ fontSize: 14, color: "var(--text-body)", padding: "9px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)", lineHeight: 1.45 }}>{b}</div>
+                  )) : <span style={{ fontSize: 13, color: "var(--text-muted)" }}>Run the belief interview to capture your POV.</span>}
+                </div>
+              </CardContent>
             </Card>
           </div>
 
           {/* Core memory */}
           <Card style={{ marginBottom: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 6 }}>
-              <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--green-500)", boxShadow: "0 0 0 4px var(--green-50)", flex: "none" }} />
-              <h4 style={{ margin: 0 }}>Core memory</h4>
-              <span style={{ marginLeft: "auto", fontSize: 12, color: "var(--text-muted)" }}>{me.memory.length} things learned</span>
-            </div>
-            <p style={{ margin: "0 0 16px", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.55 }}>
-              Every edit, approval, and &ldquo;not quite&rdquo; teaches Tutti. It lands in one governing memory that every future post reads from — so the tool sharpens the more you use it.
-            </p>
-            {me.memory.length ? me.memory.map((m, i) => (
-              <div key={i} style={{ display: "flex", gap: 11, alignItems: "flex-start", padding: "10px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)", fontSize: 13.5, lineHeight: 1.45 }}>
-                <span style={{ color: "var(--brass-600)", flex: "none", marginTop: 1 }}><Icon.edit size={15} /></span>
-                <div>
-                  <div style={{ color: "var(--text-body)" }}>{m.text}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 3 }}>{m.src}</div>
-                </div>
+            <CardContent>
+              <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 6 }}>
+                <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--green-500)", boxShadow: "0 0 0 4px var(--green-50)", flex: "none" }} />
+                <h4 style={{ margin: 0 }}>Core memory</h4>
+                <span style={{ marginLeft: "auto", fontSize: 12, color: "var(--text-muted)" }}>
+                  <AnimatedNumber value={me.memory.length} /> things learned
+                </span>
               </div>
-            )) : <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Approve and edit a few posts — your corrections will start showing up here.</p>}
+              <p style={{ margin: "0 0 16px", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.55 }}>
+                Every edit, approval, and &ldquo;not quite&rdquo; teaches Tutti. It lands in one governing memory that every future post reads from — so the tool sharpens the more you use it.
+              </p>
+              {me.memory.length ? me.memory.map((m, i) => (
+                <Item key={i} className="px-0">
+                  <ItemMedia variant="icon" style={{ color: "var(--text-muted)", alignSelf: "flex-start", marginTop: 1 }}>
+                    <Icon.edit size={15} />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle className="line-clamp-none whitespace-normal" style={{ color: "var(--text-body)" }}>{m.text}</ItemTitle>
+                    <ItemDescription>{m.src}</ItemDescription>
+                  </ItemContent>
+                </Item>
+              )) : <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Approve and edit a few posts — your corrections will start showing up here.</p>}
+            </CardContent>
           </Card>
 
           {/* Status boxes */}
@@ -114,40 +137,53 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
             <p>Once enough of your posts have engagement data, Tutti reverse-engineers what works for <em>you</em> (TWE = likes + 2× comments + 4× shares) and feeds it back into every draft. Sample below — built from {postCount} posts.</p>
           </div>
 
-          <Card style={{ marginBottom: 14, background: "var(--green-50)", border: "1px solid var(--green-100)" }}>
-            <div className="eyebrow" style={{ color: "var(--green-700)", marginBottom: 8 }}>Your winning formula</div>
-            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--green-700)" }}>
-              Write about <b>your category</b> as a <b>contrarian text post</b> or <b>how-to carousel</b>, opening with a <b>1-line bold claim</b>, in <b>90–140 words</b>. Post <b>Tue–Thu</b>. Design for <b>comments</b>, not just likes.
-            </p>
+          <Card style={{ marginBottom: 14, background: "var(--green-soft)", borderColor: "var(--green-100)" }}>
+            <CardContent>
+              <div className="eyebrow" style={{ color: "var(--green-700)", marginBottom: 8 }}>Your winning formula</div>
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--green-700)" }}>
+                Write about <b>your category</b> as a <b>contrarian text post</b> or <b>how-to carousel</b>, opening with a <b>1-line bold claim</b>, in <b>90–140 words</b>. Post <b>Tue–Thu</b>. Design for <b>comments</b>, not just likes.
+              </p>
+            </CardContent>
           </Card>
 
           <Card style={{ marginBottom: 14 }}>
-            <div className="eyebrow muted" style={{ marginBottom: 14 }}>Format — what wins for you</div>
-            {[["Carousel", 88, "+34%"], ["Contrarian text", 80, "+28%"], ["Story", 52, "+6%"], ["Think-piece", 22, "−19%"]].map(([l, w, v]) => (
-              <div key={l as string} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 10, fontSize: 13 }}>
-                <span style={{ width: 110, flex: "none", color: "var(--text-body)" }}>{l}</span>
-                <div style={{ flex: 1 }}><Bar value={w as number} tone={(w as number) > 40 ? "teal" : "blue"} /></div>
-                <span style={{ width: 46, textAlign: "right", flex: "none", fontWeight: 700, fontSize: 12.5, color: "var(--text-strong)" }}>{v}</span>
-              </div>
-            ))}
+            <CardContent>
+              <div className="eyebrow muted" style={{ marginBottom: 14 }}>Format — what wins for you</div>
+              <InView>
+                {([["Carousel", 88, "+34%"], ["Contrarian text", 80, "+28%"], ["Story", 52, "+6%"], ["Think-piece", 22, "−19%"]] as [string, number, string][]).map(([l, w, v]) => {
+                  const neg = v.startsWith("−") || v.startsWith("-");
+                  return (
+                    <div key={l} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 10, fontSize: 13 }}>
+                      <span style={{ width: 110, flex: "none", color: "var(--text-body)" }}>{l}</span>
+                      <Progress value={w} className={`flex-1 ${neg ? "[&_[data-slot=progress-indicator]]:bg-[var(--amber)]" : "[&_[data-slot=progress-indicator]]:bg-[var(--green)]"}`} />
+                      <span style={{ width: 46, textAlign: "right", flex: "none", fontWeight: 700, fontSize: 12.5, color: "var(--text-strong)" }}>{v}</span>
+                    </div>
+                  );
+                })}
+              </InView>
+            </CardContent>
           </Card>
 
           <div className="grid2" style={{ marginBottom: 14 }}>
             <Card>
-              <div className="eyebrow muted" style={{ marginBottom: 10 }}>Hooks that work</div>
-              <div style={{ fontSize: 13.5, lineHeight: 1.7, color: "var(--text-body)" }}>
-                <b>&ldquo;Everyone does X. We stopped.&rdquo;</b> — your top pattern.<br />
-                <b>&ldquo;The boring truth about Y&rdquo;</b> — 2.1× your median.<br />
-                <span style={{ color: "var(--text-muted)" }}>Underperforms: question openers.</span>
-              </div>
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 10 }}>Hooks that work</div>
+                <div style={{ fontSize: 13.5, lineHeight: 1.7, color: "var(--text-body)" }}>
+                  <b>&ldquo;Everyone does X. We stopped.&rdquo;</b> — your top pattern.<br />
+                  <b>&ldquo;The boring truth about Y&rdquo;</b> — 2.1× your median.<br />
+                  <span style={{ color: "var(--text-muted)" }}>Underperforms: question openers.</span>
+                </div>
+              </CardContent>
             </Card>
             <Card>
-              <div className="eyebrow muted" style={{ marginBottom: 10 }}>Stop doing</div>
-              {["Burying the hook below the fold", "3+ hashtags — zero correlation", "Posting two days running"].map((t) => (
-                <div key={t} style={{ display: "flex", gap: 9, fontSize: 13, padding: "5px 0", color: "var(--text-body)" }}>
-                  <span style={{ color: "var(--brass-600)", fontWeight: 700, flex: "none" }}>✕</span>{t}
-                </div>
-              ))}
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 10 }}>Stop doing</div>
+                {["Burying the hook below the fold", "3+ hashtags — zero correlation", "Posting two days running"].map((t) => (
+                  <div key={t} style={{ display: "flex", gap: 9, fontSize: 13, padding: "5px 0", color: "var(--text-body)" }}>
+                    <span style={{ color: "var(--text-muted)", fontWeight: 700, flex: "none" }}>✕</span>{t}
+                  </div>
+                ))}
+              </CardContent>
             </Card>
           </div>
 
@@ -164,40 +200,48 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
           </div>
 
           <Card style={{ marginBottom: 16 }}>
-            <div className="eyebrow muted" style={{ marginBottom: 8 }}>Positioning</div>
-            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, color: "var(--text-body)" }}>{company.positioning || "Not set yet."}</p>
+            <CardContent>
+              <div className="eyebrow muted" style={{ marginBottom: 8 }}>Positioning</div>
+              <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, color: "var(--text-body)" }}>{company.positioning || "Not set yet."}</p>
+            </CardContent>
           </Card>
 
           <div className="grid2" style={{ marginBottom: 16 }}>
             <Card>
-              <div className="eyebrow muted" style={{ marginBottom: 12 }}>Ideal customer</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
-                {company.personas.map((p) => <span key={p} className="chip dot" style={{ color: "var(--teal-700)", background: "var(--teal-50)" }}>{p}</span>)}
-              </div>
-              {company.antiPersonas.length > 0 && (
-                <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}><b style={{ color: "var(--text-body)" }}>Not for:</b> {company.antiPersonas.join(", ")}</p>
-              )}
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>Ideal customer</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
+                  {company.personas.map((p) => <Badge key={p} variant="secondary">{p}</Badge>)}
+                </div>
+                {company.antiPersonas.length > 0 && (
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}><b style={{ color: "var(--text-body)" }}>Not for:</b> {company.antiPersonas.join(", ")}</p>
+                )}
+              </CardContent>
             </Card>
             <Card>
-              <div className="eyebrow muted" style={{ marginBottom: 12 }}>Brand voice rules</div>
-              {company.voiceRules.map((r) => (
-                <div key={r} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "5px 0", color: "var(--text-body)", lineHeight: 1.4 }}>
-                  <Icon.check size={15} color="var(--teal-600)" stroke={2.4} />{r}
-                </div>
-              ))}
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>Brand voice rules</div>
+                {company.voiceRules.map((r) => (
+                  <div key={r} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "5px 0", color: "var(--text-body)", lineHeight: 1.4 }}>
+                    <Icon.check size={15} color="var(--green)" stroke={2.4} />{r}
+                  </div>
+                ))}
+              </CardContent>
             </Card>
           </div>
 
           {company.pains.length > 0 && (
             <Card style={{ marginBottom: 16 }}>
-              <div className="eyebrow muted" style={{ marginBottom: 12 }}>Validated pains</div>
-              {company.pains.map((p, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 11, padding: "10px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)" }}>
-                  <span style={{ flex: 1, fontSize: 14, color: "var(--text-strong)", fontWeight: 600 }}>{p.pain}</span>
-                  <Badge tone="blue">{p.weekly_trigger}</Badge>
-                  <span style={{ fontSize: 12, color: p.severity === "high" ? "var(--text-accent)" : "var(--text-muted)", fontWeight: 600 }}>{p.severity}</span>
-                </div>
-              ))}
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>Validated pains</div>
+                {company.pains.map((p, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)" }}>
+                    <span style={{ flex: 1, fontSize: 14, color: "var(--text-strong)", fontWeight: 600 }}>{p.pain}</span>
+                    <Badge variant="secondary">{p.weekly_trigger}</Badge>
+                    <Badge variant={p.severity === "high" ? "warning" : "secondary"}>{p.severity}</Badge>
+                  </div>
+                ))}
+              </CardContent>
             </Card>
           )}
 
@@ -212,13 +256,17 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
 
 function StatusBox({ icon, title, meta, tone, label }: { icon: React.ReactNode; title: string; meta: string; tone: "green" | "neutral"; label: string }) {
   return (
-    <div className="card" style={{ padding: "16px 18px", display: "flex", gap: 13, alignItems: "center" }}>
-      <span style={{ width: 34, height: 34, flex: "none", borderRadius: 9, background: "var(--brass-50)", color: "var(--brass-600)", display: "grid", placeItems: "center" }}>{icon}</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text-strong)" }}>{title}</div>
-        <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 1 }}>{meta}</div>
-      </div>
-      <Badge tone={tone === "green" ? "green" : "neutral"}>{label}</Badge>
-    </div>
+    <Item variant="outline">
+      <ItemMedia>
+        <span style={{ width: 34, height: 34, flex: "none", borderRadius: 9, background: "var(--paper-2)", color: "var(--text-muted)", display: "grid", placeItems: "center" }}>{icon}</span>
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle style={{ color: "var(--text-strong)" }}>{title}</ItemTitle>
+        <ItemDescription>{meta}</ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <Badge variant={tone === "green" ? "success" : "secondary"}>{label}</Badge>
+      </ItemActions>
+    </Item>
   );
 }
