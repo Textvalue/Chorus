@@ -61,7 +61,7 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
         <div className="fade">
           <div className="vhead">
             <h1>Your voice</h1>
-            <p>Most tools copy how you write. Tutti also captured what you believe — and it keeps learning every time you post.</p>
+            <p>Most tools copy how you write. Penkala also captured what you believe — and it keeps learning every time you post.</p>
           </div>
 
           <div className="grid2" style={{ marginBottom: 20 }}>
@@ -100,7 +100,7 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
                 </span>
               </div>
               <p style={{ margin: "0 0 16px", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.55 }}>
-                Every edit, approval, and &ldquo;not quite&rdquo; teaches Tutti. It lands in one governing memory that every future post reads from — so the tool sharpens the more you use it.
+                Every edit, approval, and &ldquo;not quite&rdquo; teaches Penkala. It lands in one governing memory that every future post reads from — so the tool sharpens the more you use it.
               </p>
               {me.memory.length ? me.memory.map((m, i) => (
                 <Item key={i} className="px-0">
@@ -134,7 +134,7 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
         <div className="fade">
           <div className="vhead">
             <h1>Your winning content <DemoTag /></h1>
-            <p>Once enough of your posts have engagement data, Tutti reverse-engineers what works for <em>you</em> (TWE = likes + 2× comments + 4× shares) and feeds it back into every draft. Sample below — built from {postCount} posts.</p>
+            <p>Once enough of your posts have engagement data, Penkala reverse-engineers what works for <em>you</em> (TWE = likes + 2× comments + 4× shares) and feeds it back into every draft. Sample below — built from {postCount} posts.</p>
           </div>
 
           <Card style={{ marginBottom: 14, background: "var(--green-soft)", borderColor: "var(--green-100)" }}>

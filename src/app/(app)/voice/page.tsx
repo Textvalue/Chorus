@@ -18,7 +18,7 @@ export default async function VoicePage() {
     text:
       c.note ||
       (c.kind === "edit"
-        ? `You refined a draft${c.topic ? ` on “${c.topic}”` : ""} — Tutti learned the pattern.`
+        ? `You refined a draft${c.topic ? ` on “${c.topic}”` : ""} — Penkala learned the pattern.`
         : c.kind === "reject"
         ? "You rejected a draft — folded into your never-say list."
         : "A brain-dump sharpened your point of view."),
@@ -26,7 +26,7 @@ export default async function VoicePage() {
   }));
   if (memory.length === 0) {
     memory = [
-      ...(vd.phrases_to_avoid ?? []).slice(0, 2).map((w) => ({ text: `You never say “${w}” — Tutti drops it before you see the draft.`, src: "from your voice rules" })),
+      ...(vd.phrases_to_avoid ?? []).slice(0, 2).map((w) => ({ text: `You never say “${w}” — Penkala drops it before you see the draft.`, src: "from your voice rules" })),
       ...(vd.signature_terms ?? []).slice(0, 1).map((w) => ({ text: `“${w}” is one of your signatures — weighted up in generation.`, src: "from your samples" })),
     ];
   }

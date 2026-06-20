@@ -109,7 +109,7 @@ export default async function AnalyticsPage() {
         {/* On-voice proof — REAL */}
         <Card>
           <h4 style={{ margin: "0 0 3px" }}>On-voice proof</h4>
-          <p style={{ margin: "0 0 18px", fontSize: 12.5, color: "var(--text-muted)" }}>The metric only Tutti has — how human your output stays.</p>
+          <p style={{ margin: "0 0 18px", fontSize: 12.5, color: "var(--text-muted)" }}>The metric only Penkala has — how human your output stays.</p>
           <div style={{ display: "flex", gap: 30, flexWrap: "wrap" }}>
             <div>
               <div style={{ fontSize: 34, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--green-600)", lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>

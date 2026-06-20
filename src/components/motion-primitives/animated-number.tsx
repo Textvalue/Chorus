@@ -21,7 +21,7 @@ export type AnimatedNumberProps = {
   locale?: boolean;
 };
 
-const DEFAULT_SPRING: SpringOptions = { stiffness: 90, damping: 22, mass: 1 };
+const DEFAULT_SPRING: SpringOptions = { stiffness: 150, damping: 20, mass: 0.7 };
 
 function defaultFormat(n: number, decimals: number, locale: boolean): string {
   if (locale) {

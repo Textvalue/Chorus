@@ -27,7 +27,7 @@ const serif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Tutti — the team content OS",
+  title: "Penkala — the team content OS",
   description:
     "Turn company strategy and each person's real writing voice into on-brand content. One brand, many distinct voices.",
   icons: { icon: "/brand/spark.png" },

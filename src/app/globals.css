@@ -3,7 +3,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================================
-   Tutti — editorial design system
+   Penkala — editorial design system
    A publishing aesthetic: warm paper, ink, brass. Serif display, clean sans body.
    Plain-spoken product language (no orchestra metaphor). Soft hairlines, generous
    space, a faint paper grain. Class names preserved so every screen reskins at once.
@@ -334,7 +334,7 @@ code, pre { font-family: var(--font-mono); }
 
 /* Brand tile (editorial monogram — ink tile, brass serif ampersand) */
 .bmk { width: 30px; height: 30px; flex: 0 0 auto; border-radius: 9px; background: var(--ink); display: grid; place-items: center; box-shadow: var(--shadow-sm); }
-.bmk span { font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1; color: var(--brass-200); transform: translateY(0.5px); }
+.bmk span { font-family: var(--serif); font-weight: 600; font-size: 18px; line-height: 1; color: var(--ev-300); }
 .bmk.sm { width: 26px; height: 26px; border-radius: 8px; }
 .bmk.sm span { font-size: 17px; }
 .bmk.lg { width: 44px; height: 44px; border-radius: 12px; }

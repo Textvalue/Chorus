@@ -44,7 +44,7 @@ export function TextEffect({
   className,
   preset = "fade-in-blur",
   delay = 0,
-  stagger = 0.045,
+  stagger = 0.026,
   trigger = true,
 }: TextEffectProps) {
   const reduced = usePrefersReducedMotion();
@@ -81,7 +81,7 @@ export function TextEffect({
             key={i}
             className="inline-block whitespace-pre [will-change:transform,filter,opacity]"
             variants={item}
-            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
             aria-hidden
           >
             {seg}

@@ -1,4 +1,4 @@
-// Tutti design-system primitives (ported from /design-system/project/components).
+// Penkala design-system primitives (ported from /design-system/project/components).
 // Pure, presentational, dependency-free — safe in server or client components.
 import * as React from "react";
 
@@ -71,12 +71,12 @@ export const Icon = {
 export type IconName = keyof typeof Icon;
 
 /* -------------------------------------------------------------- brandmark */
-// Editorial monogram: an ink tile with a brass serif ampersand — reads as
-// "together", no orchestra metaphor. Used in the sidebar, onboarding and auth.
+// Penkala monogram: an ink tile with an electric-violet serif "P".
+// Used in the sidebar, onboarding and auth.
 export function Brandmark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   return (
     <span className={`bmk${size === "sm" ? " sm" : size === "lg" ? " lg" : ""}`} aria-hidden>
-      <span>&amp;</span>
+      <span>P</span>
     </span>
   );
 }

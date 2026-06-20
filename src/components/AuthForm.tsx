@@ -51,7 +51,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             {isRegister ? "Create your workspace" : "Welcome back"}
           </h1>
           <p style={{ color: "var(--text-muted)", margin: 0 }}>
-            {isRegister ? "Your team. One brand, many voices. Start in a minute." : "Sign in to your Tutti workspace."}
+            {isRegister ? "Your team. One brand, many voices. Start in a minute." : "Sign in to your Penkala workspace."}
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           {isRegister ? (
             <>Already have an account? <Link href="/login" style={{ color: "var(--action-primary)", fontWeight: 600 }}>Sign in</Link></>
           ) : (
-            <>New to Tutti? <Link href="/register" style={{ color: "var(--action-primary)", fontWeight: 600 }}>Create a workspace</Link></>
+            <>New to Penkala? <Link href="/register" style={{ color: "var(--action-primary)", fontWeight: 600 }}>Create a workspace</Link></>
           )}
         </p>
       </div>

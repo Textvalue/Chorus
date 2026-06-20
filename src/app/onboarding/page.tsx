@@ -7,6 +7,7 @@ import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { LoadingMessage, TUNING_MESSAGES } from "@/components/LoadingMessage";
 import type { OrgExtract } from "@/lib/schemas";
 import type { MemberDraft } from "@/lib/mockOnboard";
 
@@ -150,7 +151,7 @@ export default function Onboarding() {
     <div className="ob-shell">
       <div className="ob-brand">
         <Image src="/brand/spark.png" alt="" width={28} height={28} style={{ height: 28, width: "auto", mixBlendMode: "multiply" }} />
-        <span className="wm" style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.04em", color: "var(--navy)" }}>tutti</span>
+        <span className="wm" style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.04em", color: "var(--navy)" }}>penkala</span>
       </div>
 
       {/* Electric-violet step progress — the single accent indicator. */}
@@ -198,11 +199,16 @@ export default function Onboarding() {
                 disabled={processing || !website.trim() || !linkedin.trim()}
               >
                 {processing ? (
-                  <><span className="spinner" /> Reading your site and your posts…</>
+                  <><span className="spinner" /> Tuning…</>
                 ) : (
                   <><Icon.sparkles size={16} color="#fff" /> Start tuning</>
                 )}
               </button>
+              {processing && (
+                <div style={{ textAlign: "center", marginTop: 16, color: "var(--text-muted)" }}>
+                  <LoadingMessage messages={TUNING_MESSAGES} interval={2800} />
+                </div>
+              )}
             </div>
             <p style={{ textAlign: "center", fontSize: 13, color: "var(--text-muted)", marginTop: 16 }}>
               Off-key just means we haven&apos;t learned you yet.

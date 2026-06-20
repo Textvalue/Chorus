@@ -9,7 +9,7 @@ const DEFAULT_VARIANTS: Variants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const DEFAULT_TRANSITION: Transition = { duration: 0.5, ease: [0.23, 1, 0.32, 1] };
+const DEFAULT_TRANSITION: Transition = { duration: 0.38, ease: [0.23, 1, 0.32, 1] };
 
 export type InViewProps = {
   children: ReactNode;

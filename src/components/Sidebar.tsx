@@ -25,7 +25,7 @@ const NAV: { href: string; label: string; icon: IconName }[] = [
   { href: "/voice", label: "Voice", icon: "voice" },
 ];
 
-const PILL: Transition = { type: "spring", stiffness: 380, damping: 32 };
+const PILL: Transition = { type: "spring", stiffness: 520, damping: 36 };
 
 export function Sidebar({
   user,

@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
+import { useRotatingMessage } from "@/lib/useRotatingMessage";
+import { WRITING_MESSAGES, IMAGE_MESSAGES, CAROUSEL_MESSAGES } from "./LoadingMessage";
 
 type Mem = { id: string; name: string; headline: string; profile_picture_url?: string | null };
 export type Template = { id: string; src: string; category: string; family: string; label: string; score: number };
@@ -66,6 +68,12 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
   }, [params]);
 
   const author = members.find((m) => m.id === authorId) ?? members[0];
+  const firstName = author?.name?.split(" ")[0] ?? "your";
+  const genMsg = useRotatingMessage([`Writing in ${firstName}'s voice…`, ...WRITING_MESSAGES], loading);
+  const visualMsg = useRotatingMessage(
+    carouselLoading ? CAROUSEL_MESSAGES : IMAGE_MESSAGES,
+    carouselLoading || imgKind !== null,
+  );
 
   async function generate() {
     if (!brief.trim() || !author) return;
@@ -226,7 +234,7 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
               placeholder="A topic, a take, or a rough thought…"
             />
             <div className="composer-foot">
-              <span className="hint">Tutti writes it in your voice, then catches the off-brand notes before you see it.</span>
+              <span className="hint">Penkala writes it in your voice, then catches the off-brand notes before you see it.</span>
               <MicButton value={brief} onChange={setBrief} />
               <button className="btn pri" onClick={() => generate()} disabled={!brief.trim()}>
                 <IconSpark /> Write in my voice
@@ -263,7 +271,7 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
                     <i key={i} style={{ animationDelay: `${d}s` }} />
                   ))}
                 </span>{" "}
-                Writing in {author.name.split(" ")[0]}&apos;s voice…
+                <span key={genMsg} className="fade">{genMsg}</span>
               </div>
               <div className="row" style={{ width: "50%" }} />
               <div className="row" />
@@ -436,7 +444,7 @@ export function CreateView({ members, orgName, orgLogo, templates = [], starters
               {(imgKind || carouselLoading) && (
                 <p style={{ fontSize: 12.5, color: "var(--ink3, #9b9ba3)", marginTop: 10 }}>
                   <span className="spinner" style={{ width: 12, height: 12, verticalAlign: "-2px", marginRight: 6 }} />
-                  {carouselLoading ? "Building your 5-slide carousel… this takes a minute." : `Generating your ${imgKind}… this can take a minute.`}
+                  <span key={visualMsg} className="fade">{visualMsg}</span>
                 </p>
               )}
 

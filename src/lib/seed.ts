@@ -1,4 +1,4 @@
-// Demo seed — a tuned "Acme" ensemble so Tutti is fully browsable out of the box
+// Demo seed — a tuned "Acme" ensemble so Penkala is fully browsable out of the box
 // (no API keys, no onboarding required). load() falls back to this when data/store.json
 // is absent; the first real write materializes it to disk. Mirrors the design-system UI kit.
 import type { Store, Member, Post } from "./types";

@@ -39,7 +39,7 @@ export default function LivePage() {
         <div style={{ flex: 1 }}>
           <div className="ct">Human in the loop</div>
           <p>
-            Tutti never auto-posts. We generate, you export — a deliberate,
+            Penkala never auto-posts. We generate, you export — a deliberate,
             human-confirmed click. No surprises on your feed.
           </p>
         </div>

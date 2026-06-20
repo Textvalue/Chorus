@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { TopBar, Card, Badge, Bar, Avatar } from "@/components/ds";
 import { useToast } from "./Toast";
+import { LoadingMessage, PROFILE_MESSAGES } from "./LoadingMessage";
 import type { ProfileMakeover } from "@/lib/schemas";
 
 type Mem = { id: string; name: string; headline: string; url: string };
@@ -154,7 +155,7 @@ export function OptimizeView({ members }: { members: Mem[] }) {
 
       {loading && (
         <Card style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>
-          <span className="spinner" /> Reading {member?.name}&apos;s profile and writing the makeover…
+          <LoadingMessage messages={[`Reading ${member?.name ?? "the"}'s profile…`, ...PROFILE_MESSAGES]} />
         </Card>
       )}
 

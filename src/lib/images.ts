@@ -54,7 +54,7 @@ export async function generateImage(prompt: string, refs: string[] = []): Promis
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
       "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-      "X-Title": "Tutti",
+      "X-Title": "Penkala",
     },
     body: JSON.stringify({
       model: IMAGE_MODEL,

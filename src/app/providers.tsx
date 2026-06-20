@@ -19,8 +19,8 @@ export function Providers({ children }: { children: ReactNode }) {
       root
       options={{
         smoothWheel: !reduced,
-        duration: reduced ? 0 : 1.1,
-        lerp: 0.12,
+        duration: reduced ? 0 : 0.8,
+        lerp: 0.18,
       }}
     >
       <TooltipProvider delay={200}>{children}</TooltipProvider>

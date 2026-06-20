@@ -2,12 +2,14 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "./Avatar";
-import { IconRefresh, IconIdeas, IconSpark } from "./Icons";
+import { IconRefresh, IconIdeas, IconSpark, IconEdit, IconCheck, IconX } from "./Icons";
+import { useToast } from "./Toast";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Badge } from "@/components/ui/badge";
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
+import { LoadingMessage, IDEAS_MESSAGES } from "./LoadingMessage";
 
 type Mem = { id: string; name: string };
 type Idea = { title: string; angle: string; source_type: "belief" | "pain"; source: string; tag: string };
@@ -15,13 +17,40 @@ type Mode = "foryou" | "discover" | "repurpose";
 
 const ICONS = ["💡", "⚡", "🎯", "📺", "📰", "🔥", "🧭", "✦"];
 
+// Demo ideas so the section is populated out of the box (like the rest of the app).
+// Replaced the moment the member hits "Find ideas" / Refresh.
+const MOCK_IDEAS: Idea[] = [
+  { title: "The advocacy playbook is quietly killing your reach", angle: "Open with the 40-cellos-one-note image, then reframe: the algorithm reads sameness as spam.", source_type: "belief", source: "Your beliefs", tag: "Contrarian" },
+  { title: "“On-brand” should never mean “identical”", angle: "Separate brand DNA (shared) from voice (personal). Make the case for harmony, not unison.", source_type: "belief", source: "Your beliefs", tag: "POV" },
+  { title: "We measured what employee advocacy actually returns", angle: "Lead with the reach-vs-pipeline gap; measured, data-led tone.", source_type: "pain", source: "Company pains", tag: "Data" },
+  { title: "The correction loop is the moat nobody talks about", angle: "Every edit teaches the model who you are — compounding and un-copyable.", source_type: "belief", source: "Your beliefs", tag: "Insight" },
+  { title: "Your reps all sound the same — here’s the fix", angle: "Name the tooling-vs-people tension, land on “give them a POV, not a script.”", source_type: "pain", source: "Company pains", tag: "How-to" },
+  { title: "Stop scheduling. Start sounding human.", angle: "Short and punchy: distinct voices on one strategy beat identical voices every time.", source_type: "belief", source: "Your beliefs", tag: "Punchy" },
+];
+
 export function IdeasView({ members }: { members: Mem[] }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("foryou");
   const [authorId, setAuthorId] = useState(members[0]?.id ?? "");
-  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [ideas, setIdeas] = useState<Idea[]>(MOCK_IDEAS);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const toast = useToast();
+  // Inline edit (in-session) of an idea's title/angle before you write it.
+  const [editIdx, setEditIdx] = useState<number | null>(null);
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftAngle, setDraftAngle] = useState("");
+
+  function startEdit(i: number, idea: Idea) {
+    setEditIdx(i);
+    setDraftTitle(idea.title);
+    setDraftAngle(idea.angle);
+  }
+  function saveEdit(i: number) {
+    setIdeas((prev) => prev.map((it, j) => (j === i ? { ...it, title: draftTitle.trim() || it.title, angle: draftAngle.trim() || it.angle } : it)));
+    setEditIdx(null);
+    toast("Idea updated");
+  }
 
   const load = useCallback(async (id: string) => {
     if (!id) return;
@@ -103,7 +132,7 @@ export function IdeasView({ members }: { members: Mem[] }) {
 
           {loading && ideas.length === 0 ? (
             <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
-              <span className="spinner" /> Finding ideas from {who} beliefs…
+              <LoadingMessage messages={[`Reading ${who} beliefs…`, ...IDEAS_MESSAGES]} />
             </div>
           ) : ideas.length === 0 ? (
             <Empty style={{ padding: 48 }}>
@@ -125,19 +154,47 @@ export function IdeasView({ members }: { members: Mem[] }) {
                 {ideas.map((idea, i) => (
                   <Item key={i} className="gap-[15px] rounded-none px-0 py-[18px]">
                     <ItemMedia className="iic">{ICONS[i % ICONS.length]}</ItemMedia>
-                    <ItemContent>
-                      <ItemTitle className="text-[15.5px] font-bold text-[var(--text-strong)]">{idea.title}</ItemTitle>
-                      <ItemDescription className="text-[13.5px] text-[var(--text-body)]">{idea.angle}</ItemDescription>
-                      <div className="im">
-                        <Badge variant={idea.source_type === "pain" ? "default" : "success"}>{idea.source}</Badge>
-                        <Badge variant="secondary">{idea.tag}</Badge>
-                      </div>
-                    </ItemContent>
-                    <ItemActions>
-                      <button className="btn sm ghost" onClick={() => router.push(`/create?topic=${encodeURIComponent(idea.title)}`)}>
-                        Write →
-                      </button>
-                    </ItemActions>
+                    {editIdx === i ? (
+                      <ItemContent>
+                        <input
+                          className="field"
+                          value={draftTitle}
+                          onChange={(e) => setDraftTitle(e.target.value)}
+                          autoFocus
+                          style={{ fontWeight: 700, marginBottom: 8 }}
+                        />
+                        <textarea
+                          className="field"
+                          value={draftAngle}
+                          onChange={(e) => setDraftAngle(e.target.value)}
+                          rows={2}
+                          style={{ resize: "vertical" }}
+                        />
+                        <div className="im" style={{ marginTop: 10 }}>
+                          <button className="btn sm pri" onClick={() => saveEdit(i)}><IconCheck /> Save</button>
+                          <button className="btn sm ghost" onClick={() => setEditIdx(null)}><IconX /> Cancel</button>
+                        </div>
+                      </ItemContent>
+                    ) : (
+                      <ItemContent>
+                        <ItemTitle className="text-[15.5px] font-bold text-[var(--text-strong)]">{idea.title}</ItemTitle>
+                        <ItemDescription className="text-[13.5px] text-[var(--text-body)]">{idea.angle}</ItemDescription>
+                        <div className="im">
+                          <Badge variant={idea.source_type === "pain" ? "default" : "success"}>{idea.source}</Badge>
+                          <Badge variant="secondary">{idea.tag}</Badge>
+                        </div>
+                      </ItemContent>
+                    )}
+                    {editIdx !== i && (
+                      <ItemActions>
+                        <button className="btn sm ghost" title="Edit idea" onClick={() => startEdit(i, idea)}>
+                          <IconEdit />
+                        </button>
+                        <button className="btn sm ghost" onClick={() => router.push(`/create?topic=${encodeURIComponent(idea.title)}`)}>
+                          Write →
+                        </button>
+                      </ItemActions>
+                    )}
                   </Item>
                 ))}
               </AnimatedGroup>
@@ -164,7 +221,7 @@ export function IdeasView({ members }: { members: Mem[] }) {
             <EmptyHeader>
               <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Discover what&apos;s trending</EmptyTitle>
               <EmptyDescription style={{ maxWidth: 460 }}>
-                Type any topic and Tutti studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context — with the right format and hook.
+                Type any topic and Penkala studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context — with the right format and hook.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -192,7 +249,7 @@ export function IdeasView({ members }: { members: Mem[] }) {
             <EmptyHeader>
               <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Turn one thing into many</EmptyTitle>
               <EmptyDescription style={{ maxWidth: 460 }}>
-                Drop in something you already made — a blog post, podcast, webinar, or an old top post. Tutti breaks it into reusable pieces and the highest-leverage ways to turn it into posts, in your voice.
+                Drop in something you already made — a blog post, podcast, webinar, or an old top post. Penkala breaks it into reusable pieces and the highest-leverage ways to turn it into posts, in your voice.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>

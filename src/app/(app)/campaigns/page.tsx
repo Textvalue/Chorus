@@ -1,4 +1,4 @@
-// Tutti campaigns — the whole team on one theme, each in their own voice (PRD §5.11).
+// Penkala campaigns — the whole team on one theme, each in their own voice (PRD §5.11).
 // One brief fans out into five on-brand drafts, one per member, straight into Rehearsal.
 import Link from "next/link";
 import { TopBar, Card, Badge, Eyebrow, Avatar, Icon } from "@/components/ds";
@@ -73,11 +73,11 @@ export default function CampaignsPage() {
   return (
     <div className="main-inner">
       <TopBar
-        title="Tutti campaigns"
+        title="Penkala campaigns"
         subtitle="The whole team on one theme — each in their own voice."
         action={
           <Link href="/campaigns" className="btn accent">
-            <Icon.campaign size={16} color="#fff" /> Start a Tutti campaign
+            <Icon.campaign size={16} color="#fff" /> Start a Penkala campaign
           </Link>
         }
       />

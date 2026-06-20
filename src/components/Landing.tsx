@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 
 /**
- * Tutti marketing landing page.
+ * Penkala marketing landing page.
  * Aesthetic: editorial "concert program / sheet music" — warm ivory paper, ink, brass accent,
  * Instrument Serif display. The unforgettable device is the product thesis made visual:
  * UNISON (forty identical gray voices) vs HARMONY (distinct voices on one score).
@@ -62,11 +62,8 @@ export function Landing() {
       <header className="nav">
         <div className="wrap nav-in">
           <a href="#top" className="brand">
-            <span className="brand-mark" aria-hidden>
-              <span className="bm-staff" />
-              <span className="bm-note" />
-            </span>
-            <span className="brand-wm">tutti</span>
+            <span className="brand-mark" aria-hidden>P</span>
+            <span className="brand-wm">penkala</span>
           </a>
           <nav className="nav-links">
             <a href="#problem">The problem</a>
@@ -98,7 +95,7 @@ export function Landing() {
               finally <em>in&nbsp;tune.</em>
             </h1>
             <p className="lede rise" style={{ animationDelay: "240ms" }}>
-              Tutti turns your strategy and each teammate&apos;s real voice into LinkedIn posts that
+              Penkala turns your strategy and each teammate&apos;s real voice into LinkedIn posts that
               actually sound like them. One brand DNA, many human voices — <strong>harmony, not the
               same corporate post pushed to everyone.</strong>
             </p>
@@ -201,7 +198,7 @@ export function Landing() {
               {
                 n: "Tune",
                 t: "Paste a LinkedIn URL",
-                d: "Tutti listens to how each person actually writes — their rhythm, their words — and infers what they believe. Their voice, captured in a minute.",
+                d: "Penkala listens to how each person actually writes — their rhythm, their words — and infers what they believe. Their voice, captured in a minute.",
               },
               {
                 n: "Score",
@@ -232,10 +229,10 @@ export function Landing() {
           <div className="why-copy" data-reveal>
             <div className="eyebrow light"><span className="op">III.</span> Why it&apos;s different</div>
             <h2 className="display sm light">
-              Most tools copy <em>how you sound.</em> Tutti learns <em>what you believe.</em>
+              Most tools copy <em>how you sound.</em> Penkala learns <em>what you believe.</em>
             </h2>
             <p className="body on-dark">
-              Scraping your old posts only mirrors your style — the commodity half. Tutti captures your
+              Scraping your old posts only mirrors your style — the commodity half. Penkala captures your
               point of view and your company&apos;s context, then gets sharper every time you edit a draft.
             </p>
             <p className="body on-dark muted">
@@ -295,7 +292,7 @@ export function Landing() {
           </div>
           <h2 className="display sm">Nothing posts itself.</h2>
           <p className="body">
-            Tutti drafts — <em>you</em> conduct. Read it, tweak it, approve it, copy it out. No
+            Penkala drafts — <em>you</em> conduct. Read it, tweak it, approve it, copy it out. No
             autopilot, no surprise posts in your name. The baton never leaves your hand.
           </p>
         </div>
@@ -361,8 +358,8 @@ export function Landing() {
       <footer className="foot">
         <div className="wrap foot-in">
           <a href="#top" className="brand">
-            <span className="brand-mark" aria-hidden><span className="bm-staff" /><span className="bm-note" /></span>
-            <span className="brand-wm">tutti</span>
+            <span className="brand-mark" aria-hidden>P</span>
+            <span className="brand-wm">penkala</span>
           </a>
           <span className="foot-tag">The team content OS — harmony, not unison.</span>
           <div className="foot-links">
@@ -377,10 +374,10 @@ export function Landing() {
 
 const CSS = `
 .tt {
-  --paper:#F6F1E6; --paper-2:#EFE7D6; --ink:#191A1F; --ink-2:#3B3B3C; --ink-soft:#6E6A60;
-  --brass:#B07A2A; --brass-2:#946221; --teal:#1F7A6B; --line:#E0D6C2; --line-2:#D2C6AC;
-  --serif:var(--lp-serif),Georgia,'Times New Roman',serif;
-  --sans:var(--lp-sans),-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --paper:#F7F7F8; --paper-2:#F0F0F2; --ink:#18181B; --ink-2:#5B5B63; --ink-soft:#9B9BA3;
+  --brass:#761fff; --brass-2:#5a0bcc; --teal:#0E9F6E; --line:#ECECEF; --line-2:#E2E2E6;
+  --serif:var(--font-serif),Georgia,'Times New Roman',serif;
+  --sans:var(--font-general-sans),-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   font-family:var(--sans); color:var(--ink); background:var(--paper);
   -webkit-font-smoothing:antialiased; line-height:1.6; letter-spacing:-.005em;
   overflow-x:hidden;
@@ -388,12 +385,6 @@ const CSS = `
 .tt *{box-sizing:border-box; margin:0; padding:0;}
 .tt a{color:inherit; text-decoration:none;}
 .tt .wrap{max-width:1140px; margin:0 auto; padding:0 28px; width:100%;}
-
-/* grain + warmth overlay */
-.tt::before{
-  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
-}
 .tt > *{position:relative; z-index:1;}
 
 /* ---- type ---- */
@@ -402,12 +393,12 @@ const CSS = `
 .tt .display.sm{font-size:clamp(32px,4.6vw,54px); line-height:1.05;}
 .tt .display em{font-style:italic; color:var(--brass);}
 .tt .display.light, .tt .display.light em{color:var(--paper);}
-.tt .display.light em{color:#E7B872;}
+.tt .display.light em{color:#bdaaff;}
 .tt .eyebrow{font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.18em; color:var(--ink-soft); display:flex; align-items:center; gap:10px; margin-bottom:22px;}
 .tt .eyebrow.center{justify-content:center;}
 .tt .eyebrow.light{color:#C9Bfa8;}
 .tt .op{font-family:var(--serif); font-style:italic; font-size:15px; letter-spacing:0; text-transform:none; color:var(--brass); border-right:1px solid var(--line-2); padding-right:10px;}
-.tt .eyebrow.light .op{color:#E7B872; border-color:rgba(255,255,255,.18);}
+.tt .eyebrow.light .op{color:#bdaaff; border-color:rgba(255,255,255,.18);}
 .tt .body{font-size:18px; color:var(--ink-2); max-width:46ch;}
 .tt .body.muted{color:var(--ink-soft); margin-top:14px; font-size:16.5px;}
 .tt .body.center{margin-left:auto; margin-right:auto; text-align:center;}
@@ -418,8 +409,8 @@ const CSS = `
 /* ---- buttons ---- */
 .tt .btn{display:inline-flex; align-items:center; gap:9px; font-weight:600; font-size:15px; padding:12px 22px; border-radius:999px; border:1px solid transparent; transition:transform .15s, background .2s, box-shadow .2s, color .2s; cursor:pointer; white-space:nowrap;}
 .tt .btn.lg{font-size:16px; padding:15px 28px;}
-.tt .btn.brass{background:var(--ink); color:var(--paper); box-shadow:0 1px 0 rgba(0,0,0,.04);}
-.tt .btn.brass:hover{background:var(--brass-2); transform:translateY(-2px); box-shadow:0 10px 28px -10px rgba(176,122,42,.6);}
+.tt .btn.brass{background:var(--brass); color:#fff; box-shadow:0 1px 2px rgba(118,31,255,.2);}
+.tt .btn.brass:hover{background:var(--brass-2); transform:translateY(-2px); box-shadow:0 10px 28px -10px rgba(118,31,255,.6);}
 .tt .btn.ghost{background:transparent; color:var(--ink); border-color:var(--line-2);}
 .tt .btn.ghost:hover{background:#fff; border-color:var(--ink); transform:translateY(-2px);}
 .tt .btn .arr{transition:transform .2s;}
@@ -432,9 +423,7 @@ const CSS = `
 .tt .nav-in{display:flex; align-items:center; justify-content:space-between; height:70px;}
 .tt .brand{display:flex; align-items:center; gap:10px;}
 .tt .brand-wm{font-family:var(--serif); font-size:26px; letter-spacing:-.01em;}
-.tt .brand-mark{position:relative; width:30px; height:30px; display:grid; place-items:center;}
-.tt .bm-staff{position:absolute; inset:50% 0 auto 0; height:9px; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); transform:translateY(-50%);}
-.tt .bm-note{width:11px; height:11px; border-radius:50%; background:var(--brass); transform:translateX(4px) rotate(-18deg); box-shadow:6px -7px 0 -4px var(--ink);}
+.tt .brand-mark{width:30px; height:30px; border-radius:9px; background:var(--brass); color:#fff; display:grid; place-items:center; font-family:var(--serif); font-weight:600; font-size:18px; line-height:1; box-shadow:0 1px 2px rgba(118,31,255,.25);}
 .tt .nav-links{display:flex; gap:30px; font-size:14.5px; color:var(--ink-2); font-weight:500;}
 .tt .nav-links a{position:relative;}
 .tt .nav-links a:hover{color:var(--ink);}
@@ -460,7 +449,7 @@ const CSS = `
 .tt .trust .tick{color:var(--teal); font-weight:700;}
 
 /* hero device */
-.tt .hero-device{background:#FffefB; border:1px solid var(--line-2); border-radius:22px; padding:18px; box-shadow:0 30px 70px -34px rgba(40,30,10,.4), 0 2px 0 rgba(255,255,255,.6) inset; transform:rotate(.6deg);}
+.tt .hero-device{background:#FffefB; border:1px solid var(--line-2); border-radius:22px; padding:18px; box-shadow:0 30px 70px -34px rgba(24,24,27,.4), 0 2px 0 rgba(255,255,255,.6) inset; transform:rotate(.6deg);}
 .tt .device-head{display:flex; align-items:center; justify-content:space-between; padding:6px 8px 14px;}
 .tt .dh-label{font-family:var(--serif); font-size:18px;}
 .tt .tuner{display:flex; align-items:center; gap:9px;}
@@ -534,14 +523,14 @@ const CSS = `
 .tt .chord > span:first-child{margin-top:0;}
 .tt .chord-bar{height:12px; border-radius:999px; background:#2c2d34; overflow:hidden;}
 .tt .chord-bar i{display:block; height:100%; border-radius:999px; background:#4a4b54;}
-.tt .chord-bar:not(.dim) i{background:linear-gradient(90deg,var(--brass),#E7B872);}
+.tt .chord-bar:not(.dim) i{background:linear-gradient(90deg,var(--brass),#bdaaff);}
 .tt .chord-bar.grow i{background:linear-gradient(90deg,var(--teal),#43b89f);}
 .tt .chord small{display:block; margin-top:8px; font-size:13px; color:#86826f;}
 
 /* features */
 .tt .fgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
 .tt .fcard{background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px; transition:transform .2s, box-shadow .2s, border-color .2s;}
-.tt .fcard:hover{transform:translateY(-4px); box-shadow:0 22px 44px -28px rgba(40,30,10,.45); border-color:var(--line-2);}
+.tt .fcard:hover{transform:translateY(-4px); box-shadow:0 22px 44px -28px rgba(24,24,27,.45); border-color:var(--line-2);}
 .tt .fnote{display:inline-grid; place-items:center; width:36px; height:36px; border-radius:10px; background:var(--paper-2); color:var(--brass); font-size:18px; margin-bottom:16px;}
 .tt .fcard h3{font-family:var(--serif); font-size:23px; margin-bottom:8px;}
 .tt .fcard p{font-size:15px; color:var(--ink-soft); line-height:1.6;}
@@ -553,7 +542,7 @@ const CSS = `
 
 /* harmony / proof */
 .tt .proof{display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:940px; margin:0 auto;}
-.tt .ppost{background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow:0 18px 50px -34px rgba(40,30,10,.4);}
+.tt .ppost{background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow:0 18px 50px -34px rgba(24,24,27,.4);}
 .tt .ppost header{display:flex; align-items:center; gap:11px; margin-bottom:16px;}
 .tt .ppost header > span:nth-child(2){display:flex; flex-direction:column; flex:1;}
 .tt .ppost header b{font-size:14.5px; font-weight:700;}

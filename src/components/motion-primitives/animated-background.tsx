@@ -37,8 +37,8 @@ export type AnimatedBackgroundProps = {
 
 const DEFAULT_TRANSITION: Transition = {
   type: "spring",
-  stiffness: 320,
-  damping: 30,
+  stiffness: 460,
+  damping: 34,
 };
 
 /**

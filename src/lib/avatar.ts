@@ -1,4 +1,4 @@
-// Brand-tinted avatar fills (white text). No bluish-purple — not part of the Tutti brand.
+// Brand-tinted avatar fills (white text). No bluish-purple — not part of the Penkala brand.
 const COLORS = ["#2563EB", "#1488A6", "#16A34A", "#33425E", "#0F7089", "#1D4FD0"];
 
 export function initials(name: string): string {

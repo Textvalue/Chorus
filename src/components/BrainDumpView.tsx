@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Avatar } from "./Avatar";
 import { MicButton } from "./MicButton";
 import { useToast } from "./Toast";
+import { LoadingMessage, THINKING_MESSAGES } from "./LoadingMessage";
 import { IconSpark, IconCheck } from "./Icons";
 
 type Mem = { id: string; name: string };
@@ -64,7 +65,7 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
           rows={5}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="What did you just learn, argue, or change your mind about? Talk freely — Tutti turns it into ideas and sharpens what you believe."
+          placeholder="What did you just learn, argue, or change your mind about? Talk freely — Penkala turns it into ideas and sharpens what you believe."
         />
         <div className="composer-foot">
           <span className="hint">This both spawns post ideas and corrects your POV — the part that gets smarter over time.</span>
@@ -76,6 +77,12 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
       </div>
 
       {err && <p style={{ color: "var(--coral-d)", marginTop: 14 }}>{err}</p>}
+
+      {loading && (
+        <div style={{ marginTop: 20, color: "var(--text-muted)" }}>
+          <LoadingMessage messages={THINKING_MESSAGES} />
+        </div>
+      )}
 
       {pov && (
         <div className="card fade" style={{ padding: 20, marginTop: 24 }}>
