@@ -8,144 +8,74 @@
    ============================================================================ */
 
 :root {
-  /* ---- Paper & ink (editorial base) ---- */
-  --paper:    #F7F2E7;   /* page canvas — warm ivory */
-  --paper-2:  #F0E8D6;   /* sunken / inset */
-  --paper-3:  #EDE3CF;
-  --card:     #FFFDF7;   /* warm white card */
-  --ink:      #1B1A1F;   /* near-black, warm */
-  --ink-2:    #423E38;   /* body text */
-  --ink-soft: #6E685B;   /* muted */
+  /* ============================================================================
+     Choir — electric-violet on warm neutral (new design system, 2026-06)
+     Linear/Vercel restraint. ONE accent (#761fff). Tokens remap every existing
+     alias so all screens reskin at once. General Sans body.
+     ============================================================================ */
 
-  /* ---- Brass (primary accent: links, active, highlights) ---- */
-  --brass-50:  #F4EAD6;
-  --brass-100: #E9D8B4;
-  --brass-200: #DEC795;
-  --brass:     #A9772A;
-  --brass-600: #8A5F20;
-  --brass-700: #6E4B19;
+  /* ---- Base canvas & ink ---- */
+  --bg:#F7F7F8; --surface:#fff; --card:#fff;
+  --ink:#18181B; --ink-2:#5B5B63; --ink2:#5B5B63; --ink3:#9B9BA3; --ink-soft:#6E6E76;
+  --line:#ECECEF; --line-2:#E2E2E6;
 
-  /* ---- Teal (secondary accent) ---- */
-  --teal-50:  #E3F0EC;
-  --teal-100: #C7E4DB;
-  --teal-500: #1C7B6B;
-  --teal-600: #155E51;
-  --teal-700: #114B41;
+  /* ---- Electric-violet (THE accent, 11 stops) ---- */
+  --ev-50:#f4f1ff; --ev-100:#ebe6ff; --ev-200:#d9d0ff; --ev-300:#bdaaff; --ev-400:#9e7aff;
+  --ev-500:#8145ff; --ev-600:#761fff; --ev-700:#7218f4; --ev-800:#5a0bcc; --ev-900:#4b0ba7; --ev-950:#2c0372;
+  --accent:var(--ev-600); --accent-soft:var(--ev-100); --accent-ink:var(--ev-800);
 
-  /* ---- Green (success / growth) ---- */
-  --green-50:  #E9F1E9;
-  --green-100: #CFE3D2;
-  --green-500: #3F7D54;
-  --green-600: #316040;
-  --green-700: #264C33;
+  /* ---- Semantic status (kept separate from the accent) ---- */
+  --green:#0E9F6E; --green-50:#E6F6EF; --green-100:#CFEDDF; --green-500:#0E9F6E; --green-600:#0B8A5E; --green-700:#096F4B;
+  --amber:#B26B00; --amber-400:#D9A53B; --amber-500:#B26B00;
+  --coral-d:#B42318;
 
-  /* ---- Neutrals (warmed) ---- */
-  --white:    #FFFFFF;
-  --gray-25:  #FBF7EF;
-  --gray-50:  #F2EBDD;
-  --gray-100: #EBE2CF;
-  --gray-200: #E4D9C2;
-  --gray-300: #D6C9AD;
-  --gray-400: #B6A98C;
-  --slate-500:#6E685B;
-  --slate-600:#534E43;
-  --slate-700:#423E38;
+  /* ---- Cool neutrals ---- */
+  --white:#fff;
+  --gray-25:#FBFBFC; --gray-50:#F4F4F6; --gray-100:#ECECEF; --gray-200:#E2E2E6; --gray-300:#D3D3D9; --gray-400:#B4B4BC;
+  --slate-500:#6E6E76; --slate-600:#5B5B63; --slate-700:#3A3A40;
 
-  /* ---- Brass scale also drives "blue" roles (active nav, info badges, primary tints) ---- */
-  --blue-50:  var(--brass-50);
-  --blue-100: var(--brass-100);
-  --blue-200: var(--brass-200);
-  --blue-500: var(--brass);
-  --blue-600: var(--brass-600);
-  --blue-700: var(--brass-700);
+  /* ---- "blue"/"brass"/"teal" roles → all consolidated onto electric-violet (one accent) ---- */
+  --blue-50:var(--ev-50); --blue-100:var(--ev-100); --blue-200:var(--ev-200);
+  --blue-500:var(--ev-600); --blue-600:var(--ev-700); --blue-700:var(--ev-800);
+  --brass-50:var(--ev-50); --brass-100:var(--ev-100); --brass-200:var(--ev-200);
+  --brass:var(--ev-600); --brass-2:var(--ev-500); --brass-600:var(--ev-700); --brass-700:var(--ev-800);
+  --teal-50:var(--ev-50); --teal-100:var(--ev-100);
+  --teal:var(--ev-600); --teal-500:var(--ev-600); --teal-600:var(--ev-700); --teal-700:var(--ev-800);
 
-  /* ---- Navy aliased onto ink so existing "navy" usages read as ink ---- */
-  --navy:     var(--ink);
-  --navy-900: var(--ink);
-  --navy-800: #2A2823;
-  --navy-700: #3A362F;
-  --navy-600: #4B463C;
+  /* ---- ink/navy aliases ---- */
+  --navy:var(--ink); --navy-700:#3A3A40;
+  --paper:var(--bg); --paper-2:#F0F0F2; --paper-3:#ECECEF;
 
-  /* ---- Amber (streaks, badges) ---- */
-  --amber-400: #D9A53B;
-  --amber-500: #B57E22;
+  /* ===== Semantic aliases (what components reference) ===== */
+  --surface-page:var(--bg); --surface-card:var(--surface); --surface-2:#FBFBFC;
+  --text-strong:var(--ink); --text-body:var(--slate-700); --text-muted:var(--ink3);
+  --text-accent:var(--accent-ink); --text-link:var(--accent-ink); --text-success:var(--green-600);
 
-  /* ===== Semantic aliases ===== */
-  --surface-page:    var(--paper);
-  --surface-card:    var(--card);
-  --surface-sunken:  var(--paper-2);
-  --surface-inverse: var(--ink);
+  --border-subtle:var(--line); --border-strong:var(--line-2); --border-focus:var(--accent);
+  --ring:0 0 0 3px var(--accent-soft);
 
-  --text-strong:   var(--ink);
-  --text-body:     var(--slate-700);
-  --text-muted:    var(--slate-500);
-  --text-inverse:  var(--paper);
-  --text-link:     var(--brass-600);
-  --text-accent:   var(--brass-600);
-  --text-success:  var(--green-600);
-
-  --border-subtle: var(--line);
-  --border-strong: var(--line-2);
-  --border-accent: var(--brass);
-  --border-focus:  var(--brass);
-
-  --action-primary:        var(--ink);
-  --action-primary-hover:  #322D25;
-  --action-primary-press:  #100F12;
-  --action-accent:         var(--teal-500);
-  --action-accent-hover:   var(--teal-600);
-  --action-success:        var(--green-500);
-  --action-success-hover:  var(--green-600);
-
-  --ring: 0 0 0 3px color-mix(in srgb, var(--brass) 28%, transparent);
+  --action-primary:var(--accent); --action-primary-hover:var(--accent-ink);
+  --action-accent:var(--accent); --action-accent-hover:var(--accent-ink);
+  --action-success:var(--green); --action-success-hover:var(--green-600);
 
   /* ---- Type ---- */
-  --sans:  var(--font-sans), system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --serif: var(--font-serif), 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-mono: 'SFMono-Regular', ui-monospace, 'Menlo', monospace;
-  --fs-display: 60px; --fs-h1: 42px; --fs-h2: 33px; --fs-h3: 23px; --fs-h4: 19px;
-  --fs-lg: 18px; --fs-body: 16px; --fs-sm: 14px; --fs-xs: 13px; --fs-2xs: 11px;
+  --font-sans:"General Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-serif:var(--lp-serif,Georgia,"Times New Roman",serif);
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:var(--font-sans); --serif:var(--font-serif);
+  --fs-2xs:11px; --fs-body:15px; --fs-h4:16px; --fs-h3:19px; --fs-h2:24px; --fs-h1:30px;
 
-  /* ---- Spacing (4px grid) ---- */
-  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
-  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
-  --control-sm: 32px; --control-md: 40px; --control-lg: 48px;
-
-  /* ---- Radius ---- */
-  --radius-xs: 4px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
-  --radius-xl: 22px; --radius-pill: 999px;
-
-  /* ---- Elevation (warm, paper-tinted) ---- */
-  --shadow-xs: 0 1px 2px rgba(60, 45, 20, 0.06);
-  --shadow-sm: 0 1px 3px rgba(60, 45, 20, 0.08), 0 1px 2px rgba(60, 45, 20, 0.05);
-  --shadow-md: 0 6px 18px rgba(60, 45, 20, 0.10), 0 2px 6px rgba(60, 45, 20, 0.05);
-  --shadow-lg: 0 18px 40px rgba(40, 30, 12, 0.16), 0 6px 12px rgba(40, 30, 12, 0.06);
-
-  /* ---- Motion ---- */
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 320ms;
-
-  /* ---- Hairlines ---- */
-  --line:  #E7DCC8;
-  --line-2:#D8CBB0;
-
-  /* ===== Legacy compatibility — remap old names onto editorial tokens ===== */
-  --bg: var(--paper);
-  --surface: var(--card);
-  --line2: var(--line-2);
-  --ink2: var(--slate-700);
-  --ink3: var(--slate-500);
-  --coral: var(--brass);
-  --coral-d: var(--brass-600);
-  --coral-soft: var(--brass-50);
-  --green-soft: var(--green-50);
-  --r: var(--radius-lg);
-  --mono: var(--font-mono);
-  --sh: var(--shadow-sm);
-  --sh2: var(--shadow-md);
+  /* ---- Radius / controls / shadows / motion ---- */
+  --radius-xs:6px; --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-pill:999px;
+  --control-sm:32px; --control-md:40px; --control-lg:48px;
+  --shadow-1:0 1px 2px rgba(24,24,27,.04),0 1px 3px rgba(24,24,27,.06);
+  --shadow-2:0 2px 4px rgba(24,24,27,.05),0 8px 24px rgba(24,24,27,.08);
+  --shadow-3:0 12px 40px rgba(24,24,27,.14);
+  --shadow-xs:var(--shadow-1); --shadow-sm:var(--shadow-1); --shadow-md:var(--shadow-2); --shadow-lg:var(--shadow-3);
+  --dur-fast:.14s; --dur-base:.22s; --dur-slow:.4s;
+  --ease-out:cubic-bezier(.23,1,.32,1); --ease-standard:cubic-bezier(.23,1,.32,1);
 }
+
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; max-width: 100%; }

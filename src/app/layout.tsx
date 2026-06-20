@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-// Editorial pairing: clean sans for UI/body, an elegant serif for display headings.
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
-  display: "swap",
-});
+// General Sans (Fontshare) is the primary UI/body face — clean Swiss-grotesque, the new design's
+// "feels designed" lift over Inter. Loaded via the Fontshare CDN (self-host the .woff2 for prod).
+// Instrument Serif stays available for the rare display moment.
 const serif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
@@ -26,7 +22,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${serif.variable}`}>
+    <html lang="en" className={serif.variable}>
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

@@ -133,7 +133,7 @@ export default async function StudioPage() {
               const pill = statusPill[p.status] ?? statusPill.draft;
               return (
                 <Link key={p.id} href="/queue" className="qrow" style={{ textDecoration: "none" }}>
-                  <Avatar name={nameOf(p.member_id)} lg />
+                  <Avatar name={nameOf(p.member_id)} size={40} />
                   <div className="qb">
                     <div className="qh">{p.topic || p.body.split("\n")[0].slice(0, 64)}</div>
                     <div className="qm">{nameOf(p.member_id)}{p.angle ? ` · ${p.angle}` : ""}</div>
