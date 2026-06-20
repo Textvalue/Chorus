@@ -132,3 +132,17 @@ export const ProfileMakeoverSchema = z.object({
     .describe("Ordered top changes to make first"),
 });
 export type ProfileMakeover = z.infer<typeof ProfileMakeoverSchema>;
+
+// ---- Carousel plan (5 slides: hook / value x3 / cta) ----
+export const CarouselSchema = z.object({
+  slides: z
+    .array(
+      z.object({
+        kind: z.string().describe("hook | value | cta"),
+        title: z.string().describe("Short bold slide title (<= 8 words)"),
+        body: z.string().describe("1-2 short lines of supporting text"),
+      })
+    )
+    .describe("Exactly 5 slides: 1 hook, 3 value, 1 cta"),
+});
+export type Carousel = z.infer<typeof CarouselSchema>;

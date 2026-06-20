@@ -55,14 +55,14 @@ function toCorrection(r: CorrRow): Correction {
 type PostRow = {
   id: string; member_id: string; org_id: string; topic: string; angle: string;
   body: string; generated_body: string; status: Post["status"]; voice_match: number;
-  edits: Post["edits"]; created_at: Date; image_url: string | null;
+  edits: Post["edits"]; created_at: Date; image_url: string | null; carousel: Post["carousel"];
 };
 function toPost(r: PostRow): Post {
   return {
     id: r.id, member_id: r.member_id, org_id: r.org_id, topic: r.topic, angle: r.angle,
     body: r.body, generated_body: r.generated_body, status: r.status,
     voice_match: r.voice_match, created_at: new Date(r.created_at).toISOString(), edits: r.edits,
-    image_url: r.image_url ?? null,
+    image_url: r.image_url ?? null, carousel: r.carousel ?? null,
   };
 }
 
@@ -238,6 +238,12 @@ export async function setPostImage(postId: string, imageUrl: string): Promise<vo
   const orgId = await currentOrgId();
   if (!orgId) return;
   await query("update posts set image_url = $1 where id = $2 and org_id = $3", [imageUrl, postId, orgId]);
+}
+
+export async function setPostCarousel(postId: string, slides: Post["carousel"]): Promise<void> {
+  const orgId = await currentOrgId();
+  if (!orgId) return;
+  await query("update posts set carousel = $1::jsonb where id = $2 and org_id = $3", [J(slides), postId, orgId]);
 }
 
 // Exposed so scripts can close the pool cleanly.

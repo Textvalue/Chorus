@@ -75,6 +75,7 @@ export type Post = {
   created_at: string;
   edits: { at: string; before: string; after: string }[];
   image_url?: string | null; // generated post image / infographic
+  carousel?: { url: string; title: string; body: string; kind: string }[] | null;
 };
 
 export type Store = {

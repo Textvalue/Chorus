@@ -7,6 +7,28 @@ import type { Org, Post } from "./types";
 
 export type ImageKind = "image" | "infographic";
 
+// One carousel slide (4:5, 1080x1350 per the spec). Same brand modifier + 5-block method.
+export function buildCarouselSlidePrompt(
+  slide: { kind: string; title: string; body: string },
+  org: Org,
+  index: number,
+  total: number
+): string {
+  return [
+    brandModifier(org),
+    ``,
+    `BLOCK 1 — FORMAT & LAYOUT: A single portrait (4:5) LinkedIn carousel slide, ${index + 1} of ${total}.`,
+    `Large bold title in the upper third, supporting line(s) below, lots of breathing room.`,
+    `BLOCK 2 — BRAND & COLOR: navy #14233A text on off-white #F6F4EF, teal #1F9D8A accents.`,
+    `BLOCK 3 — ZONE-BY-ZONE: a small "${index + 1}/${total}" marker top-left; TITLE = "${slide.title}";`,
+    `BODY = "${slide.body}"; a thin teal rule + "${org.name}" small at the bottom.`,
+    `BLOCK 4 — ELEMENT: one simple relevant line icon supporting the idea, not decorative clutter.`,
+    `BLOCK 5 — VIBE & FINISH: clean, modern, consistent with the other slides in the set. Calm, premium.`,
+    ``,
+    `ALL TEXT MUST BE SPELLED CORRECTLY and legible. Render exactly the title and body text given above.`,
+  ].join("\n");
+}
+
 // §5.1 Brand-DNA Prompt Modifier — a short paragraph prepended to every image prompt so visuals stay
 // on-brand. We don't scrape brand hex yet, so we derive a clean, consistent palette + mood from the org.
 function brandModifier(org: Org): string {

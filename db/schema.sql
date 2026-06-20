@@ -76,3 +76,6 @@ create index if not exists corrections_org_idx    on corrections (org_id);
 
 -- generated post image / infographic (relative URL under /generated)
 alter table if exists posts add column if not exists image_url text;
+
+-- generated carousel slides (JSON array of {url,title,body,kind})
+alter table if exists posts add column if not exists carousel jsonb;

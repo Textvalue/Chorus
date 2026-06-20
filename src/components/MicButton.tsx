@@ -2,17 +2,9 @@
 import { useEffect, useRef } from "react";
 import { useVoiceInput } from "@/lib/useVoiceInput";
 
-// Dictate into a text field: appends the spoken transcript to whatever is already there.
-// Renders null until NEXT_PUBLIC_VAPI_PUBLIC_KEY is set, so it's invisible without the Vapi key.
-export function MicButton({
-  value,
-  onChange,
-  className = "btn ghost sm",
-}: {
-  value: string;
-  onChange: (text: string) => void;
-  className?: string;
-}) {
+// Sleek, minimal icon-only dictation button. Appends the spoken transcript to the field.
+// Renders null until NEXT_PUBLIC_VAPI_PUBLIC_KEY is set.
+export function MicButton({ value, onChange }: { value: string; onChange: (text: string) => void }) {
   const { available, listening, live, start, stop } = useVoiceInput();
   const baseRef = useRef("");
   const onChangeRef = useRef(onChange);
@@ -35,8 +27,35 @@ export function MicButton({
   }
 
   return (
-    <button type="button" className={className} onClick={toggle} title="Dictate with your voice">
-      {listening ? "● Listening… stop" : "🎤 Dictate"}
-    </button>
+    <>
+      <style>{MIC_CSS}</style>
+      <button
+        type="button"
+        className="tt-mic"
+        data-on={listening}
+        onClick={toggle}
+        aria-label={listening ? "Stop dictation" : "Dictate with your voice"}
+        title={listening ? "Listening… click to stop" : "Dictate"}
+      >
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="3" width="6" height="11" rx="3" />
+          <path d="M5 11a7 7 0 0 0 14 0" />
+          <path d="M12 18v3" />
+        </svg>
+      </button>
+    </>
   );
 }
+
+const MIC_CSS = `
+.tt-mic{
+  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
+  border:1px solid var(--border-strong,#d8dde4);background:var(--surface-card,#fff);
+  color:var(--text-muted,#6b7280);cursor:pointer;transition:.16s ease;
+}
+.tt-mic:hover{color:var(--text-strong,#1a1a1a);border-color:var(--text-muted,#9aa3af);background:var(--gray-50,#f7f8fa)}
+.tt-mic:active{transform:scale(.94)}
+.tt-mic[data-on="true"]{color:#E5484D;border-color:#E5484D;background:#fff;animation:ttmic 1.4s ease-out infinite}
+@keyframes ttmic{0%{box-shadow:0 0 0 0 rgba(229,72,77,.35)}70%{box-shadow:0 0 0 9px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+@media (prefers-reduced-motion:reduce){.tt-mic[data-on="true"]{animation:none}}
+`;

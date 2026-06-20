@@ -18,6 +18,35 @@ const GUIDE: string = (() => {
   }
 })();
 
+// The 34 headline formulas (verbatim from the build-spec, via hooks.json) — grouped, with exemplars.
+const HEADLINE_FORMULAS: string = (() => {
+  try {
+    const raw = readFileSync(path.join(process.cwd(), "writing-guidelines", "seed-data", "hooks.json"), "utf8");
+    const hf = (JSON.parse(raw).headline_formulas ?? []) as {
+      category: string; template: string; exemplar_headline: string;
+    }[];
+    const by = new Map<string, string[]>();
+    for (const f of hf) {
+      const list = by.get(f.category) ?? [];
+      list.push(`  • ${f.template}  —  e.g. "${f.exemplar_headline}"`);
+      by.set(f.category, list);
+    }
+    return [...by.entries()].map(([c, lines]) => `${c}:\n${lines.join("\n")}`).join("\n\n");
+  } catch {
+    return "";
+  }
+})();
+
+// The 7×5 narrative → LinkedIn profile-section map (build-spec ideation-systems.md).
+const PROFILE_SECTION_MAP = `Where each narrative ingredient belongs on the profile:
+- Audience  → Headline (who it's for) + About opening line
+- Problem   → About ("You can do X and still…")
+- Outcome   → Banner + Headline (money/time)
+- Story     → About ("I know because I…")
+- Framework → About ("How it works" / quick overview)
+- Proof     → Banner (1-3 proof signals) + About (1-3 wins)
+- Offer     → Featured (lead magnet) + Headline (1-3 achievements)`;
+
 export function buildProfilePrompt(org: Org, member: Member, profile: LinkedInProfile): string {
   const a = org.brand_dna.narrative_atoms;
   const profileBlock = [
@@ -48,8 +77,14 @@ export function buildProfilePrompt(org: Org, member: Member, profile: LinkedInPr
     member.prose_samples[0] ? `A real post of theirs (match this voice):\n${member.prose_samples[0]}` : "",
   ].filter(Boolean).join("\n");
 
-  return GUIDE
+  const filled = GUIDE
     .replace("{{PROFILE}}", profileBlock)
     .replace("{{COMPANY_CONTEXT}}", companyBlock)
     .replace("{{VOICE}}", voiceBlock);
+
+  return [
+    filled,
+    `\n---\n## Headline formula bank (use one per option, name which you used)\n${HEADLINE_FORMULAS}`,
+    `\n---\n## Profile section map\n${PROFILE_SECTION_MAP}`,
+  ].join("\n");
 }

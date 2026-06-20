@@ -29,6 +29,8 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
   const [err, setErr] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [imgKind, setImgKind] = useState<"image" | "infographic" | null>(null);
+  const [carousel, setCarousel] = useState<{ url: string; title: string; body: string; kind: string }[] | null>(null);
+  const [carouselLoading, setCarouselLoading] = useState(false);
 
   useEffect(() => {
     const t = params.get("topic");
@@ -45,6 +47,7 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
     setShowWhy(false);
     setResult(null);
     setImage(null);
+    setCarousel(null);
     setLoading(true);
     try {
       const res = await fetch("/api/generate", {
@@ -86,6 +89,27 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
     setPhase("idle");
     setResult(null);
     setImage(null);
+    setCarousel(null);
+  }
+
+  async function genCarousel() {
+    if (!result || carouselLoading) return;
+    setCarouselLoading(true);
+    try {
+      const res = await fetch("/api/carousel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: result.post.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "carousel failed");
+      setCarousel((data.slides as { url: string; title: string; body: string; kind: string }[]).filter((s) => s.url));
+      toast("Carousel added");
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "carousel failed");
+    } finally {
+      setCarouselLoading(false);
+    }
   }
 
   async function genImage(kind: "image" | "infographic") {
@@ -255,16 +279,33 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
                     <button className="btn ghost" onClick={() => genImage("infographic")} disabled={imgKind !== null}>
                       {imgKind === "infographic" ? <span className="spinner" /> : <IconSpark />} Infographic
                     </button>
+                    <button className="btn ghost" onClick={genCarousel} disabled={carouselLoading || imgKind !== null}>
+                      {carouselLoading ? <span className="spinner" /> : <IconSpark />} Carousel
+                    </button>
                     <button className="btn ghost" onClick={() => { setEditing(true); setDraftBody(result.post.body); }}><IconEdit /> Edit</button>
                     <button className="btn ghost" onClick={() => { navigator.clipboard.writeText(result.post.body); toast("Copied to clipboard"); }}><IconCopy /> Copy</button>
                   </>
                 )}
               </div>
-              {imgKind && (
+              {(imgKind || carouselLoading) && (
                 <p style={{ fontSize: 12.5, color: "var(--ink3, #9b9ba3)", marginTop: 10 }}>
                   <span className="spinner" style={{ width: 12, height: 12, verticalAlign: "-2px", marginRight: 6 }} />
-                  Generating your {imgKind}…
+                  {carouselLoading ? "Building your 5-slide carousel… this takes a few seconds." : `Generating your ${imgKind}…`}
                 </p>
+              )}
+
+              {carousel && carousel.length > 0 && !editing && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "var(--ink3, #9b9ba3)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>
+                    Carousel · {carousel.length} slides
+                  </div>
+                  <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8 }}>
+                    {carousel.map((s, i) => (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img key={i} src={s.url} alt={s.title} title={s.title} style={{ height: 320, borderRadius: 12, border: "1px solid var(--line, #e5e5e5)", flex: "none" }} />
+                    ))}
+                  </div>
+                </div>
               )}
             </>
           )}
