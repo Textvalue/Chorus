@@ -46,3 +46,7 @@ next-env.d.ts
 
 # runtime-generated images
 /public/generated
+
+# harvest-posts.ts output
+/harvest-media
+/harvest-posts.json
