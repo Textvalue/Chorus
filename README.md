@@ -1,47 +1,85 @@
-# Chorus — Team Content OS
+# Tutti — the team content OS
 
-Company strategy + each person's real voice, captured with two URLs, turned into on-brand LinkedIn
-posts that sound like them — shared across a team as one brand DNA, each post still human.
+> **Your team. In tune. Your brand. Heard everywhere.**
+> *Alone we can do so little. Together we make music.*
 
-The defensible part is **what you believe** (POV) + company context, not **how you sound**. Chorus
+Tutti turns a company's strategy and each person's real voice into on-brand content that plays
+beautifully together — so a whole team sounds like one brand, while every post still sounds human.
+The wedge is **harmony, not unison**: competitors push the *same* corporate post to every employee;
+Tutti gives each person their instrument, tunes it to one score, and lets the whole team play.
+
+The defensible part is **what you believe** (POV) + company context, not **how you sound**. Tutti
 infers a draft POV at onboarding and lets normal use correct it — that correction loop is the moat.
+The guiding rule, inherited by every screen: **off-key means the tool hasn't learned you yet — never
+that your writing is bad.**
 
-## Flow
+## The app
 
-1. **Org onboarding** (`/onboarding/org`) — enter a company website. Exa researches the site + web;
-   OpenRouter extracts a structured ICP (pains with weekly triggers), positioning, competitors, and
-   brand DNA. You confirm the pre-filled record.
-2. **Member onboarding** (`/onboarding/member`) — enter a LinkedIn URL. HarvestAPI pulls the person's
-   posts; we drop reposts and short posts, sort by engagement, and keep the top 3–5 as verbatim voice
-   samples. Two OpenRouter passes extract **voice DNA** (HOW) and **expert POV** (WHAT, `inferred`).
-3. **Create** (`/create`) — pick a topic, generate a post grounded in the real samples + true facts +
-   ban-list. A deterministic **anti-slop sanitizer** runs after generation and auto-regenerates on a
-   hard fail (em-dash density, curly quotes, kill-words, banned phrases, structural tells).
-4. **Drafts** (`/drafts`) — approve / edit / reject. Every edit is diffed vs the generated body and
-   appended to that member's `corrections` (the moat loop).
-5. **Brain Dump** (`/brain-dump`) — freeform text spawns ideas AND sharpens/confirms the POV.
-6. **Ideas** (`/ideas`) — expands beliefs/topics + company pains into angle cards, one click into Create.
+The shell is a workspace sidebar (the spark + lowercase `tutti` wordmark) over these surfaces:
+
+**Make**
+- **Studio** (`/studio`) — the daily home. Two jobs (*Create* / *Ideas*) plus the 60-second *Record a
+  note* habit, over a progression dashboard (in-tune score, character progression, reach, ensemble).
+- **Create** (`/create`) — pick a topic, generate a post grounded in real samples + true facts +
+  ban-list. The deterministic **Sounds Flat** gate runs after generation and quietly regenerates on a
+  fail (em-dash density, curly quotes, kill-words, banned phrases, structural tells).
+- **Ideas** (`/ideas`) — Theme & Variations: expands beliefs + company pains into angle cards.
+- **Riff** (`/riff`) — Improv: a freeform daily note that sharpens your voice *and* spawns ideas.
+
+**Team**
+- **Rehearsal** (`/rehearsal`) — drafts & approvals. Every edit is logged as a correction.
+- **Ensemble** (`/ensemble`) — team roster, instruments, the unison alarm.
+- **Campaigns** (`/campaigns`) — Tutti: one theme, a draft per member, each in their own voice.
+
+**Brand**
+- **The Score** (`/score`) — shared company strategy, owned by the bandleader.
+- **Audience** (`/audience`) — weighted personas tied to weekly pains.
+- **Tuning** (`/tuning`) — an in-app recap of onboarding.
+
+**Reach**
+- **Live** (`/live`) — publish (copy / export, never auto-post) and measure.
+- **Engage** (`/engage`) — warm feed; in-voice comments, human-clicked sends.
+- **Achievements** (`/achievements`) — XP, badges, streaks, the venue ladder.
+
+Onboarding lives at `/onboarding/org` (research a company URL → verify the Score) and
+`/onboarding/member` (a LinkedIn URL → captured voice DNA + inferred POV).
+
+## Design system
+
+The brand lives in [`design-system/`](design-system/) (tokens, components, a full UI kit, brand
+assets). It's ported into the app as CSS variables + base styles in
+[`src/app/globals.css`](src/app/globals.css) and React primitives in
+[`src/components/ds.tsx`](src/components/ds.tsx). Navy ink keeps it B2B-credible; blue is the primary
+action; **teal carries the musical / brand-soul moments, green signals "on key" / success / growth.**
+Inter throughout, soft-rounded white cards, hairline borders, gentle navy-tinted shadows, and lightly
+hand-drawn character illustrations as the emotional core.
 
 ## Stack
 
-- Next.js (App Router) + TypeScript + Tailwind v4
-- **No database** — file-based JSON store at `data/store.json` (`src/lib/store.ts`)
-- LLM: OpenRouter via the Vercel AI SDK (`generateObject` + Zod). Haiku for drafts, Sonnet for extraction
-- [HarvestAPI](https://harvest-api.com) for LinkedIn posts, [Exa](https://exa.ai) for company research
+- Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4
+- **No database** — file-based JSON store at `data/store.json` (`src/lib/store.ts`). Ships a tuned demo
+  "Acme" ensemble via `src/lib/seed.ts`, so the app is fully browsable with no keys and no onboarding.
+- LLM: OpenRouter via the Vercel AI SDK (`generateObject` + Zod). Haiku for drafts, Sonnet for
+  extraction. Set `MOCK_GENERATION=1` (or just omit keys) to use the built-in mock drafter.
+- [HarvestAPI](https://harvest-api.com) for LinkedIn posts, [Exa](https://exa.ai) for company research.
 
 ## Setup
 
 ```bash
-cp .env.example .env   # fill in OPENROUTER_API_KEY, HARVEST_API_KEY, EXA_API_KEY
+cp .env.example .env   # optional: OPENROUTER_API_KEY, HARVEST_API_KEY, EXA_API_KEY
 npm install
-npm run dev            # http://localhost:3000
+npm run dev            # http://localhost:3000  → redirects to /studio
 ```
+
+Without keys, generation falls back to a clean on-voice mock so the Create flow never dead-ends, and
+the seeded ensemble keeps every screen populated.
 
 ## Architecture notes
 
-- **Team isolation** is modeled on `(org_id, member_id)`. Shared layer (org brand DNA / ICP) is edited
-  by the owner; private layer (voice / POV / corrections) is owned by each member.
-- Generation is **verbatim-anchored**: the prompt inlines the real prose samples, never an abstract
-  voice description (`src/lib/prompt.ts`). The stable per-member prefix is cacheable.
-- Cut from this MVP (per the build plan): warm feed / engagement, voice interview, auto-publish,
-  cross-platform fan-out, competitor watch-loop, analytics, billing.
+- **Team isolation** is modeled on `(org_id, member_id)`. The shared layer (org brand DNA / ICP) is
+  edited by the owner; the private layer (voice / POV / corrections) is owned by each member.
+- Generation is **verbatim-anchored**: the prompt inlines real prose samples, never an abstract voice
+  description (`src/lib/prompt.ts`). The stable per-member prefix is cacheable.
+- The progression, reach, ensemble, score, audience, campaigns, live, and engage surfaces are mocked
+  UI (self-contained sample data) pending wiring — the generation / Sounds Flat / correction loop is
+  real.

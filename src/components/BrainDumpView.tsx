@@ -47,7 +47,7 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
   return (
     <div className="pad narrow">
       <div className="auth-row">
-        <span className="al">Brain dump for</span>
+        <span className="al">Riff as</span>
         <div className="seg">
           {members.map((m) => (
             <button key={m.id} className={m.id === authorId ? "on" : ""} onClick={() => setAuthorId(m.id)}>
@@ -57,13 +57,13 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
         </div>
       </div>
 
-      <h1 className="ch">Dump a raw thought. We&apos;ll sharpen it.</h1>
+      <h1 className="ch">Riff on what you&apos;re seeing this week.</h1>
       <div className="composer">
         <textarea
           rows={5}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="What did you just learn, argue, or change your mind about? Talk freely — Chorus turns it into ideas and updates what you believe."
+          placeholder="What did you just learn, argue, or change your mind about? Talk freely — Tutti turns it into ideas and sharpens what you believe."
         />
         <div className="composer-foot">
           <span className="hint">This both spawns post ideas and corrects your POV — the part that gets smarter over time.</span>

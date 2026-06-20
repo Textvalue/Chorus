@@ -46,8 +46,8 @@ export function DraftsView({ posts }: { posts: Row[] }) {
     <div className="pad">
       <div className="vhead" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
         <div>
-          <h1>Drafts</h1>
-          <p>Approval queue. Every edit you make trains your voice.</p>
+          <h1>Rehearsal</h1>
+          <p>Your approval queue. Every edit teaches the model, so the next draft lands closer.</p>
         </div>
         <div className="seg">
           {FILTERS.map((f) => (
@@ -58,7 +58,7 @@ export function DraftsView({ posts }: { posts: Row[] }) {
 
       {shown.length === 0 ? (
         <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--ink3)" }}>
-          Nothing here yet. Generate a post from <b>Create</b>.
+          Nothing to rehearse yet. Write one from <b>Create</b>.
         </div>
       ) : (
         <div className="card" style={{ padding: "8px 24px" }}>

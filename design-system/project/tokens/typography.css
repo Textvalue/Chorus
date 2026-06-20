@@ -1,0 +1,58 @@
+/* Tutti — Typography tokens
+   Inter throughout: Bold/authoritative for headings, Regular/clear for body. */
+:root {
+  /* Families */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-body: var(--font-sans);
+  --font-mono: 'SFMono-Regular', ui-monospace, 'Menlo', monospace;
+
+  /* Weights */
+  --fw-regular: 400;   /* @kind font */
+  --fw-medium: 500;    /* @kind font */
+  --fw-semibold: 600;  /* @kind font */
+  --fw-bold: 700;      /* @kind font */
+  --fw-extrabold: 800; /* @kind font */
+
+  /* Type scale (1.250 major-third, rounded) */
+  --fs-display: 56px;   /* hero */
+  --fs-h1: 40px;
+  --fs-h2: 32px;
+  --fs-h3: 24px;
+  --fs-h4: 20px;
+  --fs-lg: 18px;
+  --fs-body: 16px;
+  --fs-sm: 14px;
+  --fs-xs: 13px;
+  --fs-2xs: 11px;       /* eyebrow / overline */
+
+  /* Line heights */
+  --lh-tight: 1.1;     /* @kind font */
+  --lh-snug: 1.25;    /* @kind font */
+  --lh-normal: 1.5;   /* @kind font */
+  --lh-relaxed: 1.65; /* @kind font */
+
+  /* Letter spacing */
+  --ls-tight: -0.02em;   /* @kind font */
+  --ls-snug: -0.01em;    /* @kind font */
+  --ls-normal: 0;        /* @kind font */
+  --ls-wide: 0.04em;     /* @kind font */
+  --ls-wider: 0.08em;    /* @kind font */
+
+  /* Semantic roles */
+  --text-display-size: var(--fs-display);
+  --text-display-weight: var(--fw-extrabold); /* @kind font */
+  --text-display-lh: var(--lh-tight); /* @kind font */
+  --text-display-ls: var(--ls-tight); /* @kind font */
+
+  --text-heading-weight: var(--fw-bold); /* @kind font */
+  --text-heading-lh: var(--lh-snug); /* @kind font */
+  --text-heading-ls: var(--ls-snug); /* @kind font */
+
+  --text-body-weight: var(--fw-regular); /* @kind font */
+  --text-body-lh: var(--lh-normal); /* @kind font */
+
+  --text-eyebrow-size: var(--fs-2xs);
+  --text-eyebrow-weight: var(--fw-bold); /* @kind font */
+  --text-eyebrow-ls: var(--ls-wide); /* @kind font */
+}

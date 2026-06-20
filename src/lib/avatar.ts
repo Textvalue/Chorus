@@ -1,4 +1,5 @@
-const COLORS = ["#7C3AED", "#0E9F6E", "#B45309", "#0891B2", "#DB2777", "#2563EB"];
+// Brand-tinted avatar fills (white text). No bluish-purple — not part of the Tutti brand.
+const COLORS = ["#2563EB", "#1488A6", "#16A34A", "#33425E", "#0F7089", "#1D4FD0"];
 
 export function initials(name: string): string {
   const parts = name.trim().split(/\s+/);

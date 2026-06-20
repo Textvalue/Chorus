@@ -1,28 +1,37 @@
 import { redirect } from "next/navigation";
 import { getOrg, getMembers } from "@/lib/store";
-import { Rail } from "@/components/Rail";
+import { Sidebar } from "@/components/Sidebar";
 import { ToastProvider } from "@/components/Toast";
-import { initials } from "@/lib/avatar";
+import { Icon } from "@/components/ds";
 
 export const dynamic = "force-dynamic";
 
-// Gate (plan.md §3c): dashboard locked until org exists AND a member has voice_dna + prose_samples.
+// Gate (plan.md §3c): the app is locked until an org exists AND a member has a voice.
+// Seed data ships a tuned demo team, so this passes out of the box.
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const org = await getOrg();
-  if (!org) redirect("/onboarding/org");
+  if (!org) redirect("/onboarding");
 
   const members = await getMembers();
   const ready = members.some((m) => m.prose_samples.length > 0);
-  if (!ready) redirect("/onboarding/member");
+  if (!ready) redirect("/onboarding");
 
-  const owner =
-    members.find((m) => m.member_id === org.owner_member_id) ?? members[0];
+  const owner = members.find((m) => m.member_id === org.owner_member_id) ?? members[0];
 
   return (
     <ToastProvider>
       <div className="app">
-        <Rail ownerInitials={owner ? initials(owner.name) : "ME"} />
-        <main className="main">{children}</main>
+        <Sidebar
+          user={{ name: owner?.name ?? "You", role: `Bandleader · ${org.name}`, instrument: "Conductor" }}
+        />
+        <main className="main">
+          <div className="topstrip">
+            <Icon.search size={19} />
+            <Icon.bell size={19} />
+            <span className="ws">{org.name} · Pro</span>
+          </div>
+          {children}
+        </main>
       </div>
     </ToastProvider>
   );

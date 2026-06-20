@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Studio dashboard" description="Tutti's signature in-tune dashboard — score ring, voice-maturity meter, reach stats" -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <style>
+    body { margin: 0; background: #F6F8FA; font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</helmet>
+
+<div style="max-width: 980px; margin: 0 auto; padding: 36px 40px 64px;">
+
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px;">
+    <div>
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #0F7089; margin-bottom: 8px;">Studio</div>
+      <h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: #0B1833;">You're getting in tune</h1>
+      <p style="margin: 6px 0 0; color: #64748B; font-size: 15px;">Keep going — beautiful sounds ahead.</p>
+    </div>
+    <x-import component-from-global-scope="DesignSystem_42715e.Button" variant="primary" hint-size="auto,40px">Create a post</x-import>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 20px;">
+    <x-import component-from-global-scope="DesignSystem_42715e.Card" hint-size="100%,260px">
+      <div style="display: flex; gap: 28px; align-items: center;">
+        <x-import component-from-global-scope="DesignSystem_42715e.TuneScore" value="{{ score }}" hint-size="132px,132px"></x-import>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #0F7089; margin-bottom: 14px;">Voice maturity</div>
+          <x-import component-from-global-scope="DesignSystem_42715e.ProgressMeter" items="{{ meter }}" hint-size="100%,180px"></x-import>
+        </div>
+      </div>
+    </x-import>
+
+    <x-import component-from-global-scope="DesignSystem_42715e.Card" hint-size="100%,260px">
+      <div style="display: flex; flex-direction: column; gap: 16px; height: 100%; justify-content: center;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #64748B;">Fill the stadium</div>
+          <x-import component-from-global-scope="DesignSystem_42715e.Badge" tone="green" hint-size="auto,22px">↑ 78%</x-import>
+        </div>
+        <x-import component-from-global-scope="DesignSystem_42715e.Stat" value="{{ impressions }}" label="Total impressions · last 30 days" delta="Climbing toward the Arena" hint-size="100%,80px"></x-import>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <x-import component-from-global-scope="DesignSystem_42715e.Badge" tone="teal" hint-size="auto,22px">Theater · 100K</x-import>
+          <x-import component-from-global-scope="DesignSystem_42715e.Badge" tone="neutral" hint-size="auto,22px">Arena · 1M</x-import>
+        </div>
+      </div>
+    </x-import>
+  </div>
+
+  <x-import component-from-global-scope="DesignSystem_42715e.Card" hint-size="100%,80px">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 18px;">♪</span>
+      <span style="font-size: 14px; color: #334155;"><b style="color:#0B1833;">In tune — {{ score }}% sounds like you.</b> Off-key just means we haven't learned your voice yet.</span>
+    </div>
+  </x-import>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:980,&quot;height&quot;:640},&quot;score&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:96,&quot;min&quot;:0,&quot;max&quot;:100,&quot;tsType&quot;:&quot;number&quot;},&quot;impressions&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;12.4M&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;meter&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{label:string,value:number}[]&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      score: this.props.score ?? 96,
+      impressions: this.props.impressions ?? '12.4M',
+      meter: this.props.meter ?? [
+        { label: 'Brand DNA', value: 100 },
+        { label: 'Voice Match', value: 96 },
+        { label: 'Audience', value: 80 },
+        { label: 'Team', value: 60 },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

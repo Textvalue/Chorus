@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "./Avatar";
 import { IconRefresh } from "./Icons";
@@ -36,9 +36,9 @@ export function IdeasView({ members }: { members: Mem[] }) {
     }
   }, []);
 
-  useEffect(() => {
-    load(authorId);
-  }, [authorId, load]);
+  // No auto-trigger — ideas are generated only when the member asks for them.
+  const author = members.find((m) => m.id === authorId);
+  const who = author ? `${author.name.split(" ")[0]}'s` : "your";
 
   return (
     <div className="pad">
@@ -49,7 +49,11 @@ export function IdeasView({ members }: { members: Mem[] }) {
         </div>
         <div className="seg">
           {members.map((m) => (
-            <button key={m.id} className={m.id === authorId ? "on" : ""} onClick={() => setAuthorId(m.id)}>
+            <button
+              key={m.id}
+              className={m.id === authorId ? "on" : ""}
+              onClick={() => { setAuthorId(m.id); setIdeas([]); setErr(""); }}
+            >
               <Avatar name={m.name} /> {m.name.split(" ")[0]}
             </button>
           ))}
@@ -57,18 +61,30 @@ export function IdeasView({ members }: { members: Mem[] }) {
       </div>
 
       <div className="srcrow" style={{ marginBottom: 18 }}>
-        <span className="chip dot" style={{ color: "#7C3AED" }}>Your beliefs</span>
-        <span className="chip dot" style={{ color: "var(--coral)" }}>Company pains</span>
-        <button className="btn ghost sm" style={{ marginLeft: "auto" }} onClick={() => load(authorId)} disabled={loading}>
-          <IconRefresh /> {loading ? "Generating…" : "Refresh"}
-        </button>
+        <span className="chip dot" style={{ color: "var(--teal-600)" }}>Your beliefs</span>
+        <span className="chip dot" style={{ color: "var(--blue-600)" }}>Company pains</span>
+        {ideas.length > 0 && (
+          <button className="btn ghost sm" style={{ marginLeft: "auto" }} onClick={() => load(authorId)} disabled={loading}>
+            <IconRefresh /> {loading ? "Finding…" : "Refresh"}
+          </button>
+        )}
       </div>
 
-      {err && <p style={{ color: "var(--coral-d)" }}>{err}</p>}
+      {err && <p style={{ color: "var(--amber-500)" }}>{err}</p>}
 
       {loading && ideas.length === 0 ? (
-        <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--ink3)" }}>
-          <span className="spinner" /> Generating ideas from your POV…
+        <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
+          <span className="spinner" /> Finding ideas from {who} beliefs…
+        </div>
+      ) : ideas.length === 0 ? (
+        <div className="card" style={{ padding: 48, textAlign: "center" }}>
+          <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text-strong)", marginBottom: 6 }}>Ready when you are.</div>
+          <p style={{ color: "var(--text-muted)", maxWidth: 380, margin: "0 auto 20px", lineHeight: 1.5 }}>
+            Pull fresh angles from {who} beliefs and the gaps your company can own.
+          </p>
+          <button className="btn pri" onClick={() => load(authorId)} disabled={loading}>
+            <IconRefresh /> Find ideas
+          </button>
         </div>
       ) : (
         <div className="card" style={{ padding: "6px 24px" }}>
@@ -79,7 +95,7 @@ export function IdeasView({ members }: { members: Mem[] }) {
                 <div className="ih">{idea.title}</div>
                 <div className="ia">{idea.angle}</div>
                 <div className="im">
-                  <span className="chip dot" style={{ color: "#7C3AED" }}>{idea.source}</span>
+                  <span className="chip dot" style={{ color: "var(--teal-600)" }}>{idea.source}</span>
                   <span className="chip">{idea.tag}</span>
                 </div>
               </div>

@@ -2,6 +2,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import type { Store, Org, Member, Post } from "./types";
+import { SEED } from "./seed";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const STORE_PATH = path.join(DATA_DIR, "store.json");
@@ -16,7 +17,9 @@ async function load(): Promise<Store> {
     const raw = await fs.readFile(STORE_PATH, "utf8");
     return { ...EMPTY, ...(JSON.parse(raw) as Store) };
   } catch {
-    return structuredClone(EMPTY);
+    // No store on disk yet → ship the demo ensemble so Tutti is browsable out of the box.
+    // The first real write (onboarding, generation) materializes it to data/store.json.
+    return structuredClone(SEED);
   }
 }
 
@@ -52,6 +55,12 @@ export async function saveOrg(org: Org): Promise<Org> {
   s.org = org;
   await persist(s);
   return org;
+}
+
+// Wipe the workspace to empty and persist it. Because an EMPTY store has org=null,
+// the app gate redirects back into onboarding — this is the "restart onboarding" reset.
+export async function resetStore(): Promise<void> {
+  await persist(structuredClone(EMPTY));
 }
 
 export async function upsertMember(member: Member): Promise<Member> {

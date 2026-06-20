@@ -1,0 +1,6 @@
+/* Tutti — Webfonts
+   Brand face is Inter (Bold for headings, Regular for body).
+   Loaded from Google Fonts CDN. SUBSTITUTION NOTE: no local binaries were
+   provided, so we link the Google-hosted Inter. Swap in self-hosted .woff2
+   files here if you need offline / pinned versions. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');

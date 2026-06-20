@@ -67,7 +67,7 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
       body: JSON.stringify({ action, body }),
     });
     if (!res.ok) return toast("Something went wrong");
-    if (action === "approve") toast("Approved — moved to Drafts");
+    if (action === "approve") toast("Approved — moved to Rehearsal");
     if (action === "reject") toast("Rejected — logged as a correction");
     if (action === "edit") toast("Saved — your edit trains your voice");
   }
@@ -111,7 +111,7 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
               placeholder="A topic, a take, or a rough thought…"
             />
             <div className="composer-foot">
-              <span className="hint">Chorus writes it in your voice, then checks it for AI tells before you see it.</span>
+              <span className="hint">Tutti writes it in your voice, then catches the off-brand notes before you see it.</span>
               <button className="btn pri" onClick={() => generate()} disabled={!brief.trim()}>
                 <IconSpark /> Write in my voice
               </button>
