@@ -1,6 +1,6 @@
 // Image generation via OpenRouter chat-completions with image modality.
 // Model is OPENROUTER_IMAGE_MODEL (default gpt-5.4-image). Returns a PNG buffer, or null on failure.
-export const IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL ?? "openai/gpt-5.4-image-2";
+export const IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL ?? "google/gemini-3.1-flash-image";
 
 type ORImage = { type?: string; image_url?: { url?: string } };
 type ORChoice = { message?: { images?: ORImage[]; content?: string } };

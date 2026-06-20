@@ -261,7 +261,7 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
               {imgKind && (
                 <p style={{ fontSize: 12.5, color: "var(--ink3, #9b9ba3)", marginTop: 10 }}>
                   <span className="spinner" style={{ width: 12, height: 12, verticalAlign: "-2px", marginRight: 6 }} />
-                  Generating your {imgKind}… this usually takes a minute or two.
+                  Generating your {imgKind}…
                 </p>
               )}
             </>
