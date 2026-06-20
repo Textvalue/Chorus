@@ -90,3 +90,45 @@ export const IdeasSchema = z.object({
     })
   ),
 });
+
+// ---- LinkedIn profile optimizer ----
+export const ProfileMakeoverSchema = z.object({
+  overall_score: z.number().describe("Profile strength 0-100"),
+  verdict: z.string().describe("One blunt line: what's holding the profile back most"),
+  sections: z
+    .array(
+      z.object({
+        name: z.string().describe("headline | about | experience | featured | banner"),
+        score: z.number().describe("0-100"),
+        issue: z.string().describe("What's wrong now"),
+        fix: z.string().describe("The specific fix"),
+      })
+    )
+    .describe("Section-by-section audit"),
+  headline: z.object({
+    current: z.string(),
+    options: z
+      .array(
+        z.object({
+          text: z.string().describe("A ready-to-paste rewritten headline"),
+          formula: z.string().describe("Which headline formula it uses"),
+          why: z.string(),
+        })
+      )
+      .describe("3 distinct rewritten headline options"),
+  }),
+  about: z.object({
+    current_read: z.string().describe("Brief honest read on the current About"),
+    rewrite: z.string().describe("Full rewritten About section, in the member's voice, ready to paste"),
+  }),
+  priorities: z
+    .array(
+      z.object({
+        change: z.string(),
+        why: z.string(),
+        effort: z.string().describe("quick | medium | involved"),
+      })
+    )
+    .describe("Ordered top changes to make first"),
+});
+export type ProfileMakeover = z.infer<typeof ProfileMakeoverSchema>;

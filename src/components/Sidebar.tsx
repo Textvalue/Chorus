@@ -13,6 +13,7 @@ const NAV: { href: string; label: string; icon: IconName }[] = [
   { href: "/riff", label: "Riff", icon: "riff" },
   { href: "/rehearsal", label: "Rehearsal", icon: "rehearsal" },
   { href: "/ensemble", label: "Ensemble", icon: "ensemble" },
+  { href: "/optimize", label: "Profile", icon: "target" },
 ];
 
 export function Sidebar({ user }: { user: { name: string; role: string; instrument?: string } }) {

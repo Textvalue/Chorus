@@ -14,6 +14,20 @@ type HarvestProfile = {
   firstName?: string;
   lastName?: string;
   headline?: string;
+  about?: string;
+  followerCount?: number;
+  connectionsCount?: number;
+  location?: { linkedinText?: string };
+  experience?: { companyName?: string; position?: string }[];
+};
+
+export type LinkedInProfile = {
+  name: string;
+  headline: string;
+  about: string;
+  location: string;
+  followers: number;
+  experience: { company: string; position: string }[];
 };
 
 function apiKey(): string {
@@ -40,6 +54,24 @@ export async function fetchProfile(profileUrl: string): Promise<{ name: string; 
   const el = data.element ?? {};
   const name = [el.firstName, el.lastName].filter(Boolean).join(" ").trim();
   return { name: name || "New member", headline: el.headline ?? "" };
+}
+
+/** Full profile for the optimizer — headline, About, experience, followers. */
+export async function fetchProfileFull(profileUrl: string): Promise<LinkedInProfile> {
+  const data = await get<{ element?: HarvestProfile }>(
+    `/linkedin/profile?url=${encodeURIComponent(profileUrl)}`
+  );
+  const el = data.element ?? {};
+  return {
+    name: [el.firstName, el.lastName].filter(Boolean).join(" ").trim() || "Member",
+    headline: el.headline ?? "",
+    about: el.about ?? "",
+    location: el.location?.linkedinText ?? "",
+    followers: el.followerCount ?? el.connectionsCount ?? 0,
+    experience: (el.experience ?? [])
+      .slice(0, 5)
+      .map((e) => ({ company: e.companyName ?? "", position: e.position ?? "" })),
+  };
 }
 
 /** Fetch ~2 pages of posts for a profile. */
