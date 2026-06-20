@@ -1,8 +1,8 @@
 // Turn a post into an image prompt. Uses the build-spec's visual-gen method
 // (choir-backend-build-spec/integrations/integration-spec.md §5): a Brand-DNA visual modifier
 // prepended to a 5-block prompt template (FORMAT / BRAND&COLOR / ZONE-BY-ZONE / ELEMENT-DIFF / VIBE),
-// plus the regenerate-on-typo guard (spelling must be correct). Engine = Nano Banana 2
-// (Gemini 3.1 Flash Image), the spec's default for infographics + text rendering.
+// plus the regenerate-on-typo guard (spelling must be correct). Engine = openai/gpt-5.4-image-2
+// (OPENROUTER_IMAGE_MODEL), with optional reference images (brand logo, author headshot) for on-brand output.
 import type { Org, Post } from "./types";
 
 export type ImageKind = "image" | "infographic";

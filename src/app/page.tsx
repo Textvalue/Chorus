@@ -22,7 +22,7 @@ export default async function Home() {
     const org = await getOrg();
     if (!org) redirect("/onboarding");
     const members = await getMembers();
-    redirect(members.some((m) => m.prose_samples.length > 0) ? "/studio" : "/onboarding");
+    redirect(members.some((m) => m.prose_samples.length > 0) ? "/create" : "/onboarding");
   }
   return (
     <div className={`${serif.variable} ${sans.variable}`}>

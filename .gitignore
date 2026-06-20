@@ -47,6 +47,12 @@ next-env.d.ts
 # runtime-generated images
 /public/generated
 
+# user-uploaded brand assets (logo, profile picture, reference images)
+/public/uploads
+
 # harvest-posts.ts output
 /harvest-media
 /harvest-posts.json
+
+# local build-spec / scratch (not for the repo)
+/megathon-linkedin

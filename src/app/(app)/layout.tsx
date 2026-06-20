@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getOrg, getMembers } from "@/lib/store";
 import { Sidebar } from "@/components/Sidebar";
 import { ToastProvider } from "@/components/Toast";
-import { Icon } from "@/components/ds";
 
 export const dynamic = "force-dynamic";
 
@@ -22,16 +21,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <ToastProvider>
       <div className="app">
         <Sidebar
-          user={{ name: owner?.name ?? "You", role: `Bandleader · ${org.name}`, instrument: "Conductor" }}
+          user={{ name: owner?.name ?? "You", role: "Owner" }}
+          org={{ name: org.name, memberCount: members.length }}
         />
-        <main className="main">
-          <div className="topstrip">
-            <Icon.search size={19} />
-            <Icon.bell size={19} />
-            <span className="ws">{org.name} · Pro</span>
-          </div>
-          {children}
-        </main>
+        <main className="main">{children}</main>
       </div>
     </ToastProvider>
   );

@@ -37,6 +37,52 @@ function Nav({ onBack, onNext, nextLabel, busy }: { onBack: () => void; onNext: 
   );
 }
 
+// Upload an image to /api/upload and hand back its URL. Used for the company logo and the
+// member profile picture — both are reused later as reference images in visual generation.
+function AssetUpload({ label, hint, value, onChange, round }: {
+  label: string; hint?: string; value: string | null; onChange: (url: string) => void; round?: boolean;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  async function pick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    setErr("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "upload failed");
+      onChange(data.url);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "upload failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div>
+      <label className="label">{label} <span style={{ textTransform: "none", color: "var(--text-muted)", fontWeight: 400 }}>· optional</span></label>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {value ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={value} alt="" style={{ width: 56, height: 56, objectFit: "cover", borderRadius: round ? 999 : 10, border: "1px solid var(--line)" }} />
+        ) : (
+          <div style={{ width: 56, height: 56, borderRadius: round ? 999 : 10, background: "var(--surface-2, #f1f1f4)", display: "grid", placeItems: "center", color: "var(--text-muted)", fontSize: 11 }}>none</div>
+        )}
+        <label className="btn ghost sm" style={{ cursor: "pointer" }}>
+          {busy ? <span className="spinner" /> : null} {value ? "Replace" : "Upload"}
+          <input type="file" accept="image/*" onChange={pick} disabled={busy} style={{ display: "none" }} />
+        </label>
+      </div>
+      {hint && !err && <p style={{ fontSize: 12.5, color: "var(--text-muted)", margin: "8px 0 0" }}>{hint}</p>}
+      {err && <p style={{ color: "var(--amber-500)", fontSize: 12, marginTop: 6 }}>{err}</p>}
+    </div>
+  );
+}
+
 export default function Onboarding() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -49,6 +95,8 @@ export default function Onboarding() {
   const [member, setMember] = useState<MemberDraft | null>(null);
   const [mocked, setMocked] = useState(false);
   const [team, setTeam] = useState(["", ""]);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
 
   const updOrg = (patch: Partial<OrgDraft>) => setOrg((o) => (o ? { ...o, ...patch } : o));
 
@@ -83,10 +131,10 @@ export default function Onboarding() {
       const res = await fetch("/api/onboarding/finish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ org, member, linkedin_url: linkedin }),
+        body: JSON.stringify({ org, member, linkedin_url: linkedin, logo_url: logoUrl, profile_picture_url: profilePicUrl }),
       });
       if (!res.ok) throw new Error((await res.json()).error || "could not finish");
-      router.push("/studio");
+      router.push("/create");
       router.refresh();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "could not finish");
@@ -169,7 +217,7 @@ export default function Onboarding() {
                 style={{ resize: "vertical", marginBottom: 16 }}
               />
               <label className="label">Brand voice rules</label>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 18 }}>
                 {org.brand_dna.voice_rules.map((r, i) => (
                   <div key={i} style={{ display: "flex", gap: 8, fontSize: 14, color: "var(--text-body)", lineHeight: 1.4 }}>
                     <span style={{ flex: "none", marginTop: 2 }}><Icon.check size={15} color="var(--teal-600)" stroke={2.4} /></span>
@@ -177,6 +225,12 @@ export default function Onboarding() {
                   </div>
                 ))}
               </div>
+              <AssetUpload
+                label="Company logo"
+                hint="Used as a reference image so generated visuals stay on-brand."
+                value={logoUrl}
+                onChange={setLogoUrl}
+              />
             </div>
             {mocked && <p className="ob-mock-note">Using sample data — no API keys set. Edit freely.</p>}
             <Nav onBack={() => setStep(0)} onNext={() => setStep(2)} nextLabel="Looks right" />
@@ -193,7 +247,7 @@ export default function Onboarding() {
               <label className="label">Personas</label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
                 {org.icp.personas.map((p, i) => (
-                  <span className="chip" key={i}>{p}</span>
+                  <span className="chip" key={i} style={{ whiteSpace: "normal", maxWidth: "100%", textAlign: "left", lineHeight: 1.4, borderRadius: 12 }}>{p}</span>
                 ))}
               </div>
               <label className="label">Validated pains</label>
@@ -201,11 +255,11 @@ export default function Onboarding() {
                 {org.icp.pains.map((p, i) => (
                   <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                     <span style={{ flex: "none", marginTop: 1 }}><Icon.check size={16} color="var(--green-600)" stroke={2.4} /></span>
-                    <div>
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-strong)" }}>{p.pain}</div>
-                      <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                        <span className="badge blue" style={{ marginRight: 6 }}>{p.weekly_trigger}</span>
-                        {p.severity}
+                      <div style={{ display: "flex", gap: 8, alignItems: "baseline", flexWrap: "wrap", marginTop: 3 }}>
+                        <span className={`badge ${p.severity === "high" ? "amber" : p.severity === "medium" ? "blue" : "neutral"}`}>{p.severity}</span>
+                        <span style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>{p.weekly_trigger}</span>
                       </div>
                     </div>
                   </div>
@@ -277,6 +331,15 @@ export default function Onboarding() {
                   <div key={i}>◆ {b}</div>
                 ))}
               </div>
+            </div>
+            <div className="card pad6" style={{ marginTop: 14 }}>
+              <AssetUpload
+                label="Profile picture"
+                hint="Your headshot — used as a reference image when generating visuals for your posts."
+                value={profilePicUrl}
+                onChange={setProfilePicUrl}
+                round
+              />
             </div>
             {err && <p style={{ color: "var(--amber-500)", fontSize: 13, marginTop: 12 }}>{err}</p>}
             <div style={{ display: "flex", gap: 10, marginTop: 22 }}>

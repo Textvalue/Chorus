@@ -32,10 +32,11 @@ const GUIDELINES: string = (() => {
   }
 })();
 
-export function buildSystemPrompt(org: Org, member: Member): string {
-  // --- L2: company context (the website research) ---
+// L2 company context — the website research, as a standalone block so other generation paths
+// (e.g. the Ideas route) can ground their output in the same true facts the post writer uses.
+export function buildCompanyContext(org: Org): string {
   const atoms = org.brand_dna.narrative_atoms;
-  const companyContext = [
+  return [
     `# COMPANY CONTEXT${org.website ? ` — researched from ${org.website}` : ""}`,
     `These are TRUE facts. Never contradict them and never invent metrics beyond them.`,
     ``,
@@ -45,6 +46,9 @@ export function buildSystemPrompt(org: Org, member: Member): string {
     `Outcome we deliver: ${atoms.outcome}`,
     `Proof: ${atoms.proof}`,
     atoms.offer ? `Offer: ${atoms.offer}` : ``,
+    org.icp.personas.length
+      ? `\nWho we sell to (personas):\n` + org.icp.personas.map((p) => `- ${p}`).join("\n")
+      : ``,
     org.icp.pains.length
       ? `\nAudience pains (each with the recurring moment it's felt — strong hook material):\n` +
         org.icp.pains.map((p) => `- ${p.pain} — felt: ${p.weekly_trigger} [${p.severity}]`).join("\n")
@@ -56,6 +60,11 @@ export function buildSystemPrompt(org: Org, member: Member): string {
       ? `\nBrand voice rules:\n` + org.brand_dna.voice_rules.map((r) => `- ${r}`).join("\n")
       : ``,
   ].filter(Boolean).join("\n");
+}
+
+export function buildSystemPrompt(org: Org, member: Member): string {
+  // --- L2: company context (the website research) ---
+  const companyContext = buildCompanyContext(org);
 
   // --- L3: writer context (their LinkedIn voice) ---
   const corrections = member.corrections.slice(-6).map((c) => {

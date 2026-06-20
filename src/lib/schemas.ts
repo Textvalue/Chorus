@@ -85,7 +85,12 @@ export const IdeasSchema = z.object({
     z.object({
       title: z.string(),
       angle: z.string(),
-      source: z.string().describe("Which belief/topic it came from"),
+      source_type: z
+        .enum(["belief", "pain"])
+        .describe("'belief' = led by the author's POV; 'pain' = led by a company audience pain"),
+      source: z
+        .string()
+        .describe("The specific belief/topic or company pain it came from (short label)"),
       tag: z.string(),
     })
   ),

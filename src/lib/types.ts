@@ -25,6 +25,7 @@ export type Org = {
     };
   };
   owner_member_id: string | null;
+  logo_url?: string | null; // brand logo, used as a reference image in visual generation
 };
 
 export type VoiceDna = {
@@ -39,6 +40,19 @@ export type ExpertPov = {
   topics: string[];
   hot_takes: string[];
   status: "inferred" | "confirmed";
+};
+
+// Background generation job — post / image / carousel. result holds the payload the
+// matching route used to return synchronously; the client polls until status is done/error.
+export type JobKind = "post" | "image" | "carousel";
+export type JobStatus = "pending" | "running" | "done" | "error";
+export type Job = {
+  id: string;
+  kind: JobKind;
+  status: JobStatus;
+  result: unknown | null;
+  error: string | null;
+  post_id: string | null;
 };
 
 export type Correction = {
@@ -60,6 +74,7 @@ export type Member = {
   prose_samples: string[]; // 3-5 verbatim posts — the active ingredient
   expert_pov: ExpertPov;
   corrections: Correction[];
+  profile_picture_url?: string | null; // author headshot, used as a reference image in visual generation
 };
 
 export type Post = {

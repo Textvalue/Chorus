@@ -47,8 +47,8 @@ export function DraftsView({ posts }: { posts: Row[] }) {
     <div className="pad">
       <div className="vhead" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
         <div>
-          <h1>Rehearsal</h1>
-          <p>Your approval queue. Every edit teaches the model, so the next draft lands closer.</p>
+          <h1>Queue</h1>
+          <p>Your approved posts, ready to copy &amp; post. Nothing publishes automatically.</p>
         </div>
         <div className="seg">
           {FILTERS.map((f) => (
@@ -59,7 +59,7 @@ export function DraftsView({ posts }: { posts: Row[] }) {
 
       {shown.length === 0 ? (
         <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--ink3)" }}>
-          Nothing to rehearse yet. Write one from <b>Create</b>.
+          Nothing here yet. Write one from <b>Create</b>.
         </div>
       ) : (
         <div className="card" style={{ padding: "8px 24px" }}>
@@ -73,7 +73,15 @@ export function DraftsView({ posts }: { posts: Row[] }) {
                 </div>
                 {p.status === "draft" && <span className="pill need">Needs you</span>}
                 {p.status === "approved" && <span className="pill sched">Approved</span>}
-                {p.status === "rejected" && <span className="pill rejected">Rejected</span>}
+                {p.status === "rejected" && <span className="pill rejected">Passed</span>}
+                {p.status === "approved" && (
+                  <button
+                    className="btn ghost sm"
+                    onClick={() => { navigator.clipboard.writeText(p.body); toast("Copied — open LinkedIn to post"); }}
+                  >
+                    Copy
+                  </button>
+                )}
                 <button
                   className="btn ghost sm"
                   onClick={() => { setOpenId(openId === p.id ? null : p.id); setEditId(null); }}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "./ds";
 
-// Adds a voice to the ensemble from a LinkedIn URL (captures voice DNA + POV into the current org).
+// Adds a teammate's voice from a LinkedIn URL (captures writing voice + POV into the current org).
 export function InviteMember() {
   const router = useRouter();
   const [open, setOpen] = useState(false);

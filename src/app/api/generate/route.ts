@@ -1,17 +1,11 @@
+// Kick off post generation as a background job: resolve org + member, create a job row, run the
+// work after the response is sent (it can take a while + retries), and return a job id to poll.
 import { NextResponse } from "next/server";
-import { generateObject } from "ai";
-import { model, DRAFT_MODEL } from "@/lib/ai";
-import { GenerateSchema } from "@/lib/schemas";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompt";
-import { sanitize, type SlopViolation } from "@/lib/antislop";
-import { getOrg, getMember, addPost, id } from "@/lib/store";
-import { mockGenerate } from "@/lib/mockGen";
-import type { Post } from "@/lib/types";
+import { after } from "next/server";
+import { getOrg, getMember, createJob } from "@/lib/store";
+import { runPostJob } from "@/lib/jobs";
 
-export const maxDuration = 120;
-
-const MAX_TRIES = 3;
-const MOCK = process.env.MOCK_GENERATION === "1";
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   try {
@@ -27,66 +21,11 @@ export async function POST(req: Request) {
     const member = await getMember(member_id);
     if (!org || !member) return NextResponse.json({ error: "member not found" }, { status: 404 });
 
-    const system = buildSystemPrompt(org, member);
+    const jobId = await createJob("post", { member_id, topic, angle: angle ?? "" });
+    if (!jobId) return NextResponse.json({ error: "no workspace" }, { status: 401 });
 
-    let violations: SlopViolation[] = [];
-    let object: typeof GenerateSchema._type | null = null;
-    let attempts = 0;
-    let mocked = false;
-
-    if (MOCK) {
-      object = mockGenerate(org, member, topic);
-      violations = sanitize(object.body).violations;
-      attempts = 1;
-      mocked = true;
-    } else {
-      try {
-        for (let i = 0; i < MAX_TRIES; i++) {
-          attempts++;
-          const res = await generateObject({
-            model: model(DRAFT_MODEL),
-            schema: GenerateSchema,
-            system,
-            prompt: buildUserPrompt(topic, angle ?? "", violations),
-          });
-          object = res.object;
-          const check = sanitize(object.body);
-          violations = check.violations;
-          if (check.pass) break; // anti-slop gate passed
-        }
-      } catch (genErr) {
-        // Never dead-end the Create flow: fall back to a mock draft if the live LLM call fails.
-        console.error("[generate] live LLM failed, using mock fallback:", genErr);
-        object = mockGenerate(org, member, topic);
-        violations = sanitize(object.body).violations;
-        mocked = true;
-      }
-    }
-
-    if (!object) return NextResponse.json({ error: "generation failed" }, { status: 500 });
-
-    const passed = violations.length === 0;
-    const post: Post = {
-      id: id("post"),
-      member_id,
-      org_id: org.org_id,
-      topic,
-      angle: angle ?? "",
-      body: object.body,
-      generated_body: object.body,
-      status: "draft",
-      voice_match: object.voice_match,
-      created_at: new Date().toISOString(),
-      edits: [],
-    };
-    await addPost(post);
-
-    return NextResponse.json({
-      post,
-      why: object.why,
-      antislop: { pass: passed, violations, attempts },
-      mocked,
-    });
+    after(() => runPostJob(jobId, org, member, topic, angle ?? ""));
+    return NextResponse.json({ job_id: jobId });
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "generation failed" },

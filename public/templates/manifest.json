@@ -1,0 +1,245 @@
+[
+  {
+    "id": "7454107016962191360",
+    "src": "/templates/7454107016962191360_0.jpg",
+    "category": "screenshot_or_mockup",
+    "family": "capture",
+    "label": "Screenshot / mockup",
+    "score": 3610,
+    "sourceUrl": "https://www.linkedin.com/posts/charlie-hills_my-entire-claude-skills-library-is-now-free-activity-7454107016962191360-3HTY"
+  },
+  {
+    "id": "7468964914615746562",
+    "src": "/templates/7468964914615746562_0.jpg",
+    "category": "screenshot_or_mockup",
+    "family": "capture",
+    "label": "Screenshot / mockup",
+    "score": 2130,
+    "sourceUrl": "https://www.linkedin.com/posts/charlie-hills_youre-wasting-most-of-your-claude-context-activity-7468964914615746562-kOp2"
+  },
+  {
+    "id": "7463820535399981057",
+    "src": "/templates/7463820535399981057_0.jpg",
+    "category": "chat_conversation",
+    "family": "capture",
+    "label": "Chat / conversation",
+    "score": 540,
+    "sourceUrl": "https://www.linkedin.com/posts/nbroekema_tuesday-a-18b-arr-company-found-me-on-activity-7463543304924655616-BTpl"
+  },
+  {
+    "id": "7463543304924655616",
+    "src": "/templates/7463543304924655616_0.jpg",
+    "category": "chat_conversation",
+    "family": "capture",
+    "label": "Chat / conversation",
+    "score": 540,
+    "sourceUrl": "https://www.linkedin.com/posts/nbroekema_tuesday-a-18b-arr-company-found-me-on-activity-7463543304924655616-BTpl"
+  },
+  {
+    "id": "7469719186307575808",
+    "src": "/templates/7469719186307575808_0.jpg",
+    "category": "comparison_table",
+    "family": "comparison",
+    "label": "Comparison table",
+    "score": 4779,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_seo-aeo-and-geo-are-not-the-same-thing-activity-7469719186307575808-sk8x"
+  },
+  {
+    "id": "7462843050269261825",
+    "src": "/templates/7462843050269261825_0.jpg",
+    "category": "comparison_table",
+    "family": "comparison",
+    "label": "Comparison table",
+    "score": 2812,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_ive-spent-20-years-in-seo-built-and-sold-activity-7462843050269261825-4Gw-"
+  },
+  {
+    "id": "7454861274707841024",
+    "src": "/templates/7454861274707841024_0.jpg",
+    "category": "two_by_two_matrix",
+    "family": "comparison",
+    "label": "2×2 matrix",
+    "score": 2459,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_30-types-of-content-succeed-within-ai-search-activity-7454861274707841024-4hhR"
+  },
+  {
+    "id": "7463196176985686016",
+    "src": "/templates/7463196176985686016_0.jpg",
+    "category": "data_visualization",
+    "family": "data",
+    "label": "Data viz",
+    "score": 2247,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_linkedin-is-the-2nd-most-cited-domain-by-activity-7463196176985686016-C1yn"
+  },
+  {
+    "id": "7458486009702404096",
+    "src": "/templates/7458486009702404096_0.jpg",
+    "category": "data_visualization",
+    "family": "data",
+    "label": "Data viz",
+    "score": 1147,
+    "sourceUrl": "https://www.linkedin.com/posts/diandraescobar_linkedin-gets-cited-in-ai-responses-8-million-activity-7458486009702404096-Y4W1"
+  },
+  {
+    "id": "7458847464066818048",
+    "src": "/templates/7458847464066818048_0.jpg",
+    "category": "multi_section_infographic",
+    "family": "grid",
+    "label": "Multi-section",
+    "score": 12690,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_i-built-a-claude-skill-that-audits-your-linkedin-activity-7458847464066818048-6PZK"
+  },
+  {
+    "id": "7457035597505777665",
+    "src": "/templates/7457035597505777665_0.jpg",
+    "category": "grid_of_cards",
+    "family": "grid",
+    "label": "Card grid",
+    "score": 10933,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_i-built-a-world-class-linkedin-content-coach-activity-7457035597505777665-xh3-"
+  },
+  {
+    "id": "7456310842222039040",
+    "src": "/templates/7456310842222039040_0.jpg",
+    "category": "multi_section_infographic",
+    "family": "grid",
+    "label": "Multi-section",
+    "score": 6845,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_claude-x-linkedin-is-a-lead-gen-machine-activity-7456310842222039040-04zo"
+  },
+  {
+    "id": "7464978669439213568",
+    "src": "/templates/7464978669439213568_0.jpg",
+    "category": "grid_of_cards",
+    "family": "grid",
+    "label": "Card grid",
+    "score": 3478,
+    "sourceUrl": "https://www.linkedin.com/posts/charlie-hills_anthropic-just-dropped-24-free-claude-code-activity-7464978669439213568-Ez2F"
+  },
+  {
+    "id": "7469750102090346496",
+    "src": "/templates/7469750102090346496_0.jpg",
+    "category": "hierarchy_diagram",
+    "family": "hierarchy",
+    "label": "Hierarchy",
+    "score": 802,
+    "sourceUrl": "https://www.linkedin.com/posts/majavoje_tool-jockeys-are-raving-about-the-latest-activity-7469750102090346496-LIxU"
+  },
+  {
+    "id": "7462140054329794561",
+    "src": "/templates/7462140054329794561_0.jpg",
+    "category": "hierarchy_diagram",
+    "family": "hierarchy",
+    "label": "Hierarchy",
+    "score": 576,
+    "sourceUrl": "https://www.linkedin.com/posts/fivosaresti_the-best-gtm-tool-per-category-in-2026-activity-7462140054329794561--TSn"
+  },
+  {
+    "id": "7463891484170219520",
+    "src": "/templates/7463891484170219520_0.jpg",
+    "category": "multi_column_list",
+    "family": "list",
+    "label": "Multi-column list",
+    "score": 4153,
+    "sourceUrl": "https://www.linkedin.com/posts/charlie-hills_you-install-claude-code-and-stop-there-activity-7463891484170219520-eF3H"
+  },
+  {
+    "id": "7457760416983826432",
+    "src": "/templates/7457760416983826432_0.jpg",
+    "category": "vertical_list",
+    "family": "list",
+    "label": "Vertical list",
+    "score": 3500,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_you-can-master-ai-without-paying-a-penny-activity-7457760416983826432-tUu6"
+  },
+  {
+    "id": "7454136558305185793",
+    "src": "/templates/7454136558305185793_0.jpg",
+    "category": "vertical_list",
+    "family": "list",
+    "label": "Vertical list",
+    "score": 3260,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_100s-of-businesses-have-10x-their-citations-activity-7454136558305185793-I6xd"
+  },
+  {
+    "id": "7465370580976881664",
+    "src": "/templates/7465370580976881664_0.jpg",
+    "category": "multi_column_list",
+    "family": "list",
+    "label": "Multi-column list",
+    "score": 3076,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_successful-1-person-businesses-are-more-possible-activity-7465370580976881664-0ejw"
+  },
+  {
+    "id": "7453411969035898880",
+    "src": "/templates/7453411969035898880_0.jpg",
+    "category": "funnel_diagram",
+    "family": "process",
+    "label": "Funnel",
+    "score": 4144,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_this-is-the-funnel-behind-multi-million-dollar-activity-7453411969035898880-bLgd"
+  },
+  {
+    "id": "7462079564534546433",
+    "src": "/templates/7462079564534546433_0.jpg",
+    "category": "roadmap_or_timeline",
+    "family": "process",
+    "label": "Roadmap / timeline",
+    "score": 3333,
+    "sourceUrl": "https://www.linkedin.com/posts/charlie-hills_claude-code-does-more-than-write-code-how-activity-7462079564534546433-S6KU"
+  },
+  {
+    "id": "7464616282361991168",
+    "src": "/templates/7464616282361991168_0.jpg",
+    "category": "roadmap_or_timeline",
+    "family": "process",
+    "label": "Roadmap / timeline",
+    "score": 2532,
+    "sourceUrl": "https://www.linkedin.com/posts/charlie-hills_claude-code-is-actually-easy-the-12-step-activity-7464616282361991168-Jba9"
+  },
+  {
+    "id": "7453049309169754112",
+    "src": "/templates/7453049309169754112_0.jpg",
+    "category": "flowchart",
+    "family": "process",
+    "label": "Flowchart",
+    "score": 2434,
+    "sourceUrl": "https://www.linkedin.com/posts/donnellychris_ranking-on-google-used-to-be-the-whole-game-activity-7453049309169754112-9DxI"
+  },
+  {
+    "id": "7465361035026284544",
+    "src": "/templates/7465361035026284544_0.jpg",
+    "category": "flowchart",
+    "family": "process",
+    "label": "Flowchart",
+    "score": 948,
+    "sourceUrl": "https://www.linkedin.com/posts/kyle-poyar_im-extremely-bullish-on-account-based-gtm-activity-7465361035026284544-Wwzc"
+  },
+  {
+    "id": "7454510145725861888",
+    "src": "/templates/7454510145725861888_0.jpg",
+    "category": "funnel_diagram",
+    "family": "process",
+    "label": "Funnel",
+    "score": 507,
+    "sourceUrl": "https://www.linkedin.com/posts/diandraescobar_if-you-want-true-inbound-from-linkedin-every-activity-7454510145725861888-RLmr"
+  },
+  {
+    "id": "7457039368994820096",
+    "src": "/templates/7457039368994820096_0.jpg",
+    "category": "text_block",
+    "family": "text",
+    "label": "Text block",
+    "score": 2208,
+    "sourceUrl": "https://www.linkedin.com/posts/diandraescobar_claude-got-worse-and-ive-had-to-re-sign-activity-7457039368994820096-um2v"
+  },
+  {
+    "id": "7459573162112905216",
+    "src": "/templates/7459573162112905216_0.jpg",
+    "category": "text_block",
+    "family": "text",
+    "label": "Text block",
+    "score": 673,
+    "sourceUrl": "https://www.linkedin.com/posts/diandraescobar_someone-copied-one-of-my-posts-last-week-activity-7459573162112905216-OOj4"
+  }
+]

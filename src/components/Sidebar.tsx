@@ -1,58 +1,107 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { Icon, type IconName, Avatar } from "./ds";
+import { Icon, type IconName, Avatar, Brandmark, brandInitials } from "./ds";
 import { RestartOnboarding } from "./RestartOnboarding";
 
 const NAV: { href: string; label: string; icon: IconName }[] = [
-  { href: "/studio", label: "Studio", icon: "studio" },
   { href: "/create", label: "Create", icon: "create" },
   { href: "/ideas", label: "Ideas", icon: "ideas" },
-  { href: "/riff", label: "Riff", icon: "riff" },
-  { href: "/rehearsal", label: "Rehearsal", icon: "rehearsal" },
-  { href: "/ensemble", label: "Ensemble", icon: "ensemble" },
-  { href: "/optimize", label: "Profile", icon: "target" },
+  { href: "/queue", label: "Queue", icon: "queue" },
+  { href: "/engage", label: "Engage", icon: "engage" },
+  { href: "/analytics", label: "Analytics", icon: "analytics" },
+  { href: "/voice", label: "Voice", icon: "voice" },
 ];
 
-export function Sidebar({ user }: { user: { name: string; role: string; instrument?: string } }) {
+export function Sidebar({
+  user,
+  org,
+}: {
+  user: { name: string; role: string };
+  org: { name: string; memberCount: number };
+}) {
   const path = usePathname();
+  const [open, setOpen] = useState(false);
   const isOn = (href: string) => path === href || path.startsWith(href + "/");
-  return (
-    <aside className="sidebar">
-      <Link href="/studio" className="sbrand">
-        <Image src="/brand/spark.png" alt="" width={26} height={26} style={{ height: 26, width: "auto", mixBlendMode: "multiply" }} />
-        <span className="wm">tutti</span>
-      </Link>
 
-      <nav className="snav">
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <>
+      {/* Desktop icon rail */}
+      <aside className="rail">
+        <Link href="/create" className="bmk-link" aria-label="Tutti home">
+          <Brandmark size="md" />
+        </Link>
+        <nav className="rnav">
+          {NAV.map((it) => {
+            const Ico = Icon[it.icon];
+            return (
+              <Link key={it.href} href={it.href} className={`rbtn${isOn(it.href) ? " on" : ""}`}>
+                <Ico size={21} />
+                <span className="rl">{it.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="rspacer" />
+        <button className="ravatar" onClick={() => setOpen((v) => !v)} aria-label="Workspace and account">
+          <Avatar name={user.name} size={36} />
+        </button>
+      </aside>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="tabbar">
         {NAV.map((it) => {
           const Ico = Icon[it.icon];
           return (
-            <Link key={it.href} href={it.href} className={isOn(it.href) ? "on" : ""}>
-              <Ico size={19} />
-              <span>{it.label}</span>
+            <Link key={it.href} href={it.href} className={`tbtn${isOn(it.href) ? " on" : ""}`}>
+              <Ico size={21} />
+              <span className="tl">{it.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="sfoot">
-        <div className="suser">
-          <Avatar name={user.name} size={34} instrument={user.instrument} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="un">{user.name}</div>
-            <div className="ur">{user.role}</div>
+      {/* Settings popover */}
+      {open && <div className="smask on" onClick={() => setOpen(false)} />}
+      <div className={`smenu${open ? " on" : ""}`}>
+        <div className="sworkspace">
+          <span className="swlogo">{brandInitials(org.name)}</span>
+          <div style={{ minWidth: 0 }}>
+            <div className="swn">{org.name}</div>
+            <div className="swm">{org.memberCount} {org.memberCount === 1 ? "member" : "members"} · {user.role}</div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <RestartOnboarding />
-          <button className="restart" onClick={() => signOut({ redirectTo: "/login" })} style={{ marginLeft: "auto" }}>
-            Sign out
-          </button>
-        </div>
+
+        <Link href="/ensemble" className="sitem" onClick={() => setOpen(false)}>
+          <Icon.ensemble size={17} /> Team
+        </Link>
+        <Link href="/optimize" className="sitem" onClick={() => setOpen(false)}>
+          <Icon.target size={17} /> Profile optimizer
+        </Link>
+        <button className="sitem dim" disabled>
+          <Icon.lock size={17} /> Roles &amp; permissions <span className="dimtag">soon</span>
+        </button>
+        <button className="sitem dim" disabled>
+          <Icon.gear size={17} /> Workspace settings <span className="dimtag">soon</span>
+        </button>
+
+        <div className="sdiv" />
+
+        <RestartOnboarding className="sitem">
+          <Icon.refresh size={17} /> Replay first-run
+        </RestartOnboarding>
+        <button className="sitem" onClick={() => signOut({ redirectTo: "/login" })}>
+          <Icon.logout size={17} /> Sign out
+        </button>
       </div>
-    </aside>
+    </>
   );
 }

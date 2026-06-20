@@ -79,3 +79,23 @@ alter table if exists posts add column if not exists image_url text;
 
 -- generated carousel slides (JSON array of {url,title,body,kind})
 alter table if exists posts add column if not exists carousel jsonb;
+
+-- brand assets used as reference images in visual generation (relative URL under /uploads)
+alter table if exists orgs    add column if not exists logo_url            text;
+alter table if exists members add column if not exists profile_picture_url text;
+
+-- Background jobs — post / image / carousel generation runs async (kicked off via after(),
+-- polled by the client). result holds the same payload the route used to return synchronously.
+create table if not exists jobs (
+  id          text primary key,
+  org_id      text not null references orgs(org_id) on delete cascade,
+  kind        text not null check (kind in ('post','image','carousel')),
+  status      text not null default 'pending' check (status in ('pending','running','done','error')),
+  input       jsonb not null default '{}'::jsonb,
+  result      jsonb,
+  error       text,
+  post_id     text,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+create index if not exists jobs_org_idx on jobs (org_id);

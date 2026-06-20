@@ -3,7 +3,7 @@ import { DraftsView } from "@/components/DraftsView";
 
 export const dynamic = "force-dynamic";
 
-export default async function DraftsPage() {
+export default async function QueuePage() {
   const [posts, members] = await Promise.all([getPosts(), getMembers()]);
   const nameById = Object.fromEntries(members.map((m) => [m.member_id, m.name]));
   return (

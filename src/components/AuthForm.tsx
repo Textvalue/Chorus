@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
+import { Brandmark } from "./ds";
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
@@ -44,18 +44,14 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <Image
-            src="/brand/spark.png"
-            alt="Tutti"
-            width={34}
-            height={34}
-            style={{ height: 34, width: "auto", mixBlendMode: "multiply", margin: "0 auto 14px" }}
-          />
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <Brandmark size="lg" />
+          </div>
           <h1 className="ch" style={{ marginBottom: 6 }}>
             {isRegister ? "Create your workspace" : "Welcome back"}
           </h1>
           <p style={{ color: "var(--text-muted)", margin: 0 }}>
-            {isRegister ? "Your team. In tune. Start in a minute." : "Sign in to your Tutti workspace."}
+            {isRegister ? "Your team. One brand, many voices. Start in a minute." : "Sign in to your Tutti workspace."}
           </p>
         </div>
 

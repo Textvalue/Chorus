@@ -102,12 +102,12 @@ export default function EngagePage() {
           <Card>
             <div className="eyebrow" style={{ marginBottom: 4 }}>Drafted in your voice</div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-              <Avatar name="Maya Patel" instrument="Violin" size={32} />
+              <Avatar name="Maya Patel" size={32} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text-strong)" }}>Maya Patel</div>
                 <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Replying to Marcus Hale · CRO, Beacon</div>
               </div>
-              <Badge tone="teal">Violin · 96%</Badge>
+              <Badge tone="teal">96% sounds like you</Badge>
             </div>
 
             <div

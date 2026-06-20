@@ -48,7 +48,7 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
   return (
     <div className="pad narrow">
       <div className="auth-row">
-        <span className="al">Riff as</span>
+        <span className="al">Writing as</span>
         <div className="seg">
           {members.map((m) => (
             <button key={m.id} className={m.id === authorId ? "on" : ""} onClick={() => setAuthorId(m.id)}>
@@ -58,7 +58,7 @@ export function BrainDumpView({ members }: { members: Mem[] }) {
         </div>
       </div>
 
-      <h1 className="ch">Riff on what you&apos;re seeing this week.</h1>
+      <h1 className="ch">What are you seeing this week?</h1>
       <div className="composer">
         <textarea
           rows={5}

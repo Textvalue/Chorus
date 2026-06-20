@@ -29,6 +29,7 @@ export const Icon = {
   create: mk(["M12 20h9", "M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"]),
   ideas: mk(["M9 18h6", "M10 21h4", "M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.2-1 2.5H9c0-1.3-.3-1.8-1-2.5A6 6 0 0 1 12 3Z"]),
   riff: mk(["M9 18V5l12-2v13", "M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z", "M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"]),
+  notes: mk(["M4 6.5h16", "M4 12h16", "M4 17.5h10"]),
   rehearsal: mk(["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"]),
   ensemble: mk(["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2", "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8", "M23 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"]),
   audience: mk(["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8", "M22 21v-2a4 4 0 0 0-3-3.87"]),
@@ -58,8 +59,27 @@ export const Icon = {
   flat: mk(["M9 3v14", "M9 9c2-1.5 5-1 5 1.5S11 16 9 17"]),
   clock: mk(["M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z", "M12 7v5l3 2"]),
   target: mk(["M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z", "M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z", "M12 12h0"]),
+  queue: mk(["M12 3 3 7.5 12 12l9-4.5L12 3Z", "M3 12.5 12 17l9-4.5", "M3 17 12 21.5 21 17"]),
+  analytics: mk(["M5 21V11", "M12 21V4", "M19 21v-7"]),
+  voice: mk(["M4 10v4", "M8 7v10", "M12 4v16", "M16 7v10", "M20 10v4"]),
+  mic: mk(["M9 3h6v8a3 3 0 0 1-6 0Z", "M5 11a7 7 0 0 0 14 0", "M12 18v3"]),
+  gear: mk(["M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z", "M19.4 13a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 3.5 14H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.7 7a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 10 2.6h.09A1.7 1.7 0 0 0 11.4 1H12a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 17 2.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 21.4 11H22a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"]),
+  lock: mk(["M5 11h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1Z", "M8 11V7a4 4 0 0 1 8 0v4"]),
+  logout: mk(["M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", "M16 17l5-5-5-5", "M21 12H9"]),
+  userCircle: mk(["M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z", "M5.5 20a6.5 6.5 0 0 1 13 0"]),
 };
 export type IconName = keyof typeof Icon;
+
+/* -------------------------------------------------------------- brandmark */
+// Editorial monogram: an ink tile with a brass serif ampersand — reads as
+// "together", no orchestra metaphor. Used in the sidebar, onboarding and auth.
+export function Brandmark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  return (
+    <span className={`bmk${size === "sm" ? " sm" : size === "lg" ? " lg" : ""}`} aria-hidden>
+      <span>&amp;</span>
+    </span>
+  );
+}
 
 /* --------------------------------------------------------------- eyebrow */
 export function Eyebrow({ children, muted }: { children: React.ReactNode; muted?: boolean }) {

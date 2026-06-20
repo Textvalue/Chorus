@@ -7,10 +7,12 @@ import type { MemberDraft } from "@/lib/mockOnboard";
 
 export async function POST(req: Request) {
   try {
-    const { org: orgDraft, member: memberDraft, linkedin_url } = (await req.json()) as {
+    const { org: orgDraft, member: memberDraft, linkedin_url, logo_url, profile_picture_url } = (await req.json()) as {
       org: OrgExtract & { website?: string };
       member: MemberDraft;
       linkedin_url?: string;
+      logo_url?: string | null;
+      profile_picture_url?: string | null;
     };
     if (!orgDraft || !memberDraft) {
       return NextResponse.json({ error: "org and member are required" }, { status: 400 });
@@ -29,6 +31,7 @@ export async function POST(req: Request) {
         voice_rules: [],
         narrative_atoms: { audience: "", problem: "", outcome: "", proof: "", offer: "" },
       },
+      logo_url: logo_url ?? null,
     };
     await saveOrg(org);
 
@@ -42,6 +45,7 @@ export async function POST(req: Request) {
       prose_samples: memberDraft.prose_samples ?? [],
       expert_pov: { ...memberDraft.expert_pov, status: "inferred" },
       corrections: [],
+      profile_picture_url: profile_picture_url ?? null,
     };
     await upsertMember(member); // first member becomes the org owner
 
