@@ -26,6 +26,8 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
   const [editing, setEditing] = useState(false);
   const [draftBody, setDraftBody] = useState("");
   const [err, setErr] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [imgKind, setImgKind] = useState<"image" | "infographic" | null>(null);
 
   useEffect(() => {
     const t = params.get("topic");
@@ -41,6 +43,7 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
     setEditing(false);
     setShowWhy(false);
     setResult(null);
+    setImage(null);
     setLoading(true);
     try {
       const res = await fetch("/api/generate", {
@@ -81,6 +84,27 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
   function startOver() {
     setPhase("idle");
     setResult(null);
+    setImage(null);
+  }
+
+  async function genImage(kind: "image" | "infographic") {
+    if (!result || imgKind) return;
+    setImgKind(kind);
+    try {
+      const res = await fetch("/api/image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: result.post.id, kind }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "image failed");
+      setImage(data.url);
+      toast(kind === "infographic" ? "Infographic added" : "Image added");
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "image failed");
+    } finally {
+      setImgKind(null);
+    }
   }
 
   if (!author) {
@@ -173,6 +197,10 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
                 ) : (
                   <div className="pbody">{result.post.body}</div>
                 )}
+                {image && !editing && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={image} alt="Generated visual" style={{ width: "100%", borderRadius: 14, marginTop: 14, border: "1px solid var(--line, #e5e5e5)" }} />
+                )}
               </div>
 
               <div className="confidence">
@@ -219,11 +247,23 @@ export function CreateView({ members, orgName, starters }: { members: Mem[]; org
                   <>
                     <button className="btn pri" onClick={() => patch("approve")}><IconCheck /> Approve</button>
                     <button className="btn" onClick={() => generate()}><IconRefresh /> Regenerate</button>
+                    <button className="btn ghost" onClick={() => genImage("image")} disabled={imgKind !== null}>
+                      {imgKind === "image" ? <span className="spinner" /> : <IconSpark />} Image
+                    </button>
+                    <button className="btn ghost" onClick={() => genImage("infographic")} disabled={imgKind !== null}>
+                      {imgKind === "infographic" ? <span className="spinner" /> : <IconSpark />} Infographic
+                    </button>
                     <button className="btn ghost" onClick={() => { setEditing(true); setDraftBody(result.post.body); }}><IconEdit /> Edit</button>
                     <button className="btn ghost" onClick={() => { navigator.clipboard.writeText(result.post.body); toast("Copied to clipboard"); }}><IconCopy /> Copy</button>
                   </>
                 )}
               </div>
+              {imgKind && (
+                <p style={{ fontSize: 12.5, color: "var(--ink3, #9b9ba3)", marginTop: 10 }}>
+                  <span className="spinner" style={{ width: 12, height: 12, verticalAlign: "-2px", marginRight: 6 }} />
+                  Generating your {imgKind}… this usually takes a minute or two.
+                </p>
+              )}
             </>
           )}
         </div>

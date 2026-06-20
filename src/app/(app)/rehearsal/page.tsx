@@ -15,6 +15,7 @@ export default async function DraftsPage() {
         status: p.status,
         member: nameById[p.member_id] ?? "Unknown",
         angle: p.angle,
+        image_url: p.image_url ?? null,
       }))}
     />
   );

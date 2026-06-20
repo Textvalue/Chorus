@@ -12,6 +12,7 @@ type Row = {
   status: "draft" | "approved" | "rejected";
   member: string;
   angle: string;
+  image_url?: string | null;
 };
 
 const FILTERS = ["All", "Needs approval", "Approved"] as const;
@@ -94,6 +95,10 @@ export function DraftsView({ posts }: { posts: Row[] }) {
                     <div style={{ whiteSpace: "pre-wrap", background: "var(--bg)", border: "1px solid var(--line)", borderRadius: 14, padding: 16, fontSize: 14.5, lineHeight: 1.6 }}>
                       {p.body}
                     </div>
+                  )}
+                  {p.image_url && editId !== p.id && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={p.image_url} alt="Post visual" style={{ width: "100%", maxWidth: 420, borderRadius: 12, marginTop: 12, border: "1px solid var(--line)" }} />
                   )}
                   <div className="actions">
                     {editId === p.id ? (

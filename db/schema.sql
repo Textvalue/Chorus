@@ -73,3 +73,6 @@ create index if not exists posts_org_idx          on posts (org_id);
 create index if not exists posts_status_idx       on posts (status);
 create index if not exists corrections_member_idx on corrections (member_id);
 create index if not exists corrections_org_idx    on corrections (org_id);
+
+-- generated post image / infographic (relative URL under /generated)
+alter table if exists posts add column if not exists image_url text;

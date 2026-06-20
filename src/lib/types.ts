@@ -74,6 +74,7 @@ export type Post = {
   voice_match: number; // 0-100
   created_at: string;
   edits: { at: string; before: string; after: string }[];
+  image_url?: string | null; // generated post image / infographic
 };
 
 export type Store = {
