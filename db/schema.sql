@@ -56,6 +56,17 @@ create table if not exists corrections (
   at          timestamptz not null default now()
 );
 
+-- Auth (NextAuth credentials + JWT sessions). One user owns one workspace (org).
+-- org_id is null until the user finishes onboarding, then points at their private org.
+create table if not exists users (
+  id             text primary key,
+  email          text unique not null,
+  password_hash  text not null,
+  org_id         text references orgs(org_id) on delete set null,
+  created_at     timestamptz not null default now()
+);
+create index if not exists users_org_idx on users (org_id);
+
 create index if not exists members_org_idx       on members (org_id);
 create index if not exists posts_member_idx       on posts (member_id);
 create index if not exists posts_org_idx          on posts (org_id);

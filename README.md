@@ -61,6 +61,10 @@ hand-drawn character illustrations as the emotional core.
   Four tables: `orgs`, `members`, `posts`, and `corrections` (the moat loop, queryable). Nested blobs
   (icp, brand_dna, voice_dna, expert_pov) are JSONB. Reads are scoped to the active org. Ships a tuned
   demo "Acme" ensemble via `src/lib/seed.ts` (`npm run db:seed`).
+- **Auth**: email + password via [Auth.js / NextAuth v5](https://authjs.dev) (Credentials + JWT
+  sessions, scrypt hashing — `src/auth.ts`, `src/lib/password.ts`). **Per-user workspaces**: each
+  account owns one private org; `users.org_id` links them, and every store read/write is scoped to the
+  logged-in user's org. `src/middleware.ts` gates all routes except `/login`, `/register`.
 - LLM: OpenRouter via the Vercel AI SDK (`generateObject` + Zod). Haiku for drafts, Sonnet for
   extraction. Set `MOCK_GENERATION=1` (or just omit keys) to use the built-in mock drafter.
 - [HarvestAPI](https://harvest-api.com) for LinkedIn posts, [Exa](https://exa.ai) for company research.
@@ -68,12 +72,15 @@ hand-drawn character illustrations as the emotional core.
 ## Setup
 
 ```bash
-cp .env.example .env   # set DATABASE_URL; optional: OPENROUTER_API_KEY, HARVEST_API_KEY, EXA_API_KEY
+cp .env.example .env   # set DATABASE_URL + AUTH_SECRET; optional: OPENROUTER/HARVEST/EXA keys
 npm install
-npm run db:migrate     # create tables
-npm run db:seed        # load the Acme demo ensemble (npm run db:reset reloads it)
-npm run dev            # http://localhost:3000  → redirects to /studio
+npm run db:migrate     # create tables (orgs, members, posts, corrections, users)
+npm run db:seed        # load the Acme demo + a demo login (npm run db:reset reloads it)
+npm run dev            # http://localhost:3000  → /login (then /studio or /onboarding)
 ```
+
+**Demo login:** `demo@tutti.app` / `demodemo` (workspace = the Acme ensemble). New sign-ups land in
+onboarding to build their own isolated workspace. Generate `AUTH_SECRET` with `openssl rand -base64 32`.
 
 Without keys, generation falls back to a clean on-voice mock so the Create flow never dead-ends, and
 the seeded ensemble keeps every screen populated.

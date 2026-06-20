@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { Icon, type IconName, Avatar } from "./ds";
 import { RestartOnboarding } from "./RestartOnboarding";
 
@@ -44,7 +45,12 @@ export function Sidebar({ user }: { user: { name: string; role: string; instrume
             <div className="ur">{user.role}</div>
           </div>
         </div>
-        <RestartOnboarding />
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <RestartOnboarding />
+          <button className="restart" onClick={() => signOut({ redirectTo: "/login" })} style={{ marginLeft: "auto" }}>
+            Sign out
+          </button>
+        </div>
       </div>
     </aside>
   );

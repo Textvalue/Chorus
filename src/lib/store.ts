@@ -3,7 +3,8 @@
 // are unchanged. Reads are scoped to the active org (the most recently saved one), giving real
 // (org_id, member_id) isolation — onboarding a real company cleanly hides the demo ensemble.
 import { pool, query } from "./db";
-import { seedDatabase } from "./seedDb";
+import { auth } from "@/auth";
+import { getUserOrgId, setUserOrg } from "./users";
 import type { Store, Org, Member, Post, Correction } from "./types";
 
 export function id(prefix: string): string {
@@ -64,21 +65,27 @@ function toPost(r: PostRow): Post {
   };
 }
 
-async function activeOrgId(): Promise<string | null> {
-  const rows = await query<{ org_id: string }>(
-    "select org_id from orgs order by updated_at desc limit 1"
-  );
-  return rows[0]?.org_id ?? null;
+// The current workspace = the logged-in user's org. Everything is scoped to it, so each
+// user gets a fully isolated workspace (multi-tenant). Null until the user finishes onboarding.
+async function currentUserId(): Promise<string | null> {
+  const session = await auth();
+  return (session?.user as { id?: string } | undefined)?.id ?? null;
+}
+async function currentOrgId(): Promise<string | null> {
+  const uid = await currentUserId();
+  return uid ? getUserOrgId(uid) : null;
 }
 
 // ---- reads ----
 export async function getOrg(): Promise<Org | null> {
-  const rows = await query<OrgRow>("select * from orgs order by updated_at desc limit 1");
+  const orgId = await currentOrgId();
+  if (!orgId) return null;
+  const rows = await query<OrgRow>("select * from orgs where org_id = $1", [orgId]);
   return rows[0] ? toOrg(rows[0]) : null;
 }
 
 export async function getMembers(): Promise<Member[]> {
-  const orgId = await activeOrgId();
+  const orgId = await currentOrgId();
   if (!orgId) return [];
   const [mrows, crows] = await Promise.all([
     query<MemberRow>("select * from members where org_id = $1 order by created_at asc", [orgId]),
@@ -94,7 +101,12 @@ export async function getMembers(): Promise<Member[]> {
 }
 
 export async function getMember(memberId: string): Promise<Member | undefined> {
-  const mrows = await query<MemberRow>("select * from members where member_id = $1", [memberId]);
+  const orgId = await currentOrgId();
+  if (!orgId) return undefined;
+  const mrows = await query<MemberRow>(
+    "select * from members where member_id = $1 and org_id = $2",
+    [memberId, orgId]
+  );
   if (!mrows[0]) return undefined;
   const crows = await query<CorrRow>(
     "select * from corrections where member_id = $1 order by at asc, id asc",
@@ -104,7 +116,7 @@ export async function getMember(memberId: string): Promise<Member | undefined> {
 }
 
 export async function getPosts(): Promise<Post[]> {
-  const orgId = await activeOrgId();
+  const orgId = await currentOrgId();
   if (!orgId) return [];
   const rows = await query<PostRow>(
     "select * from posts where org_id = $1 order by created_at desc, id desc",
@@ -130,12 +142,18 @@ export async function saveOrg(org: Org): Promise<Org> {
     [org.org_id, org.name, org.website, org.positioning, J(org.icp), J(org.competitors),
      J(org.brand_dna), org.owner_member_id]
   );
+  // Bind this org to the current user as their private workspace.
+  const uid = await currentUserId();
+  if (uid) await setUserOrg(uid, org.org_id);
   return org;
 }
 
-// Reset = reload the Acme demo (per product choice), so the workspace is never empty.
+// Restart onboarding for the current user: drop their org (cascades members/posts/corrections).
+// The FK users.org_id ON DELETE SET NULL clears their workspace link, so the gate sends them
+// back into onboarding. Other users are untouched.
 export async function resetStore(): Promise<void> {
-  await seedDatabase({ truncate: true });
+  const orgId = await currentOrgId();
+  if (orgId) await query("delete from orgs where org_id = $1", [orgId]);
 }
 
 async function syncCorrections(member: Member): Promise<void> {
@@ -201,7 +219,9 @@ export async function updatePost(
   postId: string,
   fn: (p: Post) => Post
 ): Promise<Post | undefined> {
-  const rows = await query<PostRow>("select * from posts where id = $1", [postId]);
+  const orgId = await currentOrgId();
+  if (!orgId) return undefined;
+  const rows = await query<PostRow>("select * from posts where id = $1 and org_id = $2", [postId, orgId]);
   if (!rows[0]) return undefined;
   const next = fn(toPost(rows[0]));
   await query(
