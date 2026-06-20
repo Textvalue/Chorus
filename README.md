@@ -57,8 +57,10 @@ hand-drawn character illustrations as the emotional core.
 ## Stack
 
 - Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4
-- **No database** — file-based JSON store at `data/store.json` (`src/lib/store.ts`). Ships a tuned demo
-  "Acme" ensemble via `src/lib/seed.ts`, so the app is fully browsable with no keys and no onboarding.
+- **Postgres** (`pg`, raw SQL — `db/schema.sql`) behind a drop-in store API (`src/lib/store.ts`).
+  Four tables: `orgs`, `members`, `posts`, and `corrections` (the moat loop, queryable). Nested blobs
+  (icp, brand_dna, voice_dna, expert_pov) are JSONB. Reads are scoped to the active org. Ships a tuned
+  demo "Acme" ensemble via `src/lib/seed.ts` (`npm run db:seed`).
 - LLM: OpenRouter via the Vercel AI SDK (`generateObject` + Zod). Haiku for drafts, Sonnet for
   extraction. Set `MOCK_GENERATION=1` (or just omit keys) to use the built-in mock drafter.
 - [HarvestAPI](https://harvest-api.com) for LinkedIn posts, [Exa](https://exa.ai) for company research.
@@ -66,8 +68,10 @@ hand-drawn character illustrations as the emotional core.
 ## Setup
 
 ```bash
-cp .env.example .env   # optional: OPENROUTER_API_KEY, HARVEST_API_KEY, EXA_API_KEY
+cp .env.example .env   # set DATABASE_URL; optional: OPENROUTER_API_KEY, HARVEST_API_KEY, EXA_API_KEY
 npm install
+npm run db:migrate     # create tables
+npm run db:seed        # load the Acme demo ensemble (npm run db:reset reloads it)
 npm run dev            # http://localhost:3000  → redirects to /studio
 ```
 
