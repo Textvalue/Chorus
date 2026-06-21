@@ -2,8 +2,6 @@
 // /api/carousel routes used to do synchronously. Each route now creates a job row, schedules the
 // matching runner via after(), and returns a job id the client polls. Runners take explicitly
 // resolved entities (no request session) and write their result onto the job row.
-import { promises as fs } from "fs";
-import path from "path";
 import { generateObject } from "ai";
 import { model, DRAFT_MODEL, EXTRACT_MODEL } from "@/lib/ai";
 import { GenerateSchema, CarouselSchema } from "@/lib/schemas";
@@ -31,8 +29,6 @@ export function collectRefs(
   if (opts.useProfile && member?.profile_picture_url) refs.push(member.profile_picture_url);
   return refs;
 }
-
-const GENERATED_DIR = path.join(process.cwd(), "public", "generated");
 
 // ---- post ----
 export async function runPostJob(
@@ -113,15 +109,12 @@ export async function runImageJob(
 ): Promise<void> {
   try {
     await updateJob(jobId, { status: "running" });
-    const buf = await generateImage(buildImagePrompt(post, org, kind), refs);
-    if (!buf) {
+    const url = await generateImage(buildImagePrompt(post, org, kind), refs);
+    if (!url) {
       await updateJob(jobId, { status: "error", error: "Image model returned no image. Check OPENROUTER_IMAGE_MODEL / API key." });
       return;
     }
-    await fs.mkdir(GENERATED_DIR, { recursive: true });
-    const file = `${post.id}-${kind}-${Math.random().toString(36).slice(2, 8)}.png`;
-    await fs.writeFile(path.join(GENERATED_DIR, file), buf);
-    const url = `/generated/${file}`;
+    // No disk write (read-only filesystem on Vercel): the data URL is stored and rendered directly.
     await setPostImage(post.id, url, org.org_id);
     await updateJob(jobId, { status: "done", result: { url, kind } });
   } catch (e) {
@@ -148,16 +141,13 @@ export async function runCarouselJob(
     });
     const slides = object.slides.slice(0, 6);
 
-    // 2. Render each slide image in parallel (same brand refs across the set).
-    await fs.mkdir(GENERATED_DIR, { recursive: true });
+    // 2. Render each slide image in parallel (same brand refs across the set). The model returns
+    // each image as a data URL — stored and rendered directly, no disk write (read-only on Vercel).
     const rendered = await Promise.all(
       slides.map(async (s, i) => {
         try {
-          const buf = await generateImage(buildCarouselSlidePrompt(s, org, i, slides.length), refs);
-          if (!buf) return { ...s, url: "" };
-          const file = `${post.id}-slide${i + 1}-${Math.random().toString(36).slice(2, 7)}.png`;
-          await fs.writeFile(path.join(GENERATED_DIR, file), buf);
-          return { ...s, url: `/generated/${file}` };
+          const url = await generateImage(buildCarouselSlidePrompt(s, org, i, slides.length), refs);
+          return { ...s, url: url ?? "" };
         } catch {
           return { ...s, url: "" };
         }

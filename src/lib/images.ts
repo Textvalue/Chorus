@@ -1,7 +1,9 @@
 // Image generation via OpenRouter chat-completions with image modality.
-// Model is OPENROUTER_IMAGE_MODEL (default openai/gpt-5.4-image-2). Returns a PNG buffer, or null on failure.
-// Optional reference images are sent as multimodal image_url parts (brand logo, author headshot,
-// or — later — harvested post visuals) so the model keeps the output on-brand.
+// Model is OPENROUTER_IMAGE_MODEL (default openai/gpt-5.4-image-2). Returns the image as a URL —
+// a base64 data URL (or, occasionally, a hosted https URL) — or null on failure. Callers send this
+// straight to the frontend / store it; nothing is written to disk (the filesystem is read-only on
+// Vercel). Optional reference images are sent as multimodal image_url parts (brand logo, author
+// headshot, or — later — harvested post visuals) so the model keeps the output on-brand.
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -10,11 +12,6 @@ export const IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL ?? "google/gemini-
 type ORImage = { type?: string; image_url?: { url?: string } };
 type ORChoice = { message?: { images?: ORImage[]; content?: string } };
 type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
-
-function dataUrlToBuffer(url: string): Buffer | null {
-  const m = url.match(/^data:image\/\w+;base64,(.+)$/);
-  return m ? Buffer.from(m[1], "base64") : null;
-}
 
 const MIME: Record<string, string> = {
   ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
@@ -37,7 +34,7 @@ async function toImageUrl(ref: string): Promise<string | null> {
   }
 }
 
-export async function generateImage(prompt: string, refs: string[] = []): Promise<Buffer | null> {
+export async function generateImage(prompt: string, refs: string[] = []): Promise<string | null> {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) return null;
 
@@ -87,13 +84,14 @@ export async function generateImage(prompt: string, refs: string[] = []): Promis
   const json = (await res.json()) as { choices?: ORChoice[] };
   const msg = json.choices?.[0]?.message;
 
-  // OpenRouter returns generated images on message.images[].image_url.url (data URL).
+  // OpenRouter returns generated images on message.images[].image_url.url (a data URL, or
+  // occasionally a hosted https URL). Return it as-is — no disk write, just hand it to the frontend.
   const fromImages = msg?.images?.map((i) => i.image_url?.url).find(Boolean);
-  if (fromImages) return dataUrlToBuffer(fromImages);
+  if (fromImages) return fromImages;
 
   // Fallback: some models put a data URL straight in content.
   if (typeof msg?.content === "string" && msg.content.startsWith("data:image")) {
-    return dataUrlToBuffer(msg.content);
+    return msg.content;
   }
 
   return null;
