@@ -1,8 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Icon } from "@/components/ds";
+import { Icon, Brandmark } from "@/components/ds";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 import { Badge } from "@/components/ui/badge";
@@ -150,8 +149,7 @@ export default function Onboarding() {
   return (
     <div className="ob-shell">
       <div className="ob-brand">
-        <Image src="/brand/spark.png" alt="" width={28} height={28} style={{ height: 28, width: "auto", mixBlendMode: "multiply" }} />
-        <span className="wm" style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.04em", color: "var(--navy)" }}>penkala</span>
+        <Brandmark size="lg" />
       </div>
 
       {/* Electric-violet step progress — the single accent indicator. */}
