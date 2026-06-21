@@ -6,16 +6,18 @@ import { cn } from "@/lib/utils";
 type Cell = boolean | string;
 type Row = { f: string; free: Cell; pro: Cell; team: Cell };
 
+// Only the things that actually DIFFER between plans (limits + gated features).
+// The shared core is stated once, above the table.
 const rows: Row[] = [
-  { f: "Voice and beliefs captured", free: true, pro: true, team: true },
-  { f: "Posts in your own voice", free: true, pro: true, team: true },
-  { f: "The clean AI-tells check on every draft", free: true, pro: true, team: true },
+  { f: "Posts a month", free: "5", pro: "Unlimited", team: "Unlimited" },
+  { f: "People posting", free: "1", pro: "1", team: "3 to 15" },
+  { f: "Voice profiles", free: "1", pro: "1", team: "Per person" },
+  { f: "Branded visuals a month", free: false, pro: "30", team: "50 per seat" },
   { f: "Ideas and repurpose", free: false, pro: true, team: true },
-  { f: "The warm engagement feed", free: false, pro: true, team: true },
-  { f: "Core Memory of your edits", free: false, pro: true, team: true },
-  { f: "One shared company brand", free: false, pro: false, team: true },
+  { f: "Warm engagement feed", free: false, pro: true, team: true },
+  { f: "Core Memory", free: false, pro: true, team: true },
+  { f: "Shared company brand", free: false, pro: false, team: true },
   { f: "Team review and roles", free: false, pro: false, team: true },
-  { f: "Billing", free: "Free", pro: "Flat", team: "Per poster" },
 ];
 
 const COLS = "grid grid-cols-[1.7fr_1fr_1.05fr_1fr]";
@@ -31,7 +33,12 @@ export function ComparisonTable() {
   return (
     <Section tint>
       <SectionHead title="A closer look at each plan." center className="mx-auto" />
-      <Reveal className="mx-auto mt-12 max-w-3xl overflow-x-auto pb-1">
+      <p className="mx-auto mt-4 max-w-xl text-center text-body text-ink-soft">
+        Every plan includes voice and beliefs capture, posts in your own voice, and the AI-tells
+        check on every draft.
+      </p>
+
+      <Reveal className="mx-auto mt-10 max-w-3xl overflow-x-auto pb-1">
         <div className="min-w-[560px] overflow-hidden rounded-2xl border border-rule bg-paper">
           {/* header */}
           <div className={cn(COLS, "items-end")}>
@@ -53,24 +60,27 @@ export function ComparisonTable() {
           {rows.map((r, i) => (
             <div key={r.f} className={cn(COLS, "items-center border-t border-rule")}>
               <div className="px-5 py-4 text-body text-ink-soft">{r.f}</div>
-              <div className="grid place-items-center px-3 py-4">
+              <div className="grid place-items-center px-3 py-4 text-center">
                 <CellValue value={r.free} />
               </div>
               <div
                 className={cn(
-                  "grid place-items-center self-stretch bg-violet-soft/50 px-3 py-4",
+                  "grid place-items-center self-stretch bg-violet-soft/50 px-3 py-4 text-center",
                   i === rows.length - 1 && "rounded-b-xl"
                 )}
               >
                 <CellValue value={r.pro} />
               </div>
-              <div className="grid place-items-center px-3 py-4">
+              <div className="grid place-items-center px-3 py-4 text-center">
                 <CellValue value={r.team} />
               </div>
             </div>
           ))}
         </div>
       </Reveal>
+      <p className="mx-auto mt-4 max-w-3xl text-center text-caption text-ink-faint">
+        Unlimited posts are subject to fair use.
+      </p>
     </Section>
   );
 }
