@@ -56,3 +56,7 @@ next-env.d.ts
 
 # local build-spec / scratch (not for the repo)
 /megathon-linkedin
+
+# Landing site moved to its own repo (Textvalue/penkala-landing)
+landing-page/
+generate-video.js
