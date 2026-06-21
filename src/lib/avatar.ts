@@ -12,3 +12,11 @@ export function avatarColor(seed: string): string {
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   return COLORS[h % COLORS.length];
 }
+
+// Deterministic illustrated avatar (DiceBear) from a person's name, on a soft
+// brand-tinted background. Used everywhere a person is shown without a real
+// profile photo — feed, leaderboard, team, drafts, etc.
+export function fakeAvatar(seed: string): string {
+  const s = encodeURIComponent(seed.trim().toLowerCase() || "anon");
+  return `https://api.dicebear.com/9.x/notionists/svg?seed=${s}&radius=50&backgroundColor=ebe6ff,d9d0ff,e6f6ef,fff6e8,f0f0f2`;
+}

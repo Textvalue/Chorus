@@ -1,6 +1,7 @@
 // Penkala design-system primitives (ported from /design-system/project/components).
-// Pure, presentational, dependency-free — safe in server or client components.
+// Pure, presentational — safe in server or client components.
 import * as React from "react";
+import { fakeAvatar } from "@/lib/avatar";
 
 /* ------------------------------------------------------------------ icons */
 type IP = { size?: number; className?: string; color?: string; stroke?: number };
@@ -144,34 +145,24 @@ export function Button({
 }
 
 /* ---------------------------------------------------------------- avatar */
-const AVA_PALETTE: [string, string][] = [
-  ["var(--blue-100)", "var(--blue-700)"],
-  ["var(--teal-100)", "var(--teal-700)"],
-  ["var(--green-100)", "var(--green-700)"],
-  ["var(--navy-700)", "#fff"],
-];
 export function brandInitials(name: string): string {
   const p = name.trim().split(/\s+/);
   return ((p[0]?.[0] ?? "") + (p.length > 1 ? p[p.length - 1][0] : p[0]?.[1] ?? "")).toUpperCase();
 }
-function brandTint(name: string): [string, string] {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-  return AVA_PALETTE[h % AVA_PALETTE.length];
-}
 export function Avatar({ name, size = 40, instrument }: { name: string; size?: number; instrument?: string | null }) {
-  const [bg, fg] = brandTint(name);
   return (
     <span style={{ position: "relative", display: "inline-flex", flex: "none" }}>
-      <span
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={fakeAvatar(name)}
+        alt={name}
+        width={size}
+        height={size}
         style={{
-          width: size, height: size, borderRadius: 999, display: "inline-flex",
-          alignItems: "center", justifyContent: "center", background: bg, color: fg,
-          fontSize: size * 0.38, fontWeight: 700,
+          width: size, height: size, borderRadius: 999, objectFit: "cover",
+          background: "var(--accent-soft)", display: "block",
         }}
-      >
-        {brandInitials(name)}
-      </span>
+      />
       {instrument && (
         <span
           title={instrument}

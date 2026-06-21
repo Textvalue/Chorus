@@ -14,23 +14,26 @@ export default async function EngagePage() {
 
   return (
     <div className="main-inner">
-      <TopBar
-        title="Engage"
-        subtitle="Warm your target accounts. Penkala drafts the comment in your voice — you read it, you post it."
-        action={<Badge variant="secondary">Cookie-free feed</Badge>}
-      />
+      {/* One aligned column — header, trust banner, list filter, and feed share a width. */}
+      <div className="mx-auto w-full max-w-[680px]">
+        <TopBar
+          title="Engage"
+          subtitle="Warm your target accounts. Penkala drafts the comment in your voice — you read it, you post it."
+          action={<Badge variant="secondary">Cookie-free feed</Badge>}
+        />
 
-      {/* Compliance moat (§5.12) — neutral trust banner, NOT a warning color. */}
-      <Alert className="mb-5">
-        <Icon.lock size={18} color="var(--accent)" />
-        <AlertTitle>Nothing sends itself</AlertTitle>
-        <AlertDescription>
-          The feed is built from cookie-free data — never your logged-in session. Every comment is a
-          deliberate, human click. That&apos;s the compliance moat.
-        </AlertDescription>
-      </Alert>
+        {/* Compliance moat (§5.12) — neutral trust banner, NOT a warning color. */}
+        <Alert className="mb-5">
+          <Icon.lock size={18} color="var(--accent)" />
+          <AlertTitle>Nothing sends itself</AlertTitle>
+          <AlertDescription>
+            The feed is built from cookie-free data — never your logged-in session. Every comment is a
+            deliberate, human click. That&apos;s the compliance moat.
+          </AlertDescription>
+        </Alert>
 
-      <EngageFeed author={owner?.name ?? "You"} />
+        <EngageFeed author={owner?.name ?? "You"} />
+      </div>
     </div>
   );
 }

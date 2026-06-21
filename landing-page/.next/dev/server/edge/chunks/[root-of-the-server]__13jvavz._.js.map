@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/middleware.ts"],"sourcesContent":["// Route protection via Auth.js (Edge). Uses the DB-free auth.config so it stays Edge-safe.\nimport NextAuth from \"next-auth\";\nimport { authConfig } from \"@/auth.config\";\n\nconst { auth } = NextAuth(authConfig);\nexport default auth;\n\nexport const config = {\n  // Run on everything except Next internals, the auth API, and static brand assets.\n  matcher: [\"/((?!api/auth|_next/static|_next/image|favicon.ico|brand|.*\\\\.(?:png|jpg|svg|ico)$).*)\"],\n};\n"],"names":["auth","authConfig","config","matcher"],"mappings":";;;;;;AAAA,2FAA2F;AAC3F;;;;;;;;AAGA,MAAM,EAAEA,IAAI,EAAE,GAAG,IAAA,wKAAQ,EAACC;uCACXD;AAER,MAAME,SAAS;IACpB,kFAAkF;IAClFC,SAAS;QAAC;KAAyF;AACrG"}}]
+}

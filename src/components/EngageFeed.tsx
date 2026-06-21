@@ -225,8 +225,8 @@ export function EngageFeed({ author }: { author: string }) {
         </div>
       </Card>
 
-      {/* FEED — full-width single column, centered for readability (LinkedIn read feed). */}
-      <div className="mx-auto flex w-full max-w-[620px] flex-col gap-5">
+      {/* FEED — single column, aligned with the filter bar above it. */}
+      <div className="flex w-full flex-col gap-5">
         {shown.length === 0 && (
           <Card className="px-5 py-8 text-center text-sm text-[var(--text-muted)]">
             No one selected. Tap people above to fill your feed.
