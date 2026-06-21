@@ -16,11 +16,15 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "How does billing work?",
-    a: "By the people who post. A seat counts only once someone publishes or comments, so a quiet teammate this month costs you nothing. Exact numbers are still being finalized.",
+    a: "By the people who post. Team is a $99/mo workspace plus $49 for each person who publishes, so a quiet teammate this month costs you nothing. Pro is a flat $39/mo for one founder.",
   },
   {
     q: "Is the free plan free forever?",
-    a: "You can keep a free account, but generation runs on a monthly amount that pauses when it is spent. Generating posts costs real compute, so free is not unlimited. It is enough to know if this is for you.",
+    a: "Everyone starts with 14 days of the full product. After that you can keep a free account, but generation runs on a monthly cap, so free is not unlimited. It is enough to know if this is for you.",
+  },
+  {
+    q: "What if I run out of generations for the month?",
+    a: "Each plan includes a monthly pool of generations. If you need more, you can top up or move up a plan. You only pay for what you choose to add.",
   },
   {
     q: "Pro or Team, which do I start on?",
@@ -28,7 +32,7 @@ const faqs = [
   },
   {
     q: "What happens when the trial period ends?",
-    a: "Your account stays. Generation drops to a capped free amount, and everything you have made stays with it. You upgrade when the team is ready.",
+    a: "After your 14 days, your account stays. Generation drops to a capped free amount, and everything you have made stays with it. You upgrade when the team is ready.",
   },
   {
     q: "Do we keep our data and voice if we leave?",
@@ -55,8 +59,8 @@ export default function PricingPage() {
         <div className="mx-auto max-w-2xl text-center">
           <SectionHead title="The whole product, free to start." center className="mx-auto" />
           <p className="mt-6 text-body-l text-ink-soft">
-            Free is not a stripped-down demo. You get the real product, voice capture, posts in your
-            own voice, and the warm feed, with a set amount to write with each month. When you run
+            For 14 days you get all of it: voice capture, posts in your own voice, and the warm
+            feed. After that, a free tier with a set amount to write with each month. When you run
             out, generation pauses. Nothing you have made disappears, and your voice stays yours.
             Move up when the team is ready.
           </p>

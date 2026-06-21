@@ -20,7 +20,7 @@ const plans: Plan[] = [
   {
     name: "Free",
     price: "$0",
-    note: "The whole product, capped, so you can see if it sounds like you.",
+    note: "Start with 14 days of everything. Then a free tier, capped each month.",
     fit: "For the founder who wants to capture their voice and read the first post it writes back.",
     bullets: [
       "Your voice and beliefs, captured in one sitting",
@@ -32,7 +32,7 @@ const plans: Plan[] = [
   },
   {
     name: "Pro",
-    price: "$XX",
+    price: "$39",
     suffix: "/mo",
     note: "For one person posting for the whole company.",
     fit: "For the founder posting every week who wants ideas, the warm feed, and a memory of every edit.",
@@ -47,9 +47,9 @@ const plans: Plan[] = [
   },
   {
     name: "Team",
-    price: "$XXX",
-    suffix: "/mo",
-    note: "For the revenue team, billed per person who posts.",
+    price: "$49",
+    suffix: "/seat/mo",
+    note: "Per active seat, plus a $99/mo workspace base.",
     fit: "For the 3 to 15 person team sharing one brand and a pipeline number this quarter.",
     bullets: [
       "Everything in Pro, for your whole revenue team",
@@ -137,8 +137,8 @@ export function PlanCards() {
         ))}
       </Reveal>
       <p className="mx-auto mt-8 max-w-2xl text-center text-caption text-ink-faint">
-        The numbers here are placeholders while we finish pricing. The plan you start on will not
-        change under you without us telling you first.
+        Seats are billed only when someone posts. Need video, analytics, or SSO? Talk to us about
+        Scale and Enterprise.
       </p>
     </Section>
   );
