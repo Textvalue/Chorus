@@ -25,15 +25,21 @@ const PINNED_AVATARS: Record<string, string> = {
   "lovro culina": "/avatars/lovro-culina.png",
 };
 
+// The pinned photo for a name, or null if there isn't one. Lets the store force a pinned
+// person's profile_picture_url so the photo wins even over a stale stored value.
+export function pinnedAvatar(name: string): string | null {
+  return PINNED_AVATARS[normalizeName(name)] ?? null;
+}
+
 // Deterministic real-photo stand-in from a person's name. Same name → same face,
 // every render. Used everywhere a person is shown without a real profile photo —
 // feed, leaderboard, team, drafts, etc. If the URL ever fails to load, <Avatar>
 // quietly falls back to the name's initials (see components/ds.tsx).
 const PRAVATAR_COUNT = 70; // pravatar serves a fixed set of photos, ids 1..70
 export function fakeAvatar(seed: string): string {
-  const key = normalizeName(seed);
-  if (PINNED_AVATARS[key]) return PINNED_AVATARS[key];
-  const s = key || "anon";
+  const pinned = pinnedAvatar(seed);
+  if (pinned) return pinned;
+  const s = normalizeName(seed) || "anon";
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return `https://i.pravatar.cc/150?img=${(h % PRAVATAR_COUNT) + 1}`;

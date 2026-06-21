@@ -5,7 +5,8 @@
 import { cache } from "react";
 import { pool, query } from "./db";
 import { auth } from "@/auth";
-import { getUserOrgId, setUserOrg } from "./users";
+import { getUserOrgId, setUserOrg, getUserById } from "./users";
+import { pinnedAvatar } from "./avatar";
 import type { Store, Org, Member, Post, Correction, Job, JobKind } from "./types";
 
 export function id(prefix: string): string {
@@ -37,7 +38,9 @@ function toMember(r: MemberRow, corrections: Correction[]): Member {
   return {
     member_id: r.member_id, org_id: r.org_id, name: r.name, headline: r.headline,
     linkedin_url: r.linkedin_url, voice_dna: r.voice_dna, prose_samples: r.prose_samples,
-    expert_pov: r.expert_pov, corrections, profile_picture_url: r.profile_picture_url ?? null,
+    // A pinned person (e.g. Lovro Čulina) always shows their committed photo — it wins over any
+    // stale stored value. Everyone else keeps their own profile_picture_url.
+    expert_pov: r.expert_pov, corrections, profile_picture_url: pinnedAvatar(r.name) ?? r.profile_picture_url ?? null,
   };
 }
 
@@ -80,6 +83,15 @@ const currentUserId = cache(async (): Promise<string | null> => {
 const currentOrgId = cache(async (): Promise<string | null> => {
   const uid = await currentUserId();
   return uid ? getUserOrgId(uid) : null;
+});
+
+// The logged-in user's email. Used to scope hardcoded demo behavior to a specific account
+// (the post + image routes pass the resolved flag into their background jobs). Cached per request.
+export const currentUserEmail = cache(async (): Promise<string | null> => {
+  const uid = await currentUserId();
+  if (!uid) return null;
+  const u = await getUserById(uid);
+  return u?.email ?? null;
 });
 
 // ---- reads ----

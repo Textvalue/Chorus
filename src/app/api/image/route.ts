@@ -3,8 +3,9 @@
 // which can take 2+ minutes — runs in after(), then attaches the saved URL to the post.
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getOrg, getPosts, getMember, createJob } from "@/lib/store";
+import { getOrg, getPosts, getMember, createJob, currentUserEmail } from "@/lib/store";
 import { runImageJob, collectRefs } from "@/lib/jobs";
+import { isLovro } from "@/lib/lovro";
 import type { ImageKind } from "@/lib/imagePrompt";
 
 export const maxDuration = 300;
@@ -30,7 +31,8 @@ export async function POST(req: Request) {
     const jobId = await createJob("image", { kind, refs }, post_id);
     if (!jobId) return NextResponse.json({ error: "no workspace" }, { status: 401 });
 
-    after(() => runImageJob(jobId, org, post, kind, refs));
+    const lovro = isLovro(await currentUserEmail());
+    after(() => runImageJob(jobId, org, post, kind, refs, lovro));
     return NextResponse.json({ job_id: jobId });
   } catch (e) {
     return NextResponse.json(

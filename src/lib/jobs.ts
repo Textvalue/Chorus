@@ -10,11 +10,20 @@ import { sanitize, type SlopViolation } from "@/lib/antislop";
 import { generateImage } from "@/lib/images";
 import { buildImagePrompt, buildCarouselSlidePrompt, type ImageKind } from "@/lib/imagePrompt";
 import { mockGenerate } from "@/lib/mockGen";
+import { LOVRO_POST_BODY, LOVRO_POST_VOICE_MATCH, LOVRO_POST_WHY, LOVRO_INFOGRAPHIC_URL } from "@/lib/lovro";
 import { addPost, setPostImage, setPostCarousel, updateJob, id } from "@/lib/store";
 import type { Org, Member, Post } from "@/lib/types";
 
 const MAX_TRIES = 3;
 const MOCK = process.env.MOCK_GENERATION === "1";
+
+// The hardcoded demo paths (Lovro) finish instantly, which gives the trick away. Hold them in
+// "running" for a believable beat — roughly how long the real LLM / image model takes — so the
+// client's polling spinner behaves like a normal generation. A little jitter keeps it natural.
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const demoDelay = (base: number, jitter: number) => sleep(base + Math.floor(Math.random() * jitter));
+const DEMO_POST_DELAY = { base: 4000, jitter: 2500 }; // ~4-6.5s, like a draft coming back
+const DEMO_IMAGE_DELAY = { base: 8000, jitter: 4000 }; // ~8-12s, like an image render
 
 // Brand/reference images for a generation, in priority order: a per-generation override first,
 // then the toggled-on brand assets. Built generically so harvested post visuals can be added later.
@@ -32,10 +41,37 @@ export function collectRefs(
 
 // ---- post ----
 export async function runPostJob(
-  jobId: string, org: Org, member: Member, topic: string, angle: string
+  jobId: string, org: Org, member: Member, topic: string, angle: string, lovro = false
 ): Promise<void> {
   try {
     await updateJob(jobId, { status: "running" });
+
+    // Demo: Lovro's "Generate" always returns the one hand-written post, regardless of the idea
+    // he typed. Skip the LLM entirely, but wait a beat so it feels like a real generation.
+    if (lovro) {
+      await demoDelay(DEMO_POST_DELAY.base, DEMO_POST_DELAY.jitter);
+      const post: Post = {
+        id: id("post"),
+        member_id: member.member_id,
+        org_id: org.org_id,
+        topic,
+        angle,
+        body: LOVRO_POST_BODY,
+        generated_body: LOVRO_POST_BODY,
+        status: "draft",
+        voice_match: LOVRO_POST_VOICE_MATCH,
+        created_at: new Date().toISOString(),
+        edits: [],
+      };
+      await addPost(post);
+      await updateJob(jobId, {
+        status: "done",
+        post_id: post.id,
+        result: { post, why: LOVRO_POST_WHY, antislop: { pass: true, violations: [], attempts: 1 }, mocked: false },
+      });
+      return;
+    }
+
     const system = buildSystemPrompt(org, member);
 
     let violations: SlopViolation[] = [];
@@ -105,10 +141,20 @@ export async function runPostJob(
 
 // ---- image / infographic ----
 export async function runImageJob(
-  jobId: string, org: Org, post: Post, kind: ImageKind, refs: string[]
+  jobId: string, org: Org, post: Post, kind: ImageKind, refs: string[], lovro = false
 ): Promise<void> {
   try {
     await updateJob(jobId, { status: "running" });
+
+    // Demo: Lovro's infographic returns the static, committed overview image (no model call),
+    // after a render-like pause so it feels generated.
+    if (lovro && kind === "infographic") {
+      await demoDelay(DEMO_IMAGE_DELAY.base, DEMO_IMAGE_DELAY.jitter);
+      await setPostImage(post.id, LOVRO_INFOGRAPHIC_URL, org.org_id);
+      await updateJob(jobId, { status: "done", result: { url: LOVRO_INFOGRAPHIC_URL, kind } });
+      return;
+    }
+
     const url = await generateImage(buildImagePrompt(post, org, kind), refs);
     if (!url) {
       await updateJob(jobId, { status: "error", error: "Image model returned no image. Check OPENROUTER_IMAGE_MODEL / API key." });

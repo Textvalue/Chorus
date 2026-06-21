@@ -2,8 +2,9 @@
 // work after the response is sent (it can take a while + retries), and return a job id to poll.
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getOrg, getMember, createJob } from "@/lib/store";
+import { getOrg, getMember, createJob, currentUserEmail } from "@/lib/store";
 import { runPostJob } from "@/lib/jobs";
+import { isLovro } from "@/lib/lovro";
 
 export const maxDuration = 300;
 
@@ -24,7 +25,8 @@ export async function POST(req: Request) {
     const jobId = await createJob("post", { member_id, topic, angle: angle ?? "" });
     if (!jobId) return NextResponse.json({ error: "no workspace" }, { status: 401 });
 
-    after(() => runPostJob(jobId, org, member, topic, angle ?? ""));
+    const lovro = isLovro(await currentUserEmail());
+    after(() => runPostJob(jobId, org, member, topic, angle ?? "", lovro));
     return NextResponse.json({ job_id: jobId });
   } catch (e) {
     return NextResponse.json(
