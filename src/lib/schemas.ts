@@ -96,6 +96,72 @@ export const IdeasSchema = z.object({
   ),
 });
 
+// ---- Discover: sophisticated trending-content analysis for a topic ----
+// Grounded in the repo's own LinkedIn frameworks (hooks.json / frameworks.json /
+// linkedin-algorithm-rules.json — see lib/contentFrameworks.ts) AND the org/author context.
+export const DiscoverSchema = z.object({
+  topic: z.string().describe("The cleaned topic that was analyzed"),
+  maturity: z
+    .enum(["emerging", "hot", "saturated"])
+    .describe("How crowded this topic already is on LinkedIn"),
+  trend: z.string().describe("One-line headline: the pattern that's winning for this topic right now"),
+  summary: z
+    .string()
+    .describe("2-3 sentences on the state of play for this topic, grounded in what actually wins"),
+  formats: z
+    .array(
+      z.object({
+        label: z.string().describe("Format, e.g. Carousel / document, Formatted text, Text + image, Text-only"),
+        strength: z.enum(["highest", "high", "baseline", "declining", "penalized"]),
+        multiplier: z.string().describe("REAL engagement multiplier vs plain text from the algorithm rules, e.g. '3.7-6.6x'"),
+        note: z.string().describe("Why this format fits THIS topic specifically"),
+      })
+    )
+    .describe("How formats perform for this topic — multipliers MUST come from the provided algorithm rules, never invented"),
+  hooks: z
+    .array(
+      z.object({
+        text: z.string().describe("A ready-to-use hook (ideal 6-8 words) in the author's voice, on this topic"),
+        type: z.string().describe("Emotional hook type: curiosity | counter_narrative | credibility | fear | surprise | education | identity | counter_intuitive | eloquence"),
+        why: z.string().describe("Why this hook works for this topic"),
+      })
+    )
+    .describe("3-5 hook angles, each tagged with its emotional hook type"),
+  winning_structure: z.object({
+    framework: z.string().describe("Recommended framework from the catalog (PAIPS, PAS, BAB, AIDA, ACCA, PPPP...)"),
+    rhythm: z.string().describe("The beat-by-beat structure to follow"),
+    length: z.string().describe("Optimal length + fold guidance for the recommended format"),
+  }),
+  avoid: z
+    .array(
+      z.object({
+        what: z.string().describe("A saturated angle OR a real algorithm suppression signal"),
+        why: z.string(),
+      })
+    )
+    .describe("Saturated angles + real suppression signals (links in body, hashtag stuffing, engagement bait)"),
+  algorithm: z
+    .object({
+      best_time: z.string().describe("Best posting window for this audience"),
+      cadence: z.string().describe("Posting frequency guidance"),
+      cta: z.string().describe("CTA recommendation"),
+    })
+    .describe("Algorithm cheat-sheet, grounded in the real rules"),
+  ideas: z
+    .array(
+      z.object({
+        title: z.string(),
+        angle: z.string(),
+        pillar: z.string().describe("Synthesis | Contrarian | Access | Simplifying"),
+        format: z.string().describe("Recommended format, e.g. carousel, formatted text, text + image"),
+        hook_type: z.string(),
+        tag: z.string(),
+      })
+    )
+    .describe("5 postable ideas grounded in BOTH the analysis and the company/author context"),
+});
+export type DiscoverResult = z.infer<typeof DiscoverSchema>;
+
 // ---- LinkedIn profile optimizer ----
 export const ProfileMakeoverSchema = z.object({
   overall_score: z.number().describe("Profile strength 0-100"),

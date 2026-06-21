@@ -29,70 +29,35 @@ const MOCK_IDEAS: Idea[] = [
   { title: "Stop scheduling. Start sounding human.", angle: "Short and punchy: distinct voices on one strategy beat identical voices every time.", source_type: "belief", source: "Your beliefs", tag: "Punchy" },
 ];
 
+type DiscoverIdea = { title: string; angle: string; pillar: string; format: string; hook_type: string; tag: string };
 type DiscoverResult = {
+  topic: string;
+  maturity: "emerging" | "hot" | "saturated";
   trend: string;
-  lift: number;
-  sampled: number;
   summary: string;
-  winning: string;
-  formats: { label: string; pct: number; note: string }[];
-  hooks: string[];
-  avoid: string[];
-  ideas: Idea[];
+  formats: { label: string; strength: "highest" | "high" | "baseline" | "declining" | "penalized"; multiplier: string; note: string }[];
+  hooks: { text: string; type: string; why: string }[];
+  winning_structure: { framework: string; rhythm: string; length: string };
+  avoid: { what: string; why: string }[];
+  algorithm: { best_time: string; cadence: string; cta: string };
+  ideas: DiscoverIdea[];
 };
 type RepurposeResult = { ways: number; pieces: number; weeks: string; atoms: string[]; assets: { title: string; lift: string }[] };
 
-// Deterministic-ish pseudo metric so each topic gets stable, believable numbers.
-function topicSeed(t: string): number {
-  let h = 0;
-  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
-  return h;
-}
-
-// Mock "Discover" analysis for any topic — stands in for the live top-post study. Richer than a
-// flat idea list: a trend read, what's actually winning by format, hook patterns, what's saturated,
-// then ideas grounded in the analysis.
-function mockDiscover(topic: string): DiscoverResult {
-  const t = topic.replace(/\.$/, "").trim();
-  const seed = topicSeed(t.toLowerCase());
-  const lift = +(2.4 + (seed % 22) / 10).toFixed(1); // 2.4–4.5×
-  const sampled = 180 + (seed % 9) * 40; // 180–500 posts "studied"
-  const carousel = 70 + (seed % 22); // 70–91
-  const contrarian = 60 + (seed % 28); // 60–87
-  const story = 40 + (seed % 24);
-  const teardown = 30 + (seed % 30);
-
-  return {
-    trend: `Contrarian, specific takes on “${t}” are outrunning generic explainers`,
-    lift,
-    sampled,
-    summary: `Across ${sampled} high-reach posts on “${t}” in the last 30 days, the winners aren't the broad overviews — they're sharp, first-person takes that pick a side and back it with one concrete number or example.`,
-    winning: `A 1-line opinionated hook, then a short story or a single hard number, then a takeaway. Under 130 words, no link in the body, posted Tue–Thu morning.`,
-    formats: [
-      { label: "How-to carousel", pct: carousel, note: "saves + dwell time" },
-      { label: "Contrarian text", pct: contrarian, note: "comments engine" },
-      { label: "Personal story", pct: story, note: "reach, fewer saves" },
-      { label: "Tool/teardown", pct: teardown, note: "niche but loyal" },
-    ],
-    hooks: [
-      `“Everyone’s wrong about ${t}. Here’s what actually moved the needle.”`,
-      `“I changed my mind on ${t}. The reason is uncomfortable.”`,
-      `“We tried ${t} for 90 days. The data wasn’t what we expected.”`,
-    ],
-    avoid: [
-      `“What is ${t}?” explainers — saturated, near-zero saves`,
-      "Listicles over 7 points — drop-off after the fold",
-      "Hype with no number or example — read as AI filler",
-    ],
-    ideas: [
-      { title: `The “${t}” advice everyone repeats is wrong`, angle: "Open against the consensus, then show the counter-example with a number.", source_type: "belief", source: "Trend", tag: "Contrarian" },
-      { title: `What nobody tells you about ${t}`, angle: "Insider POV; one specific story from your own work, one lesson.", source_type: "belief", source: "Trend", tag: "Story" },
-      { title: `We tried ${t} for 90 days — here's the data`, angle: "Measured, data-led; lead with the result, not the setup.", source_type: "belief", source: "Trend", tag: "Data" },
-      { title: `A 5-step ${t} playbook (carousel)`, angle: "Turn it into a how-to carousel — the top-saving format for this topic.", source_type: "belief", source: "Trend", tag: "Carousel" },
-      { title: `${t}, but make it human`, angle: "Short, punchy reframe; end on a one-line principle.", source_type: "belief", source: "Trend", tag: "Punchy" },
-    ],
-  };
-}
+// Maturity → badge tone. "hot" = crowded-but-proven, "emerging" = open lane, "saturated" = caution.
+const MATURITY_TONE: Record<DiscoverResult["maturity"], "success" | "warning" | "secondary"> = {
+  emerging: "success",
+  hot: "warning",
+  saturated: "secondary",
+};
+// Format strength → badge tone.
+const STRENGTH_TONE: Record<DiscoverResult["formats"][number]["strength"], "success" | "default" | "secondary" | "warning"> = {
+  highest: "success",
+  high: "default",
+  baseline: "secondary",
+  declining: "warning",
+  penalized: "warning",
+};
 
 // Mock "Repurpose" breakdown for any source URL/transcript.
 function mockRepurpose(): RepurposeResult {
@@ -140,15 +105,31 @@ export function IdeasView({ members }: { members: Mem[] }) {
     toast("Idea updated");
   }
 
-  // Discover — analyze any topic (mock results, in-session).
+  // Discover — a real trending-content analysis for the topic, grounded in our LinkedIn
+  // frameworks + the company/author context (POST /api/discover).
   const [dq, setDq] = useState("");
   const [dBusy, setDBusy] = useState(false);
+  const [dErr, setDErr] = useState("");
   const [discover, setDiscover] = useState<DiscoverResult | null>(null);
-  function runDiscover() {
+  async function runDiscover() {
     if (!dq.trim() || dBusy) return;
     setDBusy(true);
+    setDErr("");
     setDiscover(null);
-    window.setTimeout(() => { setDiscover(mockDiscover(dq.trim())); setDBusy(false); }, 1100);
+    try {
+      const res = await fetch("/api/discover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: dq.trim(), member_id: authorId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "analysis failed");
+      setDiscover(data as DiscoverResult);
+    } catch (e) {
+      setDErr(e instanceof Error ? e.message : "analysis failed");
+    } finally {
+      setDBusy(false);
+    }
   }
 
   // Repurpose — break down any source (mock results, in-session).
@@ -321,7 +302,7 @@ export function IdeasView({ members }: { members: Mem[] }) {
               <input
                 className="field"
                 style={{ flex: 1, minWidth: 220 }}
-                placeholder="Analyze what's working for any topic…"
+                placeholder="Analyze a topic — e.g. codex, cold email, RAG…"
                 value={dq}
                 onChange={(e) => setDq(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && runDiscover()}
@@ -331,74 +312,105 @@ export function IdeasView({ members }: { members: Mem[] }) {
               </button>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
-              {["Last 30 days", "Min 200 likes", "5k+ followers", "All formats"].map((f) => (
+              {["Your company context", "12 hook types", "13 frameworks", "Algorithm rules"].map((f) => (
                 <span key={f} className="chip">{f}</span>
               ))}
             </div>
           </div>
 
+          {dErr && (
+            <div className="card" style={{ padding: 16, marginBottom: 14, color: "var(--amber)" }}>{dErr}</div>
+          )}
+
           {dBusy && (
             <div className="card" style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
-              <LoadingMessage messages={["Studying top posts…", ...IDEAS_MESSAGES]} />
+              <LoadingMessage messages={["Analyzing what wins for this topic…", ...IDEAS_MESSAGES]} />
             </div>
           )}
 
           {!dBusy && discover && (
             <>
+              {/* Trend read + topic maturity */}
               <div className="card" style={{ padding: 20, marginBottom: 14, borderLeft: "3px solid var(--accent)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
                   <div className="eyebrow" style={{ margin: 0 }}>Trend</div>
-                  <Badge variant="secondary">{discover.sampled} posts studied · last 30 days</Badge>
+                  <Badge variant={MATURITY_TONE[discover.maturity]}>{discover.maturity}</Badge>
+                  <Badge variant="secondary">AI analysis · LinkedIn frameworks</Badge>
                 </div>
-                <h4 style={{ margin: "6px 0 10px" }}>{discover.trend}</h4>
-                <div style={{ display: "flex", gap: 28, flexWrap: "wrap", alignItems: "flex-start" }}>
-                  <div style={{ fontSize: 26, fontWeight: 700, color: "var(--accent-ink)", fontVariantNumeric: "tabular-nums", lineHeight: 1.1, flex: "none" }}>
-                    <AnimatedNumber value={discover.lift} decimals={1} suffix="× vs median" />
-                  </div>
-                  <div style={{ fontSize: 13.5, color: "var(--text-body)", maxWidth: 460, lineHeight: 1.55 }}>
-                    {discover.summary}
-                  </div>
-                </div>
+                <h4 style={{ margin: "0 0 8px" }}>{discover.trend}</h4>
+                <div style={{ fontSize: 13.5, color: "var(--text-body)", lineHeight: 1.6 }}>{discover.summary}</div>
               </div>
 
-              {/* What's winning — format breakdown + the winning structure */}
+              {/* What's winning by format — real algorithm multipliers */}
               <div className="card" style={{ padding: 20, marginBottom: 14 }}>
-                <div className="eyebrow muted" style={{ marginBottom: 14 }}>What&apos;s winning by format</div>
+                <div className="eyebrow muted" style={{ marginBottom: 6 }}>What&apos;s winning by format</div>
                 {discover.formats.map((f) => (
-                  <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 10, fontSize: 13 }}>
-                    <span style={{ width: 130, flex: "none", color: "var(--text-body)" }}>{f.label}</span>
-                    <span style={{ flex: 1, height: 8, borderRadius: 999, background: "var(--line)", overflow: "hidden" }}>
-                      <span style={{ display: "block", height: "100%", width: `${f.pct}%`, background: "var(--accent)", borderRadius: 999 }} />
-                    </span>
-                    <span style={{ width: 36, textAlign: "right", flex: "none", fontWeight: 700, fontSize: 12.5, color: "var(--text-strong)" }}>{f.pct}</span>
-                    <span style={{ width: 116, flex: "none", fontSize: 11.5, color: "var(--text-muted)" }}>{f.note}</span>
+                  <div key={f.label} style={{ display: "flex", alignItems: "baseline", gap: 11, padding: "9px 0", borderTop: "1px solid var(--line)", fontSize: 13.5, flexWrap: "wrap" }}>
+                    <span style={{ width: 150, flex: "none", fontWeight: 600, color: "var(--text-strong)" }}>{f.label}</span>
+                    <Badge variant={STRENGTH_TONE[f.strength]}>{f.strength}</Badge>
+                    <span style={{ flex: "none", fontVariantNumeric: "tabular-nums", fontWeight: 700, color: "var(--accent-ink)" }}>{f.multiplier}</span>
+                    <span style={{ flex: 1, minWidth: 120, fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.5 }}>{f.note}</span>
                   </div>
                 ))}
-                <div style={{ marginTop: 12, padding: "12px 14px", borderRadius: 12, background: "var(--accent-soft, #efeaff)", fontSize: 13.5, lineHeight: 1.55, color: "var(--accent-ink, #4b2fbf)" }}>
-                  <b>The winning structure:</b> {discover.winning}
-                </div>
               </div>
 
-              {/* Hooks that work + what's saturated */}
+              {/* The winning structure — recommended framework */}
+              <div className="card" style={{ padding: 20, marginBottom: 14 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+                  <div className="eyebrow muted" style={{ margin: 0 }}>The winning structure</div>
+                  <Badge variant="default">{discover.winning_structure.framework}</Badge>
+                </div>
+                <div style={{ fontSize: 14, color: "var(--text-body)", lineHeight: 1.6, marginBottom: 8 }}>{discover.winning_structure.rhythm}</div>
+                <div style={{ fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.5 }}>{discover.winning_structure.length}</div>
+              </div>
+
+              {/* Hook angles that fit + what to avoid */}
               <div className="grid2" style={{ marginBottom: 14 }}>
                 <div className="card" style={{ padding: 20 }}>
-                  <div className="eyebrow muted" style={{ marginBottom: 10 }}>Hook patterns that work</div>
+                  <div className="eyebrow muted" style={{ marginBottom: 10 }}>Hook angles that fit</div>
                   {discover.hooks.map((h, i) => (
-                    <div key={i} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "7px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)", color: "var(--text-body)", lineHeight: 1.5 }}>
-                      <span style={{ color: "var(--green)", fontWeight: 700, flex: "none" }}>↑</span>{h}
+                    <div key={i} style={{ padding: "9px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)" }}>
+                      <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+                        <span style={{ color: "var(--green)", fontWeight: 700, flex: "none" }}>↑</span>
+                        <span style={{ flex: 1, fontSize: 13.5, fontWeight: 600, color: "var(--text-strong)", lineHeight: 1.45 }}>{h.text}</span>
+                        <Badge variant="secondary">{h.type.replace(/_/g, " ")}</Badge>
+                      </div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, paddingLeft: 17, lineHeight: 1.45 }}>{h.why}</div>
                     </div>
                   ))}
                 </div>
                 <div className="card" style={{ padding: 20 }}>
-                  <div className="eyebrow muted" style={{ marginBottom: 10 }}>Saturated — skip these</div>
+                  <div className="eyebrow muted" style={{ marginBottom: 10 }}>Saturated / kills reach — avoid</div>
                   {discover.avoid.map((a, i) => (
-                    <div key={i} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "7px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)", color: "var(--text-body)", lineHeight: 1.5 }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 700, flex: "none" }}>✕</span>{a}
+                    <div key={i} style={{ padding: "9px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)" }}>
+                      <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+                        <span style={{ color: "var(--text-muted)", fontWeight: 700, flex: "none" }}>✕</span>
+                        <span style={{ flex: 1, fontSize: 13.5, fontWeight: 600, color: "var(--text-strong)", lineHeight: 1.45 }}>{a.what}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, paddingLeft: 17, lineHeight: 1.45 }}>{a.why}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* Algorithm cheat-sheet — grounded in the real rules */}
+              <div className="card" style={{ padding: 20, marginBottom: 14 }}>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>Algorithm cheat-sheet</div>
+                <div className="grid3" style={{ gap: 14 }}>
+                  {[
+                    { k: "Best time", v: discover.algorithm.best_time },
+                    { k: "Cadence", v: discover.algorithm.cadence },
+                    { k: "CTA", v: discover.algorithm.cta },
+                  ].map((it) => (
+                    <div key={it.k}>
+                      <div className="label" style={{ marginBottom: 4 }}>{it.k}</div>
+                      <div style={{ fontSize: 13, color: "var(--text-body)", lineHeight: 1.5 }}>{it.v}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Ideas grounded in the analysis + the company/author context */}
               <div className="label" style={{ marginBottom: 6 }}>Ideas grounded in this analysis</div>
               <div className="card" style={{ padding: "6px 24px" }}>
                 <AnimatedGroup as="div" className="divide-y divide-[var(--line)]">
@@ -408,7 +420,11 @@ export function IdeasView({ members }: { members: Mem[] }) {
                       <ItemContent>
                         <ItemTitle className="text-[15.5px] font-bold text-[var(--text-strong)]">{idea.title}</ItemTitle>
                         <ItemDescription className="text-[13.5px] text-[var(--text-body)]">{idea.angle}</ItemDescription>
-                        <div className="im"><Badge variant="secondary">{idea.tag}</Badge></div>
+                        <div className="im">
+                          <Badge variant="success">{idea.pillar}</Badge>
+                          <Badge variant="default">{idea.format}</Badge>
+                          <Badge variant="secondary">{idea.hook_type.replace(/_/g, " ")}</Badge>
+                        </div>
                       </ItemContent>
                       <ItemActions>
                         <button className="btn sm ghost" onClick={() => router.push(`/create?topic=${encodeURIComponent(idea.title)}`)}>Write →</button>
@@ -425,7 +441,7 @@ export function IdeasView({ members }: { members: Mem[] }) {
               <EmptyHeader>
                 <EmptyTitle style={{ fontSize: 17, color: "var(--text-strong)" }}>Discover what&apos;s trending</EmptyTitle>
                 <EmptyDescription style={{ maxWidth: 460 }}>
-                  Type any topic above and Penkala studies the top-performing LinkedIn posts, tells you what&apos;s actually winning, and turns the patterns into ideas grounded in your context.
+                  Type any topic above and Penkala analyzes what&apos;s actually winning for it on LinkedIn, using proven hook, format, and algorithm frameworks plus your company context, then turns the patterns into ideas in your voice.
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
