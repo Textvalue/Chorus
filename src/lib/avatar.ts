@@ -13,13 +13,27 @@ export function avatarColor(seed: string): string {
   return COLORS[h % COLORS.length];
 }
 
+// Normalize a name for matching: lowercase, trim, strip diacritics so "Lovro Čulina",
+// "Lovro Culina" and "lovro čulina" all collapse to the same key.
+function normalizeName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, " ").normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+// Specific people pinned to a real, committed photo (served from /public). Keyed by
+// normalized name. Anyone here always shows this exact image instead of a stand-in.
+const PINNED_AVATARS: Record<string, string> = {
+  "lovro culina": "/avatars/lovro-culina.png",
+};
+
 // Deterministic real-photo stand-in from a person's name. Same name → same face,
 // every render. Used everywhere a person is shown without a real profile photo —
 // feed, leaderboard, team, drafts, etc. If the URL ever fails to load, <Avatar>
 // quietly falls back to the name's initials (see components/ds.tsx).
 const PRAVATAR_COUNT = 70; // pravatar serves a fixed set of photos, ids 1..70
 export function fakeAvatar(seed: string): string {
-  const s = seed.trim().toLowerCase() || "anon";
+  const key = normalizeName(seed);
+  if (PINNED_AVATARS[key]) return PINNED_AVATARS[key];
+  const s = key || "anon";
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return `https://i.pravatar.cc/150?img=${(h % PRAVATAR_COUNT) + 1}`;
