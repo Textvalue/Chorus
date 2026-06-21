@@ -182,6 +182,7 @@ code, pre { font-family: var(--font-mono); }
 .vhead { margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid var(--border-subtle); }
 .vhead h1 { font-family: var(--sans); font-size: 32px; font-weight: 600; letter-spacing: -0.022em; margin: 0; color: var(--text-strong); line-height: 1.08; }
 .vhead p { font-size: 15.5px; color: var(--text-muted); margin: 8px 0 0; }
+.vsub { font-size: 15.5px; color: var(--text-muted); line-height: 1.5; max-width: 580px; margin: 0 0 28px; }
 .fade { animation: fade .35s var(--ease-out); }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 

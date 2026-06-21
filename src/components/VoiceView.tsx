@@ -86,10 +86,11 @@ export function VoiceView({ me, company, isOwner }: { me: Me; company: Company; 
   }
 
   return (
-    <div className="pad">
-      <div style={{ marginBottom: 24 }}>
+    <div className="pad narrow">
+      <div className="auth-row">
+        <span className="al">Viewing</span>
         <SegmentedControl
-          tone="accent"
+          tone="surface"
           aria-label="Voice section"
           value={tab}
           onValueChange={(v) => setTab(v as "me" | "company")}
@@ -103,18 +104,20 @@ export function VoiceView({ me, company, isOwner }: { me: Me; company: Company; 
       {/* ---------- MY VOICE ---------- */}
       {tab === "me" && (
         <div className="fade">
-          <div className="vhead">
-            <h1>Your voice</h1>
-            <p>Most tools copy how you write. Penkala also captured what you believe — and it keeps learning every time you post.</p>
-          </div>
+          <h1 className="ch" style={{ marginBottom: 8 }}>Your voice</h1>
+          <p className="vsub">Most tools copy how you write. Penkala also captured what you believe — and it keeps learning every time you post.</p>
 
           <div className="grid2" style={{ marginBottom: 20 }}>
             <Card>
               <CardContent>
-                <div className="eyebrow" style={{ marginBottom: 12 }}>How you sound</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
-                  {me.traits.length ? me.traits.map((t) => <Badge key={t} variant="secondary">{t}</Badge>) : <span style={{ fontSize: 13, color: "var(--text-muted)" }}>Not captured yet.</span>}
-                </div>
+                <div className="eyebrow" style={{ marginBottom: 4 }}>How you sound</div>
+                {me.traits.length ? (
+                  <div style={{ display: "flex", flexDirection: "column", marginBottom: 14 }}>
+                    {me.traits.map((t, i) => (
+                      <div key={t} style={{ fontSize: 14, color: "var(--text-body)", padding: "9px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)", lineHeight: 1.45 }}>{t}</div>
+                    ))}
+                  </div>
+                ) : <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "8px 0 14px" }}>Not captured yet.</p>}
                 <div style={{ fontSize: 12.5, color: "var(--text-muted)", lineHeight: 1.6 }}>
                   {me.signature.length > 0 && <>Signature: {me.signature.map((s) => `“${s}”`).join(", ")}<br /></>}
                   {me.avoid.length > 0 && <>Never: {me.avoid.map((s) => `“${s}”`).join(", ")}</>}
@@ -176,10 +179,10 @@ export function VoiceView({ me, company, isOwner }: { me: Me; company: Company; 
       {/* ---------- COMPANY / BRAND DNA ---------- */}
       {tab === "company" && (
         <div className="fade">
-          <div className="vhead" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 28 }}>
             <div>
-              <h1>Team Brand DNA</h1>
-              <p>The shared layer every teammate inherits — positioning, ICP, voice rules. Each person&apos;s voice sits on top.{isOwner ? " You can edit it." : " Admin only."}</p>
+              <h1 className="ch" style={{ marginBottom: 8 }}>Team Brand DNA</h1>
+              <p className="vsub" style={{ margin: 0 }}>The shared layer every teammate inherits — positioning, ICP, voice rules. Each person&apos;s voice sits on top.{isOwner ? " You can edit it." : " Admin only."}</p>
             </div>
             {isOwner && (
               editingDNA ? (
@@ -213,7 +216,7 @@ export function VoiceView({ me, company, isOwner }: { me: Me; company: Company; 
                 ) : (
                   <>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
-                      {co.personas.map((p) => <Badge key={p} variant="secondary">{p}</Badge>)}
+                      {co.personas.map((p) => <Badge key={p} variant="secondary" className="h-auto max-w-full whitespace-normal py-1 text-left leading-snug">{p}</Badge>)}
                     </div>
                     {co.antiPersonas.length > 0 && (
                       <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}><b style={{ color: "var(--text-body)" }}>Not for:</b> {co.antiPersonas.join(", ")}</p>
