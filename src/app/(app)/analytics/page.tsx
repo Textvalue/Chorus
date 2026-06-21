@@ -81,11 +81,11 @@ export default async function AnalyticsPage() {
     const ms = mine.filter((p) => typeof p.voice_match === "number");
     const mv = ms.length ? Math.round(ms.reduce((a, p) => a + p.voice_match, 0) / ms.length) : 0;
     const approvedCount = mine.filter((p) => p.status === "approved").length;
-    return { id: m.member_id, name: m.name, isOwner: m.member_id === org?.owner_member_id, pts: approvedCount * 120 + mv * 4 + mine.length * 20 };
+    return { id: m.member_id, name: m.name, avatar: m.profile_picture_url ?? null, isOwner: m.member_id === org?.owner_member_id, pts: approvedCount * 120 + mv * 4 + mine.length * 20 };
   });
-  // pad with demo teammates so the board looks like a real org
+  // pad with demo teammates so the board looks like a real org (no real photo → fake stand-in)
   const minReal = Math.min(...realBoard.map((r) => r.pts), 320);
-  const padded = EXTRA_TEAMMATES.map((t, i) => ({ id: `demo-${i}`, name: t.name, isOwner: false, pts: Math.max(140, Math.round(minReal * (0.82 - i * 0.13))) }));
+  const padded = EXTRA_TEAMMATES.map((t, i) => ({ id: `demo-${i}`, name: t.name, avatar: null, isOwner: false, pts: Math.max(140, Math.round(minReal * (0.82 - i * 0.13))) }));
   const board = [...realBoard, ...padded].sort((a, b) => b.pts - a.pts);
   const medals = ["🥇", "🥈", "🥉"];
 
@@ -271,7 +271,7 @@ export default async function AnalyticsPage() {
             }}
           >
             <span style={{ width: 26, textAlign: "center", fontWeight: 800, fontSize: i < 3 ? 18 : 14, color: "var(--text-muted)", flex: "none" }}>{medals[i] ?? i + 1}</span>
-            <Avatar name={r.name} size={34} />
+            <Avatar name={r.name} size={34} src={r.avatar} />
             <div style={{ flex: 1, fontWeight: 600, fontSize: 14, color: "var(--text-strong)" }}>
               {r.name}{r.isOwner && <span style={{ color: "var(--text-muted)", fontWeight: 500 }}> · you</span>}
             </div>

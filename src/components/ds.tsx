@@ -1,7 +1,7 @@
 // Penkala design-system primitives (ported from /design-system/project/components).
 // Pure, presentational — safe in server or client components.
 import * as React from "react";
-import { fakeAvatar } from "@/lib/avatar";
+import { avatarColor, fakeAvatar } from "@/lib/avatar";
 
 /* ------------------------------------------------------------------ icons */
 type IP = { size?: number; className?: string; color?: string; stroke?: number };
@@ -149,20 +149,31 @@ export function brandInitials(name: string): string {
   const p = name.trim().split(/\s+/);
   return ((p[0]?.[0] ?? "") + (p.length > 1 ? p[p.length - 1][0] : p[0]?.[1] ?? "")).toUpperCase();
 }
-export function Avatar({ name, size = 40, instrument }: { name: string; size?: number; instrument?: string | null }) {
+export function Avatar({ name, size = 40, src, instrument }: { name: string; size?: number; src?: string | null; instrument?: string | null }) {
+  // A real uploaded photo wins; otherwise a deterministic illustrated stand-in.
+  const photo = src || fakeAvatar(name);
   return (
     <span style={{ position: "relative", display: "inline-flex", flex: "none" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={fakeAvatar(name)}
-        alt={name}
-        width={size}
-        height={size}
+      {/* The photo paints over an initials chip. A slow or failed load just reveals the initials
+          underneath — no broken-image icon, and no client JS (keeps Avatar server-safe). */}
+      <span
         style={{
-          width: size, height: size, borderRadius: 999, objectFit: "cover",
-          background: "var(--accent-soft)", display: "block",
+          position: "relative", overflow: "hidden",
+          width: size, height: size, borderRadius: 999, display: "inline-flex",
+          alignItems: "center", justifyContent: "center",
+          background: avatarColor(name), color: "#fff",
+          fontSize: size * 0.38, fontWeight: 700,
         }}
-      />
+      >
+        {brandInitials(name)}
+        <span
+          aria-hidden
+          style={{
+            position: "absolute", inset: 0,
+            backgroundImage: `url("${photo}")`, backgroundSize: "cover", backgroundPosition: "center",
+          }}
+        />
+      </span>
       {instrument && (
         <span
           title={instrument}
