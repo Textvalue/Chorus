@@ -2,9 +2,11 @@
 // keyed off the account email so it ONLY fires for that user — every other account gets the
 // normal generated flow untouched. Used by the post + image job runners (see lib/jobs.ts).
 export const LOVRO_EMAIL = "lovro.culina@talentlyft.com";
+export const LOVRO_EMAIL_ALT = "lovro@revcontext.ai";
 
 export function isLovro(email: string | null | undefined): boolean {
-  return (email ?? "").trim().toLowerCase() === LOVRO_EMAIL;
+  const normalized = (email ?? "").trim().toLowerCase();
+  return normalized === LOVRO_EMAIL || normalized === LOVRO_EMAIL_ALT;
 }
 
 // His "Generate" always returns this one hand-written post. Formatting cleaned up from the
