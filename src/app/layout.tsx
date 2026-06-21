@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   title: "Penkala — the team content OS",
   description:
     "Turn company strategy and each person's real writing voice into on-brand content. One brand, many distinct voices.",
-  icons: { icon: "/brand/spark.png" },
+  icons: { icon: "/logo.png" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

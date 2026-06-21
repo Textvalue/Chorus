@@ -76,7 +76,8 @@ export type IconName = keyof typeof Icon;
 export function Brandmark({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   return (
     <span className={`bmk${size === "sm" ? " sm" : size === "lg" ? " lg" : ""}`} aria-hidden>
-      <span>P</span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logo.png" alt="" />
     </span>
   );
 }

@@ -332,13 +332,11 @@ code, pre { font-family: var(--font-mono); }
 .spinner { width: 18px; height: 18px; border: 2px solid var(--gray-200); border-top-color: var(--brass); border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Brand tile (editorial monogram — ink tile, brass serif ampersand) */
-.bmk { width: 30px; height: 30px; flex: 0 0 auto; border-radius: 9px; background: var(--ink); display: grid; place-items: center; box-shadow: var(--shadow-sm); }
-.bmk span { font-family: var(--serif); font-weight: 600; font-size: 18px; line-height: 1; color: var(--ev-300); }
+/* Brand tile (Penkala pen-nib logo, rounded app-icon treatment) */
+.bmk { width: 30px; height: 30px; flex: 0 0 auto; border-radius: 9px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.bmk img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bmk.sm { width: 26px; height: 26px; border-radius: 8px; }
-.bmk.sm span { font-size: 17px; }
 .bmk.lg { width: 44px; height: 44px; border-radius: 12px; }
-.bmk.lg span { font-size: 27px; }
 
 /* Unified onboarding shell + horizontal stepper */
 .ob-shell { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 44px 20px 72px; background: var(--surface-page); }

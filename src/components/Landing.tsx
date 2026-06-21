@@ -62,7 +62,8 @@ export function Landing() {
       <header className="nav">
         <div className="wrap nav-in">
           <a href="#top" className="brand">
-            <span className="brand-mark" aria-hidden>P</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="brand-mark" src="/logo.png" alt="" aria-hidden />
             <span className="brand-wm">penkala</span>
           </a>
           <nav className="nav-links">
@@ -358,7 +359,8 @@ export function Landing() {
       <footer className="foot">
         <div className="wrap foot-in">
           <a href="#top" className="brand">
-            <span className="brand-mark" aria-hidden>P</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="brand-mark" src="/logo.png" alt="" aria-hidden />
             <span className="brand-wm">penkala</span>
           </a>
           <span className="foot-tag">The team content OS — harmony, not unison.</span>
@@ -423,7 +425,7 @@ const CSS = `
 .tt .nav-in{display:flex; align-items:center; justify-content:space-between; height:70px;}
 .tt .brand{display:flex; align-items:center; gap:10px;}
 .tt .brand-wm{font-family:var(--serif); font-size:26px; letter-spacing:-.01em;}
-.tt .brand-mark{width:30px; height:30px; border-radius:9px; background:var(--brass); color:#fff; display:grid; place-items:center; font-family:var(--serif); font-weight:600; font-size:18px; line-height:1; box-shadow:0 1px 2px rgba(118,31,255,.25);}
+.tt .brand-mark{width:30px; height:30px; border-radius:9px; object-fit:cover; display:block; box-shadow:0 1px 2px rgba(118,31,255,.25);}
 .tt .nav-links{display:flex; gap:30px; font-size:14.5px; color:var(--ink-2); font-weight:500;}
 .tt .nav-links a{position:relative;}
 .tt .nav-links a:hover{color:var(--ink);}
