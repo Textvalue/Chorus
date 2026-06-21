@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
@@ -91,17 +92,19 @@ export function Sidebar({
             <Avatar name={user.name} size={36} />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" align="end" sideOffset={10} className="w-64">
-            <DropdownMenuLabel className="flex items-center gap-2.5 py-2">
-              <span className="grid size-8 place-items-center rounded-md bg-[var(--ink-surface)] font-serif text-[15px] text-[var(--paper)]">
-                {brandInitials(org.name)}
-              </span>
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-[var(--text-strong)]">{org.name}</span>
-                <span className="block text-[11.5px] font-normal text-[var(--text-muted)]">
-                  {org.memberCount} {org.memberCount === 1 ? "member" : "members"} · {user.role}
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="flex items-center gap-2.5 py-2">
+                <span className="grid size-8 place-items-center rounded-md bg-[var(--ink-surface)] font-serif text-[15px] text-[var(--paper)]">
+                  {brandInitials(org.name)}
                 </span>
-              </span>
-            </DropdownMenuLabel>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-semibold text-[var(--text-strong)]">{org.name}</span>
+                  <span className="block text-[11.5px] font-normal text-[var(--text-muted)]">
+                    {org.memberCount} {org.memberCount === 1 ? "member" : "members"} · {user.role}
+                  </span>
+                </span>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/ensemble")}>
               <Icon.ensemble size={16} /> Team

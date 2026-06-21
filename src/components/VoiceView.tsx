@@ -7,8 +7,6 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
-import { Progress } from "@/components/ui/progress";
-import { InView } from "@/components/motion-primitives/in-view";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 
 type Me = {
@@ -31,10 +29,6 @@ type Company = {
   atoms: [string, string][];
   competitors: { name: string; note: string }[];
 };
-
-const DemoTag = () => (
-  <Badge variant="secondary" className="ml-2 align-middle">sample</Badge>
-);
 
 // Sample Brand DNA so the Company tab is populated even before it's filled in.
 const MOCK_COMPANY: Company = {
@@ -63,8 +57,8 @@ function withSampleData(c: Company): Company {
   };
 }
 
-export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCount: number; company: Company; isOwner: boolean }) {
-  const [tab, setTab] = useState<"me" | "winning" | "company">("me");
+export function VoiceView({ me, company, isOwner }: { me: Me; company: Company; isOwner: boolean }) {
+  const [tab, setTab] = useState<"me" | "company">("me");
   const toast = useToast();
 
   // Company / Brand DNA — populated with sample data and editable in-session.
@@ -98,10 +92,9 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
           tone="accent"
           aria-label="Voice section"
           value={tab}
-          onValueChange={(v) => setTab(v as "me" | "winning" | "company")}
+          onValueChange={(v) => setTab(v as "me" | "company")}
           options={[
             { value: "me", label: "My Voice" },
-            { value: "winning", label: "Winning content", icon: <Icon.trophy size={14} /> },
             { value: "company", label: "Company" },
           ]}
         />
@@ -180,74 +173,24 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
         </div>
       )}
 
-      {/* ---------- WINNING CONTENT ---------- */}
-      {tab === "winning" && (
-        <div className="fade">
-          <div className="vhead">
-            <h1>Your winning content <DemoTag /></h1>
-            <p>Once enough of your posts have engagement data, Penkala reverse-engineers what works for <em>you</em> (TWE = likes + 2× comments + 4× shares) and feeds it back into every draft. Sample below — built from {postCount} posts.</p>
-          </div>
-
-          <Card style={{ marginBottom: 14, background: "var(--green-soft)", borderColor: "var(--green-100)" }}>
-            <CardContent>
-              <div className="eyebrow" style={{ color: "var(--green-700)", marginBottom: 8 }}>Your winning formula</div>
-              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--green-700)" }}>
-                Write about <b>your category</b> as a <b>contrarian text post</b> or <b>how-to carousel</b>, opening with a <b>1-line bold claim</b>, in <b>90–140 words</b>. Post <b>Tue–Thu</b>. Design for <b>comments</b>, not just likes.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card style={{ marginBottom: 14 }}>
-            <CardContent>
-              <div className="eyebrow muted" style={{ marginBottom: 14 }}>Format — what wins for you</div>
-              <InView>
-                {([["Carousel", 88, "+34%"], ["Contrarian text", 80, "+28%"], ["Story", 52, "+6%"], ["Think-piece", 22, "−19%"]] as [string, number, string][]).map(([l, w, v]) => {
-                  const neg = v.startsWith("−") || v.startsWith("-");
-                  return (
-                    <div key={l} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 10, fontSize: 13 }}>
-                      <span style={{ width: 110, flex: "none", color: "var(--text-body)" }}>{l}</span>
-                      <Progress value={w} className={`flex-1 ${neg ? "[&_[data-slot=progress-indicator]]:bg-[var(--amber)]" : "[&_[data-slot=progress-indicator]]:bg-[var(--green)]"}`} />
-                      <span style={{ width: 46, textAlign: "right", flex: "none", fontWeight: 700, fontSize: 12.5, color: "var(--text-strong)" }}>{v}</span>
-                    </div>
-                  );
-                })}
-              </InView>
-            </CardContent>
-          </Card>
-
-          <div className="grid2" style={{ marginBottom: 14 }}>
-            <Card>
-              <CardContent>
-                <div className="eyebrow muted" style={{ marginBottom: 10 }}>Hooks that work</div>
-                <div style={{ fontSize: 13.5, lineHeight: 1.7, color: "var(--text-body)" }}>
-                  <b>&ldquo;Everyone does X. We stopped.&rdquo;</b> — your top pattern.<br />
-                  <b>&ldquo;The boring truth about Y&rdquo;</b> — 2.1× your median.<br />
-                  <span style={{ color: "var(--text-muted)" }}>Underperforms: question openers.</span>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent>
-                <div className="eyebrow muted" style={{ marginBottom: 10 }}>Stop doing</div>
-                {["Burying the hook below the fold", "3+ hashtags — zero correlation", "Posting two days running"].map((t) => (
-                  <div key={t} style={{ display: "flex", gap: 9, fontSize: 13, padding: "5px 0", color: "var(--text-body)" }}>
-                    <span style={{ color: "var(--text-muted)", fontWeight: 700, flex: "none" }}>✕</span>{t}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-
-          <Link href="/ideas" className="btn pri"><Icon.ideas size={16} /> Get ideas in your winning formats</Link>
-        </div>
-      )}
-
       {/* ---------- COMPANY / BRAND DNA ---------- */}
       {tab === "company" && (
         <div className="fade">
-          <div className="vhead">
-            <h1>Team Brand DNA</h1>
-            <p>The shared layer every teammate inherits — positioning, ICP, voice rules. Each person&apos;s voice sits on top.{isOwner ? " You can edit it." : " Admin only."}</p>
+          <div className="vhead" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16 }}>
+            <div>
+              <h1>Team Brand DNA</h1>
+              <p>The shared layer every teammate inherits — positioning, ICP, voice rules. Each person&apos;s voice sits on top.{isOwner ? " You can edit it." : " Admin only."}</p>
+            </div>
+            {isOwner && (
+              editingDNA ? (
+                <div className="im" style={{ flex: "none" }}>
+                  <button className="btn pri" onClick={saveDNA}><Icon.check size={15} color="#fff" /> Save</button>
+                  <button className="btn" onClick={() => setEditingDNA(false)}>Cancel</button>
+                </div>
+              ) : (
+                <button className="btn" style={{ flex: "none" }} onClick={startEditDNA}><Icon.edit size={15} /> Edit Brand DNA</button>
+              )
+            )}
           </div>
 
           <Card style={{ marginBottom: 16 }}>
@@ -310,15 +253,34 @@ export function VoiceView({ me, postCount, company, isOwner }: { me: Me; postCou
             </Card>
           )}
 
-          {isOwner && (
-            editingDNA ? (
-              <div className="im">
-                <button className="btn pri" onClick={saveDNA}><Icon.check size={15} color="#fff" /> Save Brand DNA</button>
-                <button className="btn" onClick={() => setEditingDNA(false)}>Cancel</button>
-              </div>
-            ) : (
-              <button className="btn" onClick={startEditDNA}><Icon.edit size={15} /> Edit Brand DNA</button>
-            )
+          {co.atoms.length > 0 && (
+            <Card style={{ marginBottom: 16 }}>
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>Narrative atoms</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
+                  {co.atoms.map(([k, v]) => (
+                    <div key={k}>
+                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: "capitalize", color: "var(--text-muted)", marginBottom: 3 }}>{k}</div>
+                      <div style={{ fontSize: 13.5, color: "var(--text-body)", lineHeight: 1.5 }}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {co.competitors.length > 0 && (
+            <Card style={{ marginBottom: 16 }}>
+              <CardContent>
+                <div className="eyebrow muted" style={{ marginBottom: 12 }}>Competitive landscape</div>
+                {co.competitors.map((c, i) => (
+                  <div key={c.name} style={{ display: "flex", alignItems: "baseline", gap: 11, padding: "9px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)" }}>
+                    <span style={{ flex: "none", fontSize: 14, fontWeight: 600, color: "var(--text-strong)", minWidth: 120 }}>{c.name}</span>
+                    <span style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5 }}>{c.note}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           )}
         </div>
       )}

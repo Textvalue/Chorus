@@ -29,20 +29,66 @@ const MOCK_IDEAS: Idea[] = [
   { title: "Stop scheduling. Start sounding human.", angle: "Short and punchy: distinct voices on one strategy beat identical voices every time.", source_type: "belief", source: "Your beliefs", tag: "Punchy" },
 ];
 
-type DiscoverResult = { trend: string; lift: number; winning: string; ideas: Idea[] };
+type DiscoverResult = {
+  trend: string;
+  lift: number;
+  sampled: number;
+  summary: string;
+  winning: string;
+  formats: { label: string; pct: number; note: string }[];
+  hooks: string[];
+  avoid: string[];
+  ideas: Idea[];
+};
 type RepurposeResult = { ways: number; pieces: number; weeks: string; atoms: string[]; assets: { title: string; lift: string }[] };
 
-// Mock "Discover" analysis for any topic — stands in for the live top-post study.
+// Deterministic-ish pseudo metric so each topic gets stable, believable numbers.
+function topicSeed(t: string): number {
+  let h = 0;
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+// Mock "Discover" analysis for any topic — stands in for the live top-post study. Richer than a
+// flat idea list: a trend read, what's actually winning by format, hook patterns, what's saturated,
+// then ideas grounded in the analysis.
 function mockDiscover(topic: string): DiscoverResult {
-  const t = topic.replace(/\.$/, "");
+  const t = topic.replace(/\.$/, "").trim();
+  const seed = topicSeed(t.toLowerCase());
+  const lift = +(2.4 + (seed % 22) / 10).toFixed(1); // 2.4–4.5×
+  const sampled = 180 + (seed % 9) * 40; // 180–500 posts "studied"
+  const carousel = 70 + (seed % 22); // 70–91
+  const contrarian = 60 + (seed % 28); // 60–87
+  const story = 40 + (seed % 24);
+  const teardown = 30 + (seed % 30);
+
   return {
-    trend: `Contrarian, specific takes on “${t}” are outperforming generic advice`,
-    lift: 3.2,
-    winning: "Personal-story hooks paired with one hard number. Posts under 120 words, no link in-body.",
+    trend: `Contrarian, specific takes on “${t}” are outrunning generic explainers`,
+    lift,
+    sampled,
+    summary: `Across ${sampled} high-reach posts on “${t}” in the last 30 days, the winners aren't the broad overviews — they're sharp, first-person takes that pick a side and back it with one concrete number or example.`,
+    winning: `A 1-line opinionated hook, then a short story or a single hard number, then a takeaway. Under 130 words, no link in the body, posted Tue–Thu morning.`,
+    formats: [
+      { label: "How-to carousel", pct: carousel, note: "saves + dwell time" },
+      { label: "Contrarian text", pct: contrarian, note: "comments engine" },
+      { label: "Personal story", pct: story, note: "reach, fewer saves" },
+      { label: "Tool/teardown", pct: teardown, note: "niche but loyal" },
+    ],
+    hooks: [
+      `“Everyone’s wrong about ${t}. Here’s what actually moved the needle.”`,
+      `“I changed my mind on ${t}. The reason is uncomfortable.”`,
+      `“We tried ${t} for 90 days. The data wasn’t what we expected.”`,
+    ],
+    avoid: [
+      `“What is ${t}?” explainers — saturated, near-zero saves`,
+      "Listicles over 7 points — drop-off after the fold",
+      "Hype with no number or example — read as AI filler",
+    ],
     ideas: [
-      { title: `The “${t}” advice everyone repeats is wrong`, angle: "Open against the consensus, then show the counter-example with a number.", source_type: "belief", source: "Trend", tag: "Hook" },
-      { title: `What nobody tells you about ${t}`, angle: "Insider POV; one specific story from your own work.", source_type: "belief", source: "Trend", tag: "Story" },
+      { title: `The “${t}” advice everyone repeats is wrong`, angle: "Open against the consensus, then show the counter-example with a number.", source_type: "belief", source: "Trend", tag: "Contrarian" },
+      { title: `What nobody tells you about ${t}`, angle: "Insider POV; one specific story from your own work, one lesson.", source_type: "belief", source: "Trend", tag: "Story" },
       { title: `We tried ${t} for 90 days — here's the data`, angle: "Measured, data-led; lead with the result, not the setup.", source_type: "belief", source: "Trend", tag: "Data" },
+      { title: `A 5-step ${t} playbook (carousel)`, angle: "Turn it into a how-to carousel — the top-saving format for this topic.", source_type: "belief", source: "Trend", tag: "Carousel" },
       { title: `${t}, but make it human`, angle: "Short, punchy reframe; end on a one-line principle.", source_type: "belief", source: "Trend", tag: "Punchy" },
     ],
   };
@@ -300,17 +346,60 @@ export function IdeasView({ members }: { members: Mem[] }) {
           {!dBusy && discover && (
             <>
               <div className="card" style={{ padding: 20, marginBottom: 14, borderLeft: "3px solid var(--accent)" }}>
-                <div className="eyebrow">Trend</div>
-                <h4 style={{ margin: "4px 0 12px" }}>{discover.trend}</h4>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                  <div className="eyebrow" style={{ margin: 0 }}>Trend</div>
+                  <Badge variant="secondary">{discover.sampled} posts studied · last 30 days</Badge>
+                </div>
+                <h4 style={{ margin: "6px 0 10px" }}>{discover.trend}</h4>
                 <div style={{ display: "flex", gap: 28, flexWrap: "wrap", alignItems: "flex-start" }}>
-                  <div style={{ fontSize: 26, fontWeight: 700, color: "var(--accent-ink)", fontVariantNumeric: "tabular-nums", lineHeight: 1.1 }}>
+                  <div style={{ fontSize: 26, fontWeight: 700, color: "var(--accent-ink)", fontVariantNumeric: "tabular-nums", lineHeight: 1.1, flex: "none" }}>
                     <AnimatedNumber value={discover.lift} decimals={1} suffix="× vs median" />
                   </div>
-                  <div style={{ fontSize: 13.5, color: "var(--text-body)", maxWidth: 380, lineHeight: 1.55 }}>
-                    <b style={{ color: "var(--text-strong)" }}>What&apos;s winning:</b> {discover.winning}
+                  <div style={{ fontSize: 13.5, color: "var(--text-body)", maxWidth: 460, lineHeight: 1.55 }}>
+                    {discover.summary}
                   </div>
                 </div>
               </div>
+
+              {/* What's winning — format breakdown + the winning structure */}
+              <div className="card" style={{ padding: 20, marginBottom: 14 }}>
+                <div className="eyebrow muted" style={{ marginBottom: 14 }}>What&apos;s winning by format</div>
+                {discover.formats.map((f) => (
+                  <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 10, fontSize: 13 }}>
+                    <span style={{ width: 130, flex: "none", color: "var(--text-body)" }}>{f.label}</span>
+                    <span style={{ flex: 1, height: 8, borderRadius: 999, background: "var(--line)", overflow: "hidden" }}>
+                      <span style={{ display: "block", height: "100%", width: `${f.pct}%`, background: "var(--accent)", borderRadius: 999 }} />
+                    </span>
+                    <span style={{ width: 36, textAlign: "right", flex: "none", fontWeight: 700, fontSize: 12.5, color: "var(--text-strong)" }}>{f.pct}</span>
+                    <span style={{ width: 116, flex: "none", fontSize: 11.5, color: "var(--text-muted)" }}>{f.note}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: 12, padding: "12px 14px", borderRadius: 12, background: "var(--accent-soft, #efeaff)", fontSize: 13.5, lineHeight: 1.55, color: "var(--accent-ink, #4b2fbf)" }}>
+                  <b>The winning structure:</b> {discover.winning}
+                </div>
+              </div>
+
+              {/* Hooks that work + what's saturated */}
+              <div className="grid2" style={{ marginBottom: 14 }}>
+                <div className="card" style={{ padding: 20 }}>
+                  <div className="eyebrow muted" style={{ marginBottom: 10 }}>Hook patterns that work</div>
+                  {discover.hooks.map((h, i) => (
+                    <div key={i} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "7px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)", color: "var(--text-body)", lineHeight: 1.5 }}>
+                      <span style={{ color: "var(--green)", fontWeight: 700, flex: "none" }}>↑</span>{h}
+                    </div>
+                  ))}
+                </div>
+                <div className="card" style={{ padding: 20 }}>
+                  <div className="eyebrow muted" style={{ marginBottom: 10 }}>Saturated — skip these</div>
+                  {discover.avoid.map((a, i) => (
+                    <div key={i} style={{ display: "flex", gap: 9, fontSize: 13.5, padding: "7px 0", borderTop: i === 0 ? "none" : "1px solid var(--line)", color: "var(--text-body)", lineHeight: 1.5 }}>
+                      <span style={{ color: "var(--text-muted)", fontWeight: 700, flex: "none" }}>✕</span>{a}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="label" style={{ marginBottom: 6 }}>Ideas grounded in this analysis</div>
               <div className="card" style={{ padding: "6px 24px" }}>
                 <AnimatedGroup as="div" className="divide-y divide-[var(--line)]">
                   {discover.ideas.map((idea, i) => (

@@ -5,7 +5,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-export const IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL ?? "openai/gpt-5.4-image-2";
+export const IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL ?? "google/gemini-3.1-flash-image";
 
 type ORImage = { type?: string; image_url?: { url?: string } };
 type ORChoice = { message?: { images?: ORImage[]; content?: string } };
@@ -48,20 +48,36 @@ export async function generateImage(prompt: string, refs: string[] = []): Promis
     ? [{ type: "text", text: prompt }, ...refUrls.map((url) => ({ type: "image_url" as const, image_url: { url } }))]
     : prompt;
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-      "X-Title": "Penkala",
-    },
-    body: JSON.stringify({
-      model: IMAGE_MODEL,
-      modalities: ["image", "text"],
-      messages: [{ role: "user", content }],
-    }),
-  });
+  // Hard timeout so a misconfigured/unavailable image model fails the job instead of
+  // hanging the poll forever (a 2xx that never streams an image otherwise blocks indefinitely).
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 120_000);
+  let res: Response;
+  try {
+    res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      signal: ctrl.signal,
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+        "X-Title": "Penkala",
+      },
+      body: JSON.stringify({
+        model: IMAGE_MODEL,
+        modalities: ["image", "text"],
+        messages: [{ role: "user", content }],
+      }),
+    });
+  } catch (e) {
+    throw new Error(
+      ctrl.signal.aborted
+        ? `Image model "${IMAGE_MODEL}" timed out. Check OPENROUTER_IMAGE_MODEL.`
+        : `Image request failed: ${e instanceof Error ? e.message : "network error"}`
+    );
+  } finally {
+    clearTimeout(timer);
+  }
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");

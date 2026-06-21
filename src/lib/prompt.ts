@@ -68,7 +68,10 @@ export function buildSystemPrompt(org: Org, member: Member): string {
 
   // --- L3: writer context (their LinkedIn voice) ---
   const corrections = member.corrections.slice(-6).map((c) => {
-    if (c.kind === "edit") return `- They edited a draft: "${trunc(c.before)}" → "${trunc(c.after)}".`;
+    if (c.kind === "edit")
+      return c.note
+        ? `- They asked for this change and it stuck: "${c.note}". Apply the same preference going forward.`
+        : `- They edited a draft: "${trunc(c.before)}" → "${trunc(c.after)}".`;
     if (c.kind === "reject") return `- They rejected a draft about "${c.topic}". Avoid that approach.`;
     return `- Note from them: ${c.note}`;
   });

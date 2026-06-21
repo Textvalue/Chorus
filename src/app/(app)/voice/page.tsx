@@ -1,12 +1,12 @@
 // Voice — My Voice (how you sound + what you believe + core memory),
 // Winning content (TWE analysis, sample for now), and Company Brand DNA.
-import { getOrg, getMembers, getPosts } from "@/lib/store";
+import { getOrg, getMembers } from "@/lib/store";
 import { VoiceView } from "@/components/VoiceView";
 
 export const dynamic = "force-dynamic";
 
 export default async function VoicePage() {
-  const [org, members, posts] = await Promise.all([getOrg(), getMembers(), getPosts()]);
+  const [org, members] = await Promise.all([getOrg(), getMembers()]);
   const me = members.find((m) => m.member_id === org?.owner_member_id) ?? members[0];
 
   const vd = me?.voice_dna ?? { traits: [], sentence_patterns: [], signature_terms: [], phrases_to_avoid: [] };
@@ -44,7 +44,6 @@ export default async function VoicePage() {
         sampleCount: me?.prose_samples?.length ?? 0,
         memory,
       }}
-      postCount={posts.filter((p) => p.member_id === me?.member_id).length}
       company={{
         positioning: org?.positioning ?? "",
         personas: org?.icp?.personas ?? [],
