@@ -3,8 +3,15 @@
 import { useMemo, useState } from "react";
 import { Avatar, Icon } from "@/components/ds";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { EngageDraft } from "@/components/EngageDraft";
 
 // The people you've marked to warm — a cookie-free read feed (never your logged-in session).
@@ -27,6 +34,18 @@ const PEOPLE: Person[] = [
   { name: "Tom Okafor", role: "Head of Demand Gen, Vantage" },
   { name: "Elena Vasquez", role: "VP Brand, Cohort" },
   { name: "Sam Whitfield", role: "CEO, Tidewater" },
+];
+
+// Saved people-lists — the named segments you warm together (region, tier, campaign).
+// The selector defaults to the first list; switching one re-fills the feed with its people.
+const LISTS: { id: string; name: string; people: string[] }[] = [
+  {
+    id: "benelux",
+    name: "Q2 BENELUX",
+    people: ["Dana Reed", "Marcus Hale", "Priya Nair", "Tom Okafor", "Elena Vasquez", "Sam Whitfield"],
+  },
+  { id: "founders", name: "Founders", people: ["Priya Nair", "Sam Whitfield"] },
+  { id: "demand", name: "Demand-gen leaders", people: ["Dana Reed", "Tom Okafor", "Elena Vasquez"] },
 ];
 
 const FEED: FeedPost[] = [
@@ -99,11 +118,26 @@ const FEED: FeedPost[] = [
 ];
 
 export function EngageFeed({ author }: { author: string }) {
-  const [selected, setSelected] = useState<Set<string>>(() => new Set(PEOPLE.map((p) => p.name)));
+  const [listId, setListId] = useState<string>(LISTS[0].id);
+  const list = LISTS.find((l) => l.id === listId) ?? LISTS[0];
+
+  // People toggled on within the active list (default: everyone in it).
+  const [selected, setSelected] = useState<Set<string>>(() => new Set(LISTS[0].people));
   const [openId, setOpenId] = useState<string | null>(null);
 
   const roleOf = useMemo(() => Object.fromEntries(PEOPLE.map((p) => [p.name, p.role])), []);
-  const shown = FEED.filter((f) => selected.has(f.author));
+  const listPeople = useMemo(
+    () => PEOPLE.filter((p) => list.people.includes(p.name)),
+    [list]
+  );
+  const shown = FEED.filter((f) => list.people.includes(f.author) && selected.has(f.author));
+
+  function chooseList(id: string) {
+    const next = LISTS.find((l) => l.id === id) ?? LISTS[0];
+    setListId(id);
+    setSelected(new Set(next.people)); // re-fill the feed with the new list
+    setOpenId(null);
+  }
 
   function toggle(name: string) {
     setSelected((prev) => {
@@ -115,52 +149,87 @@ export function EngageFeed({ author }: { author: string }) {
   }
 
   return (
-    <div className="split-side">
-      {/* LEFT — the people you follow, a selectable filter */}
-      <Card className="px-5 self-start">
-        <div className="flex items-baseline justify-between">
-          <div className="eyebrow muted">People you&apos;re warming</div>
-          <Badge variant="secondary">{selected.size}/{PEOPLE.length}</Badge>
+    <div className="stack">
+      {/* TOP FILTER BAR — saved-list selector + the people in that list as toggles */}
+      <Card className="px-5">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="eyebrow muted">List</span>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label="Choose a saved list"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--surface-card)] px-3 py-2 text-[14px] font-semibold text-[var(--text-strong)] shadow-[var(--shadow-1)] transition-colors hover:bg-[var(--paper-2)]"
+            >
+              {list.name}
+              <Icon.chevronRight size={14} className="rotate-90 text-[var(--text-muted)]" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-60">
+              <DropdownMenuLabel>Saved lists</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {LISTS.map((l) => (
+                <DropdownMenuItem
+                  key={l.id}
+                  onClick={() => chooseList(l.id)}
+                  className="justify-between gap-6"
+                >
+                  <span className="font-medium text-[var(--text-strong)]">{l.name}</span>
+                  <span className="flex items-center gap-2 text-[var(--text-muted)]">
+                    <span className="text-[12px]">{l.people.length}</span>
+                    {l.id === listId && <Icon.check size={14} color="var(--accent)" stroke={2.6} />}
+                  </span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <span className="text-[13px] text-[var(--text-muted)]">
+            {listPeople.length} {listPeople.length === 1 ? "person" : "people"} · {selected.size} in feed
+          </span>
+
+          <div className="ml-auto flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => setSelected(new Set(list.people))}>
+              All
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setSelected(new Set())}>
+              None
+            </Button>
+          </div>
         </div>
-        <p className="mb-3 mt-1 text-[12.5px] leading-relaxed text-[var(--text-muted)]">
-          Pick whose posts show in your feed.
-        </p>
-        <div className="flex flex-col gap-1.5">
-          {PEOPLE.map((p) => {
+
+        {/* People chips — tap to add/remove from the feed. */}
+        <div className="flex flex-wrap gap-2">
+          {listPeople.map((p) => {
             const on = selected.has(p.name);
             return (
               <button
                 key={p.name}
                 onClick={() => toggle(p.name)}
                 aria-pressed={on}
-                className="flex items-center gap-2.5 rounded-[var(--radius-md)] border px-2.5 py-2 text-left transition-colors"
+                className="inline-flex items-center gap-2 rounded-full border px-2.5 py-1.5 transition-colors"
                 style={{
                   borderColor: on ? "var(--accent)" : "var(--line)",
                   background: on ? "var(--accent-soft)" : "transparent",
                 }}
               >
-                <Avatar name={p.name} size={32} />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13.5px] font-semibold text-[var(--text-strong)]">{p.name}</span>
-                  <span className="block truncate text-[11.5px] text-[var(--text-muted)]">{p.role}</span>
-                </span>
+                <Avatar name={p.name} size={22} />
                 <span
-                  className="grid size-4 flex-none place-items-center rounded-full"
-                  style={{ background: on ? "var(--accent)" : "transparent", border: on ? "none" : "1.5px solid var(--border-strong)" }}
+                  className="text-[12.5px] font-semibold"
+                  style={{ color: on ? "var(--accent-ink)" : "var(--text-muted)" }}
                 >
-                  {on && <Icon.check size={11} color="#fff" stroke={3} />}
+                  {p.name}
                 </span>
+                {on && <Icon.check size={12} color="var(--accent)" stroke={3} />}
               </button>
             );
           })}
         </div>
       </Card>
 
-      {/* RIGHT — the feed */}
-      <div className="stack">
+      {/* FEED — full-width single column, centered for readability (LinkedIn read feed). */}
+      <div className="mx-auto flex w-full max-w-[620px] flex-col gap-5">
         {shown.length === 0 && (
           <Card className="px-5 py-8 text-center text-sm text-[var(--text-muted)]">
-            No one selected. Pick a few people on the left to fill your feed.
+            No one selected. Tap people above to fill your feed.
           </Card>
         )}
 
@@ -177,7 +246,7 @@ export function EngageFeed({ author }: { author: string }) {
             </div>
 
             {/* post body */}
-            <p className="my-3.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-[var(--text-body)]">{f.body}</p>
+            <p className="my-0 whitespace-pre-wrap text-[14.5px] leading-relaxed text-[var(--text-body)]">{f.body}</p>
 
             {/* reactions */}
             <div className="flex items-center gap-4 border-t border-[var(--border-subtle)] pt-2.5 text-[12.5px] text-[var(--text-muted)]">
@@ -195,7 +264,7 @@ export function EngageFeed({ author }: { author: string }) {
 
             {/* inline suggested comment generator */}
             {openId === f.id && (
-              <div className="mt-3.5">
+              <div>
                 <EngageDraft
                   author={author}
                   replyingTo={`${f.author} · ${roleOf[f.author]}`}

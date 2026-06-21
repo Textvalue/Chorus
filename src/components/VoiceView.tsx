@@ -243,10 +243,43 @@ export function VoiceView({ me, company, isOwner }: { me: Me; company: Company; 
               <CardContent>
                 <div className="eyebrow muted" style={{ marginBottom: 12 }}>Validated pains</div>
                 {co.pains.map((p, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px 0", borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)" }}>
-                    <span style={{ flex: 1, fontSize: 14, color: "var(--text-strong)", fontWeight: 600 }}>{p.pain}</span>
-                    <Badge variant="secondary">{p.weekly_trigger}</Badge>
-                    <Badge variant={p.severity === "high" ? "warning" : "secondary"}>{p.severity}</Badge>
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      padding: "12px 0",
+                      borderTop: i === 0 ? "none" : "1px solid var(--border-subtle)",
+                    }}
+                  >
+                    {/* min-width:0 lets the title wrap normally instead of collapsing to one
+                        word per line; the trigger is a wrapping muted line, not a nowrap pill,
+                        so a long weekly_trigger can't blow out the row width. */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-strong)", lineHeight: 1.4 }}>
+                        {p.pain}
+                      </div>
+                      {p.weekly_trigger && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            marginTop: 5,
+                            fontSize: 12.5,
+                            color: "var(--text-muted)",
+                            lineHeight: 1.45,
+                          }}
+                        >
+                          <Icon.clock size={13} />
+                          <span style={{ minWidth: 0 }}>{p.weekly_trigger}</span>
+                        </div>
+                      )}
+                    </div>
+                    <Badge variant={p.severity === "high" ? "warning" : "secondary"} className="flex-none">
+                      {p.severity}
+                    </Badge>
                   </div>
                 ))}
               </CardContent>

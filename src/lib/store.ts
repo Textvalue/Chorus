@@ -2,6 +2,7 @@
 // every function below keeps its exact signature, so all pages/routes that import "@/lib/store"
 // are unchanged. Reads are scoped to the active org (the most recently saved one), giving real
 // (org_id, member_id) isolation — onboarding a real company cleanly hides the demo ensemble.
+import { cache } from "react";
 import { pool, query } from "./db";
 import { auth } from "@/auth";
 import { getUserOrgId, setUserOrg } from "./users";
@@ -69,24 +70,30 @@ function toPost(r: PostRow): Post {
 
 // The current workspace = the logged-in user's org. Everything is scoped to it, so each
 // user gets a fully isolated workspace (multi-tenant). Null until the user finishes onboarding.
-async function currentUserId(): Promise<string | null> {
+// Wrapped in React cache() so identity resolution (auth() + the org lookup) runs ONCE per
+// request instead of repeating for every store read — the layout and each page both fetch
+// org/members, so this collapses 2-4 duplicate auth()+DB round-trips down to one.
+const currentUserId = cache(async (): Promise<string | null> => {
   const session = await auth();
   return (session?.user as { id?: string } | undefined)?.id ?? null;
-}
-async function currentOrgId(): Promise<string | null> {
+});
+const currentOrgId = cache(async (): Promise<string | null> => {
   const uid = await currentUserId();
   return uid ? getUserOrgId(uid) : null;
-}
+});
 
 // ---- reads ----
-export async function getOrg(): Promise<Org | null> {
+// getOrg / getMembers / getPosts are cache()-wrapped: the app layout AND the page both call
+// them on every navigation, so without dedup each render hits the DB twice for the same data.
+// cache() memoizes per request, so the second caller reuses the first result.
+export const getOrg = cache(async (): Promise<Org | null> => {
   const orgId = await currentOrgId();
   if (!orgId) return null;
   const rows = await query<OrgRow>("select * from orgs where org_id = $1", [orgId]);
   return rows[0] ? toOrg(rows[0]) : null;
-}
+});
 
-export async function getMembers(): Promise<Member[]> {
+export const getMembers = cache(async (): Promise<Member[]> => {
   const orgId = await currentOrgId();
   if (!orgId) return [];
   const [mrows, crows] = await Promise.all([
@@ -100,7 +107,7 @@ export async function getMembers(): Promise<Member[]> {
     byMember.set(c.member_id, list);
   }
   return mrows.map((m) => toMember(m, byMember.get(m.member_id) ?? []));
-}
+});
 
 export async function getMember(memberId: string): Promise<Member | undefined> {
   const orgId = await currentOrgId();
@@ -117,7 +124,7 @@ export async function getMember(memberId: string): Promise<Member | undefined> {
   return toMember(mrows[0], crows.map(toCorrection));
 }
 
-export async function getPosts(): Promise<Post[]> {
+export const getPosts = cache(async (): Promise<Post[]> => {
   const orgId = await currentOrgId();
   if (!orgId) return [];
   const rows = await query<PostRow>(
@@ -125,7 +132,7 @@ export async function getPosts(): Promise<Post[]> {
     [orgId]
   );
   return rows.map(toPost);
-}
+});
 
 export async function getStore(): Promise<Store> {
   const [org, members, posts] = await Promise.all([getOrg(), getMembers(), getPosts()]);
